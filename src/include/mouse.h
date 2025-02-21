@@ -1,5 +1,14 @@
 #ifndef _mouse_h_
 #define _mouse_h_
+#include <time.h>
+
+//void interrupt(*oldTimerInt)(void);// 中断向量表备份
+//void interrupt timerISR(void);// 定时器中断服务程序
+//void init_timer_interrupt();// 初始化定时器中断
+
+void wait_and_reset();//子进程函数
+
+int detect_complete_click(int press, time_t current_press_time);//是否完成完整点击，服务双击检测
 int mouse_press(int x1, int y1, int x2, int y2);//如果在框中点击，则返回1；在框中未点击，则返回2；在框中右键，返回3；在框中双击，返回4；不在框中则返回0
 void mouse(int,int);//设计鼠标
 void mouseinit(void);//初始化
