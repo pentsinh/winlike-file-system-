@@ -16,9 +16,9 @@
 #include <sys/stat.h> // 文件状态
 #include "include.h"
 
-char path[1024];//当前路径
+extern char path[1024];//当前路径
 extern char history[HISTORY_LENGTH][1024];
-void load_init()//界面初始化
+void load_init(struct file_info* info)//界面初始化
 {
 	setbkcolor(BLACK);
 	chdir("C:\\PROJECT");
@@ -29,19 +29,18 @@ void load_init()//界面初始化
 	}
 	strcpy(history[0], path);//路径操作历史开始记录
 	//加载界面
-	load_all();
+	load_all(info);
 }
 
-void load_all()//加载界面
+void load_all(struct file_info* info)//加载界面
 {
-	cleardevice();
 	load_top();
 	line(1, 35, 640, 35);
 	load_head();
 	line(1, 65, 640, 65);
 	load_left();
 	line(105, 65, 105, 480);
-	load_main();
+	load_main(info);
 }
 
 void load_top()//(10,10)(630,30)
@@ -89,68 +88,34 @@ void load_left()//(10,50)(100,470)
 }
 
 
-void load_main()//(120,70)(640,480)
+void load_main(struct file_info *info)//(120,70)(640,480)
 {
 	int i;
-
-	DIR* dir = opendir(".");//指向当前目录（.）的目录流
-	struct dirent* entry;//指向目录中的一个条目（文件或文件夹）
-	struct stat statbuf;//存储文件或文件夹的元数据信息，如大小、修改时间、权限等
-	char time_str[20];//用于存储格式化后的时间字符串
-	char* type = get_file_type(statbuf.st_mode);//存储文件类型的描述（如“文件”、“目录”等）。
+	int j;
 
 	puthz(120, 70, "名称", 16, 2, WHITE);
 	line(320, 70, 320, 90);
 
-	puthz(320, 70, "修改日期", 16, 2, WHITE);
-	line(480, 70, 480, 90);
+	puthz(240, 70, "修改日期", 16, 2, WHITE);
+	line(400, 70, 400, 90);
 
-	puthz(480, 70, "类型", 16, 2, WHITE);
-	line(580,70,580,90);
+	puthz(400, 70, "类型", 16, 2, WHITE);
+	line(540, 70, 540, 90);
 
-	puthz(580, 70, "大小", 16, 2, WHITE);
+	puthz(540, 70, "大小", 16, 2, WHITE);
 
 	//为了开发方便，开发阶段将格子画出来
 	for (i = 90; i < 640; i += 20)
 		line(120, i, 640, i);
 
-
-	while ((entry = readdir(dir))) 
+	for (j = 0, i = 95; j < 10; j++, i += 20)
 	{
-		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
-			continue;
-
-		
-		if (lstat(entry->d_name, &statbuf) == -1)
-		{
-			//perror("获取文件信息失败");
-			continue;
-		}
-
-		// 格式化时间
-		
-		strftime(time_str, sizeof(time_str), "%Y.%m.%d %H:%M:%S",localtime(&statbuf.st_mtime));
-
-		// 获取文件类型
-		
-
-		// 输出信息
-		/*printf("%-25s %-20s %-15s %8ld字节\n",
-			entry->d_name,
-			time_str,
-			type,
-			statbuf.st_size);*/
-		outtextxy(120, i, entry->d_name);
-		outtextxy(320, i, entry->d_name);
-		puthz(480, i, type, 16, 1, WHITE);
-		outtextxy(120, i, entry->d_name);
-
+		outtextxy(120, i, (info+j)->name);//名称
+		outtextxy(240, i, (info+j)->time);//修改日期		
+		//puthz(480, i, info.type, 16, 1, WHITE);//类型
+		outtextxy(400, i, (info + j)->type);//类型
+		outtextxy(540, i, (info + j)->size);//大小
 	}
-
-	closedir(dir);
-
-
-
 }
 
 

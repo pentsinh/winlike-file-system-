@@ -1,6 +1,7 @@
 #include<conio.h>
 #include<graphics.h>
 #include<dos.h>
+#include <process.h>
 #include<stdio.h>
 #include<stdlib.h>
 #include <time.h>
@@ -15,7 +16,7 @@ ABSTRACT:
 		A.mread
 		B.newmouse
 VERSION: 3.1
-在mread函数中更新了鼠标状态的全局变量；为鼠标添加了双击状态（返回 4 ）
+在mread函数中更新了鼠标状态的全局变量；为鼠标添加了双击状态（返回 4 ）,双击检测不稳定
 ***************************/
 int MouseX;
 int MouseY;
@@ -25,8 +26,38 @@ void *buffer;
 union REGS regs;
 int flag=0;
 
-int last_click_time = -1;//服务双击检测
-int current_click_time = -1;
+//time_t last_press_time = 0;//上次点击时间
+//time_t press_time[10] = { 0 };//用于存储鼠标左键处于按下状态的cpu时间，直接比较time[0]和time[9]，提高双击检测的成功率
+time_t last_click_time = 0; // 记录上次点击时间
+int click_count = 0;        // 点击次数计数器
+int is_mouse_down = 0;      // 鼠标按下状态
+int click_flag = 0;
+//char box[10];
+
+//// 中断向量表备份
+//void interrupt(*oldTimerInt)(void);
+//
+//// 定时器中断服务程序
+//void interrupt timerISR(void) {
+//	static unsigned int elapsed_time = 0;
+//	elapsed_time += 55; // 每个中断大约为55毫秒
+//
+//	if (elapsed_time >= 700) {
+//		elapsed_time = 0;
+//		click_count = 0; // 超过最大双击时间，重置点击计数器
+//	}
+//
+//	oldTimerInt(); // 调用原始的中断服务程序
+//}
+//
+//// 初始化定时器中断
+//void init_timer_interrupt() {
+//	// 备份原来的中断向量
+//	oldTimerInt = getvect(0x08);
+//	// 设置新的中断向量
+//	setvect(0x08, timerISR);
+//}
+
 
 
 void mouseinit()//初始化
@@ -59,6 +90,9 @@ void mouseinit()//初始化
 		int86(51,&regs,&regs);
 	}
 	MouseS = 0;
+	// 初始化定时器中断
+	//init_timer_interrupt();
+	// 
 	//MouseX=320,MouseY=240;
 	//save_bk_mou(320,240);
 	//mouse(MouseX,MouseY);
@@ -235,8 +269,8 @@ void newmouse(int *nx,int *ny,int *nbuttons)
 	*ny = yn;
 	*nbuttons = buttonsn;
 	press = buttonsn;
-	if(buttons0 == *nbuttons)
-		*nbuttons = 0;    //使得能连续按键
+	//if(buttons0 == *nbuttons)
+	//	*nbuttons = 0;    //使得能连续按键
 	if(xn == x0 && yn == y0 && buttonsn == buttons0)
 		return;            //鼠标状态不变则直接返回S
 	clrmous(x0,y0);        //说明鼠标状态发生了改变
@@ -280,49 +314,179 @@ void drawmous(int nx,int ny)
 
 
 
-//如果在框中点击，则返回1；在框中未点击，则返回2；不在框中则返回0
+////如果在框中点击，则返回1；在框中未点击，则返回2；不在框中则返回0
+//int mouse_press(int x1, int y1, int x2, int y2)
+//{
+//	int i;
+//	time_t current_press_time;//当前点击时间
+//
+//	//在框中点击，则返回1
+//	if(MouseX > x1 
+//	&&MouseX < x2
+//	&&MouseY > y1
+//	&&MouseY < y2
+//	&&press == 1)
+//	{
+//		current_press_time = clock();
+//		if (current_press_time - last_press_time > 0 && current_press_time - last_press_time < 12)
+//		//if(current_press_time==last_press_time)
+//		{
+//			last_press_time = 0;
+//			return 4;
+//		}
+//		//for (i = 1; i < 10; i++)
+//		//{
+//		//	press_time[10 - i] = press_time[9 - i];
+//		//}
+//		//press_time[0] = clock();
+//
+//		//if ( press_time[0] - press_time[9] > 3 && press_time[0] - press_time[9] < 12)
+//		//{
+//		//	for (i = 0; i < 10; i++) press_time[i] = 0;//防止连续点击
+//		//	return 4;
+//
+//		//}
+//		else
+//		{
+//			last_press_time = current_press_time;
+//			return 1;
+//		}
+//	}
+//	
+//	//在框中未点击，则返回2
+//	else if(MouseX > x1 
+//	&&MouseX < x2
+//	&&MouseY > y1
+//	&&MouseY < y2
+//	&&press == 0)
+//	{
+//		return 2;
+//	}
+//	
+//	//在框中点击右键，则返回3
+//	else if(MouseX > x1 
+//	&&MouseX < x2
+//	&&MouseY > y1
+//	&&MouseY < y2
+//	&&press == 2)
+//	{		
+//		//for (i = 0; i < 10; i++) press_time[i] = 0;
+//		last_press_time = 0;
+//		return 3;
+//	}
+//	
+//	else
+//	{
+//		last_press_time = 0;
+//		return 0;
+//	}
+//}
+
+
+
+void wait_and_reset()//子进程函数
+{
+	delay(600);
+	if (click_flag == 1)
+		click_flag = 0;
+	exit(0);
+}
+
+
+
+// 辅助函数：检测完整的点击过程（从释放状态到按下状态再到释放状态）
+int detect_complete_click(int press, time_t current_press_time)
+{
+	static int initial_press_detected = 0; // 标记是否检测到初始按下
+	time_t elapsed_ticks;
+	int pid;
+
+	if (press == 1) // 鼠标左键被按下
+	{
+		if (!initial_press_detected)
+		{
+			initial_press_detected = 1; // 标记初始按下
+			last_click_time = current_press_time; // 更新最后点击时间
+			return 0; // 返回0表示正在按下，等待释放
+		}
+	}
+	else if (press == 0) // 鼠标左键被释放
+	{
+		if (initial_press_detected)
+		{
+			initial_press_detected = 0; // 重置标记
+			elapsed_ticks = current_press_time - last_click_time;
+
+			if (elapsed_ticks < 12 ) // 
+			{
+				click_count++;
+				if (click_count == 2)
+				{
+					click_count = 0; // 重置点击计数器
+					last_click_time = 0; // 重置最后点击时间
+					click_flag = 0;
+					return 4; // 返回双击标识
+				}
+
+			}
+			else
+			{
+				// 如果超过双击时间间隔，视为单击
+				click_count = 1; // 重置为单击
+				last_click_time = current_press_time; // 更新最后点击时间
+				click_flag = 1;
+				// 如果可执行文件位于当前工作目录中
+				//pid = spawnl(P_NOWAIT, "wait_and_reset.exe", "wait_and_reset.exe", NULL);
+				// 如果可执行文件不在当前工作目录中，需要提供完整路径，并确保反斜杠被正确转义
+				pid = spawnl(P_NOWAIT, "C:\\PROJECT\\build\\wait_and_reset.exe", "C:\\PROJECT\\devel\\wait_and_reset.exe", NULL);
+				if (pid == -1)
+				{
+					perror("spawnl failed");
+					//outtextxy(100, 100, itoa(errno, box, 10));
+				}
+				return 1; // 返回单击标识
+			}
+		}
+	}
+
+	return 0; // 默认返回值
+}
+
 int mouse_press(int x1, int y1, int x2, int y2)
 {
-	//在框中点击，则返回1
-	if(MouseX > x1 
-	&&MouseX < x2
-	&&MouseY > y1
-	&&MouseY < y2
-	&&press == 1)
+	time_t current_press_time = clock(); // 当前点击时间
+	int result;
+	// 检查鼠标位置是否在指定框内
+	if (MouseX > x1 && MouseX < x2 && MouseY > y1 && MouseY < y2)
 	{
-		last_click_time = current_click_time;
-		current_click_time= clock() * 1000.0 / CLOCKS_PER_SEC;
-		if (current_click_time - last_click_time > 100 && current_click_time - last_click_time < 500)
-			return 4;
-		else
-			return 1;
+		if (press == 2) // 右键点击
+		{
+			click_count = 0; // 重置点击计数器
+			last_click_time = 0; // 重置最后点击时间
+			return 3; // 返回右键点击标识
+		}
+
+		// 调用辅助函数检测完整的点击过程
+		result = detect_complete_click(press, current_press_time);
+
+		if (result != 0) // 如果有点击事件发生
+		{
+			return result;
+		}
 	}
-	
-	//在框中未点击，则返回2
-	else if(MouseX > x1 
-	&&MouseX < x2
-	&&MouseY > y1
-	&&MouseY < y2
-	&&press == 0)
-	{
-		return 2;
-	}
-	
-	//在框中点击右键，则返回3
-	else if(MouseX > x1 
-	&&MouseX < x2
-	&&MouseY > y1
-	&&MouseY < y2
-	&&press == 2)
-	{
-		last_click_time = -1;
-		return 3;
-	}
-	
 	else
 	{
-		return 0;
+		// 如果不在框中，重置状态
+		//is_mouse_down = 0;
+		click_count = 0;
+		last_click_time = 0;
+		return 0; // 不在框中
 	}
+
+	return 0; // 默认返回值
 }
+
+
+
 
 
