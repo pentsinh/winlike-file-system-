@@ -69,6 +69,7 @@ void welcome()
 
 	while (!kbhit())// 循环，直到按下键盘键
 		newmouse(&MouseX, &MouseY, &press);
+	clrmous(MouseX, MouseY);
 	cleardevice();
 }
 

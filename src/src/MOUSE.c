@@ -399,7 +399,7 @@ int detect_complete_click(int press, time_t current_press_time)
 {
 	static int initial_press_detected = 0; // 标记是否检测到初始按下
 	time_t elapsed_ticks;
-	int pid;
+	//int pid;
 
 	if (press == 1) // 鼠标左键被按下
 	{
@@ -438,12 +438,14 @@ int detect_complete_click(int press, time_t current_press_time)
 				// 如果可执行文件位于当前工作目录中
 				//pid = spawnl(P_NOWAIT, "wait_and_reset.exe", "wait_and_reset.exe", NULL);
 				// 如果可执行文件不在当前工作目录中，需要提供完整路径，并确保反斜杠被正确转义
-				pid = spawnl(P_NOWAIT, "C:\\PROJECT\\build\\wait_and_reset.exe", "C:\\PROJECT\\devel\\wait_and_reset.exe", NULL);
-				if (pid == -1)
-				{
-					perror("spawnl failed");
-					//outtextxy(100, 100, itoa(errno, box, 10));
-				}
+				//pid = spawnl(P_NOWAIT, "C:\\PROJECT\\build\\wait_and_reset.exe", "C:\\PROJECT\\devel\\wait_and_reset.exe", NULL);
+				//pid = spawnl(P_NOWAIT, "C:\\PROJECT\\build\\WIN_PRO.exe", "C:\\PROJECT\\devel\\WIN_PRO.exe", NULL);
+				//pid = spawnl(P_NOWAIT, "C:\\PROJECT\\build\\reseter.exe", "C:\\PROJECT\\devel\\reseter.exe", NULL);
+				//if (pid == -1)
+				//{
+				//	perror("spawnl failed");
+				//	//outtextxy(100, 100, itoa(errno, box, 10));
+				//}
 				return 1; // 返回单击标识
 			}
 		}
@@ -452,7 +454,7 @@ int detect_complete_click(int press, time_t current_press_time)
 	return 0; // 默认返回值
 }
 
-int mouse_press(int x1, int y1, int x2, int y2)
+int mouse_press(int x1, int y1, int x2, int y2)//
 {
 	time_t current_press_time = clock(); // 当前点击时间
 	int result;
@@ -473,6 +475,9 @@ int mouse_press(int x1, int y1, int x2, int y2)
 		{
 			return result;
 		}
+
+		else
+			return 2;
 	}
 	else
 	{

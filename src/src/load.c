@@ -18,6 +18,7 @@
 
 extern char path[1024];//当前路径
 extern char history[HISTORY_LENGTH][1024];
+extern char chosen_name[13];//被选中的文件名
 void load_init(struct file_info* info)//界面初始化
 {
 	setbkcolor(BLACK);
@@ -29,7 +30,7 @@ void load_init(struct file_info* info)//界面初始化
 	}
 	strcpy(history[0], path);//路径操作历史开始记录
 	//加载界面
-	load_all(info);
+	//load_all(info);
 }
 
 void load_all(struct file_info* info)//加载界面
@@ -39,6 +40,7 @@ void load_all(struct file_info* info)//加载界面
 	load_head();
 	line(1, 65, 640, 65);
 	load_left();
+	floodfill(121, 71, BLACK);
 	line(105, 65, 105, 480);
 	load_main(info);
 }
@@ -90,8 +92,8 @@ void load_left()//(10,50)(100,470)
 
 void load_main(struct file_info *info)//(120,70)(640,480)
 {
-	int i;
-	int j;
+	int i;//像素
+	int j;//文件序号
 
 	puthz(120, 70, "名称", 16, 2, WHITE);
 	line(320, 70, 320, 90);
@@ -110,11 +112,17 @@ void load_main(struct file_info *info)//(120,70)(640,480)
 
 	for (j = 0, i = 95; j < 10; j++, i += 20)
 	{
+		setcolor(WHITE);
 		outtextxy(120, i, (info+j)->name);//名称
 		outtextxy(240, i, (info+j)->time);//修改日期		
 		//puthz(480, i, info.type, 16, 1, WHITE);//类型
 		outtextxy(400, i, (info + j)->type);//类型
 		outtextxy(540, i, (info + j)->size);//大小
+		if (strcmp(chosen_name, (info + j)->name) == 0 && (info + j)->name != 0)
+		{
+			setcolor(YELLOW);
+			rectangle(120, 90 + j * 20, 640, 90 + j * 20 + 20);
+		}
 	}
 }
 
