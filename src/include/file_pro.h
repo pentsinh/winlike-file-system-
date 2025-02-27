@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 struct file_info {
     int num;//标号
+    //int is_chosen;//是否被选中
     char name[13];//名称
     char type[16];//类型暂时用英文
     char path[1024];//路径**********路径暂时没有值，在做搜索时填补
