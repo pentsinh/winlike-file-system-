@@ -86,6 +86,16 @@ void load_head()//(10,40)(630,60)
 
 void load_left()//(10,50)(100,470)
 {
+	struct dir_tree* p;//用于指向正在考察的目录
+	int layer = 0;//目录的层数，设c盘问第0层
+	int i;//
+	p = tree;
+
+
+}
+
+void load_left_assist(struct dir_tree* p, int layer)//加载左栏辅助函数
+{
 
 }
 

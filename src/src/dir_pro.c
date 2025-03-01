@@ -9,7 +9,6 @@
 char history[HISTORY_LENGTH][1024] = { 0 };//Ä¿Â¼²Ù×÷¼ÇÂ¼
 char path[1024];//µ±Ç°Â·¾¶
 int now_history = 0;//µ±Ç°ÔÚÂ·¾¶ÔÚhistoryÖÐµÄÎ»ÖÃ£¬·þÎñ³·Ïú²Ù×÷
-struct dir_tree tree;//Ä¿Â¼Ê÷£¬ÓÃÓÚ¼ÓÔØ×óÀ¸£¬ÒÔ¼°Í¨¹ý×óÀ¸¿ìËÙ¶¨Î»
 char chosen_name[13]={-1};//±»Ñ¡ÖÐµÄÎÄ¼þÃû
 
 void read_dir(DIR* dir, struct dirent* entry, struct file_info* info)//¶ÁÈ¡µ±Ç°Ä¿Â¼ÏÂÎÄ¼þ
@@ -111,51 +110,3 @@ int change_dir(struct file_info* info, int x, int y)//¸ü¸ÄÄ¿Â¼.·µ»Ø1Ñ¡ÖÐ£¬·µ»Ø2È
 }
 
 
-void tree_make(struct dir_tree* tree)//Ä¿Â¼Ê÷³õÊ¼»¯
-{
-	//*********ÕâÀïcopyÁËmain.cµÄ²¿·Ö¶¨Òå£¬×¢ÒâÇø·Ö	
-	DIR* dir;//Ö¸ÏòÄ¿Â¼Á÷
-	struct dirent* entry;//Ö¸ÏòÄ¿Â¼ÖÐµÄÒ»¸öÌõÄ¿£¨ÎÄ¼þ»òÎÄ¼þ¼Ð£©
-	struct file_info info_for_tree[10];//´æ·ÅÎÄ¼þÐÅÏ¢
-	//***********
-	int flag = 0;//ÊÇ·ñÎªcÅÌ
-	int i;//Ñ­»·±äÁ¿
-	int j = 0;//ÕýÔÚ¹¹½¨µÄÊ÷Ö¦±àºÅ
-	struct dir_tree* p;//Á´±í²Ù×÷¸¨ÖúÖ¸Õë£¬ÓÃÓÚÉêÇë¿Õ¼ä
-	//´ò¿ªÄ¿Â¼Á÷,//³õÊ¼»¯tree¸ù¼°·ÖÖ§·½Ïò
-	if (strcmp(tree->path, 0) == 0)
-	{
-		strcpy(tree->path, "C:\\"); //Èç¹ûÊÇ¸ù£¬³õÊ¼»¯ÎªCÅÌ
-		dir = opendir(tree->path);		
-		flag = 1;
-	}
-	else
-		dir = opendir(tree->path);	
-
-	for (i = 0; i < 10; i++)
-	{
-		tree->branch[i] = NULL;
-	}
-
-	read_dir(dir, entry, info_for_tree);
-	closedir(tree->path);
-	//É¸Ñ¡³öFold£¬²¢ÇÒ¹¹½¨tree
-	for (i = 0; info_for_tree[i].name != 0; i++)
-	{
-		if (strcmp(info_for_tree[i].type, "Fold") == 0)
-		{			
-			p = (struct dir_tree*)malloc(sizeof(struct dir_tree));//ÏòÄÚ´æÉêÇë¿Õ¼ä
-			//ÍêÉÆ·ÖÖ§ÐÅÏ¢
-			tree->branch[j] = p;
-			strcpy(p->name, info_for_tree[i].name);//
-			strcpy(p->path, tree->path);//ÊäÈë·ÖÖ§µÄÍêÕûÂ·¾¶
-			if (!flag)//Èç¹û²»ÊÇcÅÌ
-				strcat(p->path, "\\");
-			strcat(p->path, p->name);
-
-			//¶ÔÄ¿Â¼µÄ×ÓÄ¿Â¼½øÒ»²½¹¹½¨£¬µÝ¹é
-			tree_make(tree->branch[j]);
-			j++;
-		}
-	}	
-}
