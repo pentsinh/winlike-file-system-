@@ -8,4 +8,5 @@
 #include <dir_pro.h>
 #include <file_pro.h>
 #include <srch.h>
+#include <index.h>
 
