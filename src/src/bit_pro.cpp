@@ -33,6 +33,15 @@ void set_bit(unsigned char *num, int position, int value)
     }
 }
 
+unsigned char get_bit(unsigned char num, int position) // 获取八位二制的指定位置的值
+{
+    if (position < 0 || position >= 8) // 检查位置是否有效
+    {
+        return 0; // 如果位置无效，返回0
+    }
+    return (num >> position) & 1; // 右移后与1按位与，得到该位的值
+}
+
 // 以二进制输出
 void printBinary(unsigned char value)
 {
