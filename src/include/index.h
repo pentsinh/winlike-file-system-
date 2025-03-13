@@ -19,7 +19,8 @@ struct My_filenode
 };
 
 // void tree_make(struct dir_tree* tree,int depth);//构建目录树
-void tree_make(struct My_filenode *node, int depth);		   // 目录树构建
-char *get_node_path(struct My_filenode *node);				   // 获取节点绝对路径
-char *get_file_path(struct My_filenode *node, char *filename); // 获取某目录下某文件（夹）的绝对路径
-#endif														   // !_INDEX_H_
+void tree_make(struct My_filenode *node, int depth);			  // 目录树构建
+char *get_node_path(struct My_filenode *node);					  // 获取节点绝对路径
+char *get_file_path(struct My_filenode *node, char *filename);	  // 获取某目录下某文件（夹）的绝对路径
+char *get_file_path_left(struct My_filenode *node, int x, int y); // 从左栏直接点击文件夹，获取文件夹绝对路径
+#endif															  // !_INDEX_H_
