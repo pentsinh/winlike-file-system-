@@ -9,7 +9,6 @@
 与左栏相关的函数
 */
 
-
 #define MAX_DEPTH 10  // 设定最大递归深度
 struct dir_tree tree; // 目录树，用于加载左栏，以及通过左栏快速定位
 /*void tree_make(struct dir_tree* tree, int depth) // 目录树初始化
@@ -29,7 +28,6 @@ struct dir_tree tree; // 目录树，用于加载左栏，以及通过左栏快速定位
 		// strcpy(tree->path, "C:\\BORLANDC"); // 如果是根，初始化为C盘
 		// strcpy(tree->name, "BORLANDC");
 	}
-
 	tree->is_branch_on = 1;
 	for (i = 0; i < 10; i++)
 	{
@@ -107,10 +105,8 @@ struct dir_tree tree; // 目录树，用于加载左栏，以及通过左栏快速定位
 // 	{
 // 		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
 // 			continue;
-
 // 		// sprintf(tmp, "%s\\%s", path, entry->d_name);
 // 		// printf("%s:%d\n", get_file_path(node, entry->d_name), get_file_type((get_file_path(node, entry->d_name)))); // 调试输出
-
 // 		if (get_file_type((get_file_path(node, entry->d_name))) == 2) // 如果是目录
 // 		{
 // 			if (node->son_list_head == NULL) // 子目录头节点
@@ -137,18 +133,24 @@ struct dir_tree tree; // 目录树，用于加载左栏，以及通过左栏快速定位
 // 	printf("Build %s OK\n", path);
 // }
 
-void tree_make(struct My_filenode *node, int depth)
+void tree_make(struct My_filenode *node, int depth) // 目录树构建，外部调用时传入根目录
 {
 	DIR *dir;
 	struct dirent *entry;
 	struct My_filenode *p; // 正在构建的上一个子目录
-	char path[64];		   // 当前节点绝对路径
-	char tmp[64];
+	char *path;			   // 当前节点绝对路径
 	if (depth == 0)
 	{
-		strcpy(node->name, "C:\\");
-		node->flag = 1;
-		strcpy(path, "C:\\");
+
+		node->flag = 0;
+		set_bit(&node->flag, 0, 1);
+		set_bit(&node->flag, 4, 1);
+		// strcpy(node->name, "C:\\");
+		// path = (char *)malloc(sizeof(char) * (strlen("C:\\") + 1));
+		// strcpy(path, "C:\\");
+		strcpy(node->name, "C:\\PROJECT");
+		path = (char *)malloc(sizeof(char) * (strlen("C:\\PROJECT") + 1));
+		strcpy(path, "C:\\PROJECT");
 	}
 	else
 	{
@@ -162,14 +164,19 @@ void tree_make(struct My_filenode *node, int depth)
 		return; // 如果打开目录失败，停止读取
 	}
 	printf("Build %s OK\n", path);
-	if (depth < 3) // 目前只能读取到第三层的子目录
+	if (depth < 3) // 目前只能读取到第二层的子目录
 	{
 		while ((entry = readdir(dir)) != NULL)
 		{
 			if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
 				continue;
 
+			// printf("%s\n", entry->d_name);
+
 			char *file_path = get_file_path(node, entry->d_name);
+
+			// printf("%s\n", file_path);
+
 			if (!file_path)
 			{
 				closedir(dir);
@@ -188,12 +195,15 @@ void tree_make(struct My_filenode *node, int depth)
 						closedir(dir);
 						return;
 					}
+					// 节点初始化
 					strcpy(node->son_list_head->name, entry->d_name);
 					node->son_list_head->father = node;
 					node->son_list_head->next = NULL;
 					node->son_list_head->son_list_head = NULL;
+					node->son_list_head->flag = 0;
 					set_bit(&node->son_list_head->flag, 5, 1); // 标记位头节点
 					set_bit(&node->son_list_head->flag, 4, 1); // 展开
+
 					p = node->son_list_head;
 					tree_make(p, depth + 1);
 				}
@@ -207,12 +217,15 @@ void tree_make(struct My_filenode *node, int depth)
 						closedir(dir);
 						return;
 					}
+					// 节点初始化
 					strcpy(p->next->name, entry->d_name);
 					p->next->father = node;
 					p->next->next = NULL;
 					p->next->son_list_head = NULL;
+					p->next->flag = 0;
 					set_bit(&p->next->flag, 5, 0); // 非头节点
 					set_bit(&p->next->flag, 4, 1); // 展开
+
 					p = p->next;
 					tree_make(p, depth + 1);
 				}
@@ -227,13 +240,15 @@ void tree_make(struct My_filenode *node, int depth)
 // 获取节点绝对路径
 char *get_node_path(struct My_filenode *node)
 {
+	// printf("1\n");
 	if (node == NULL)
 		return NULL;
-
-	// 如果是根节点，直接返回其名称
+	// printf("2\n");
+	//  如果是根节点，直接返回其名称
 	if (node->father == NULL)
 	{
 		char *path = (char *)malloc(strlen(node->name) + 1);
+		// printf("3\n");
 		if (path == NULL)
 			return NULL;
 		strcpy(path, node->name);
@@ -243,6 +258,7 @@ char *get_node_path(struct My_filenode *node)
 	{
 		// 递归获取父节点的路径
 		char *father_path = get_node_path(node->father);
+		// printf("4\n");
 		if (father_path == NULL)
 			return NULL;
 
@@ -257,6 +273,7 @@ char *get_node_path(struct My_filenode *node)
 		// 计算所需内存大小
 		size_t len = strlen(father_path) + strlen(node->name) + 2; // +2 是为了分隔符和字符串结束符
 		char *path = (char *)malloc(len);
+		// printf("5\n");
 		if (path == NULL)
 		{
 			free(father_path);
@@ -275,10 +292,11 @@ char *get_node_path(struct My_filenode *node)
 	}
 }
 
-// 获取文件路径
+// 获取节点下的文件路径
 char *get_file_path(struct My_filenode *node, char *filename)
 {
 	char *path = get_node_path(node);
+	// printf("6\n");
 	if (path == NULL)
 		return NULL;
 
@@ -287,6 +305,7 @@ char *get_file_path(struct My_filenode *node, char *filename)
 	{
 		// 如果节点路径不以反斜杠结尾，则添加反斜杠
 		char *new_path = (char *)malloc(path_len + strlen(filename) + 2);
+		// printf("7\n");
 		if (new_path == NULL)
 		{
 			free(path);
@@ -300,6 +319,7 @@ char *get_file_path(struct My_filenode *node, char *filename)
 	{
 		// 如果节点路径以反斜杠结尾，则直接拼接文件名
 		char *new_path = (char *)malloc(path_len + strlen(filename) + 1);
+		// printf("8\n");
 		if (new_path == NULL)
 		{
 			free(path);
@@ -310,3 +330,4 @@ char *get_file_path(struct My_filenode *node, char *filename)
 		return new_path;
 	}
 }
+
