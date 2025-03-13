@@ -145,12 +145,12 @@ void tree_make(struct My_filenode *node, int depth) // Ä¿Â¼Ê÷¹¹½¨£¬Íâ²¿µ÷ÓÃÊ±´«È
 		node->flag = 0;
 		set_bit(&node->flag, 0, 1);
 		set_bit(&node->flag, 4, 1);
-		// strcpy(node->name, "C:\\");
-		// path = (char *)malloc(sizeof(char) * (strlen("C:\\") + 1));
-		// strcpy(path, "C:\\");
-		strcpy(node->name, "C:\\PROJECT");
-		path = (char *)malloc(sizeof(char) * (strlen("C:\\PROJECT") + 1));
-		strcpy(path, "C:\\PROJECT");
+		strcpy(node->name, "C:\\");
+		path = (char *)malloc(sizeof(char) * (strlen("C:\\") + 1));
+		strcpy(path, "C:\\");
+		// strcpy(node->name, "C:\\PROJECT");
+		// path = (char *)malloc(sizeof(char) * (strlen("C:\\PROJECT") + 1));
+		// strcpy(path, "C:\\PROJECT");
 	}
 	else
 	{
@@ -164,7 +164,7 @@ void tree_make(struct My_filenode *node, int depth) // Ä¿Â¼Ê÷¹¹½¨£¬Íâ²¿µ÷ÓÃÊ±´«È
 		return; // Èç¹û´ò¿ªÄ¿Â¼Ê§°Ü£¬Í£Ö¹¶ÁÈ¡
 	}
 	printf("Build %s OK\n", path);
-	if (depth < 3) // Ä¿Ç°Ö»ÄÜ¶ÁÈ¡µ½µÚ¶þ²ãµÄ×ÓÄ¿Â¼
+	if (depth < 2) // Ä¿Ç°Ö»ÄÜ¶ÁÈ¡µ½µÚ¶þ²ãµÄ×ÓÄ¿Â¼
 	{
 		while ((entry = readdir(dir)) != NULL)
 		{
@@ -331,3 +331,8 @@ char *get_file_path(struct My_filenode *node, char *filename)
 	}
 }
 
+char *get_file_path_left(struct My_filenode *node, int x, int y);// ´Ó×óÀ¸Ö±½Óµã»÷ÎÄ¼þ¼Ð£¬»ñÈ¡ÎÄ¼þ¼Ð¾ø¶ÔÂ·¾¶
+{
+	//¼ÆËãµã»÷Î»ÖÃ¶ÔÓ¦µÄÎÄ¼þ
+	if()
+}
