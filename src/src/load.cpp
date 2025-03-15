@@ -124,8 +124,8 @@ void load_left() //(10,70)(100,470)
 	struct My_filenode *p;
 	setcolor(WHITE);
 	settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
-	outtextxy(pen_x, pen_y, ">");
-	outtextxy(pen_x + 10, pen_y, root->name);
+	// outtextxy(pen_x, pen_y, ">");
+	// outtextxy(pen_x + 10, pen_y, root->name);
 	if (get_bit(root->flag, 4) == 1 && root->son_list_head != NULL) // 如果目录展开
 	{
 
