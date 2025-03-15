@@ -164,75 +164,79 @@ void tree_make(struct My_filenode *node, int depth) // Ä¿Â¼Ê÷¹¹½¨£¬Íâ²¿µ÷ÓÃÊ±´«È
 		return; // Èç¹û´ò¿ªÄ¿Â¼Ê§°Ü£¬Í£Ö¹¶ÁÈ¡
 	}
 	printf("Build %s OK\n", path);
-	if (depth < 2) // Ä¿Ç°Ö»ÄÜ¶ÁÈ¡µ½µÚ¶ş²ãµÄ×ÓÄ¿Â¼
+	// if (depth < 3) // Ä¿Ç°Ö»ÄÜ¶ÁÈ¡µ½µÚ¶ş²ãµÄ×ÓÄ¿Â¼
+	// {
+	while ((entry = readdir(dir)) != NULL)
 	{
-		while ((entry = readdir(dir)) != NULL)
+		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+			continue;
+
+		// printf("%s\n", entry->d_name);
+
+		char *file_path = get_file_path(node, entry->d_name);
+
+		// printf("%s\n", file_path);
+
+		if (!file_path)
 		{
-			if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
-				continue;
+			closedir(dir);
+			return;
+		}
 
-			// printf("%s\n", entry->d_name);
-
-			char *file_path = get_file_path(node, entry->d_name);
-
-			// printf("%s\n", file_path);
-
-			if (!file_path)
+		if (get_file_type(file_path) == 2) // Èç¹ûÊÇÄ¿Â¼
+		{
+			if (node->son_list_head == NULL) // ×ÓÄ¿Â¼Í·½Úµã
 			{
-				closedir(dir);
-				return;
-			}
-
-			if (get_file_type(file_path) == 2) // Èç¹ûÊÇÄ¿Â¼
-			{
-				if (node->son_list_head == NULL) // ×ÓÄ¿Â¼Í·½Úµã
+				node->son_list_head = (struct My_filenode *)malloc(sizeof(struct My_filenode));
+				if (!node->son_list_head)
 				{
-					node->son_list_head = (struct My_filenode *)malloc(sizeof(struct My_filenode));
-					if (!node->son_list_head)
-					{
-						perror("Memory allocation failed for son_list_head");
-						free(file_path);
-						closedir(dir);
-						return;
-					}
-					// ½Úµã³õÊ¼»¯
-					strcpy(node->son_list_head->name, entry->d_name);
-					node->son_list_head->father = node;
-					node->son_list_head->next = NULL;
-					node->son_list_head->son_list_head = NULL;
-					node->son_list_head->flag = 0;
-					set_bit(&node->son_list_head->flag, 5, 1); // ±ê¼ÇÎ»Í·½Úµã
+					perror("Memory allocation failed for son_list_head");
+					free(file_path);
+					closedir(dir);
+					return;
+				}
+				// ½Úµã³õÊ¼»¯
+				strcpy(node->son_list_head->name, entry->d_name);
+				node->son_list_head->father = node;
+				node->son_list_head->next = NULL;
+				node->son_list_head->son_list_head = NULL;
+				node->son_list_head->flag = 0;
+				set_bit(&node->son_list_head->flag, 5, 1);	   // ±ê¼ÇÎ»Í·½Úµã
+				if (depth == 0)								   // µÚÒ»¼¶Ä¿Â¼Ä¬ÈÏ¿É¼û
 					set_bit(&node->son_list_head->flag, 4, 1); // Õ¹¿ª
 
-					p = node->son_list_head;
+				p = node->son_list_head;
+				if (depth < 2) // ÏŞÖÆµİ¹éÉî¶È
 					tree_make(p, depth + 1);
-				}
-				else // ×ÓÄ¿Â¼·ÇÍ·½Úµã
+			}
+			else // ×ÓÄ¿Â¼·ÇÍ·½Úµã
+			{
+				p->next = (struct My_filenode *)malloc(sizeof(struct My_filenode));
+				if (!p->next)
 				{
-					p->next = (struct My_filenode *)malloc(sizeof(struct My_filenode));
-					if (!p->next)
-					{
-						perror("Memory allocation failed for next node");
-						free(file_path);
-						closedir(dir);
-						return;
-					}
-					// ½Úµã³õÊ¼»¯
-					strcpy(p->next->name, entry->d_name);
-					p->next->father = node;
-					p->next->next = NULL;
-					p->next->son_list_head = NULL;
-					p->next->flag = 0;
-					set_bit(&p->next->flag, 5, 0); // ·ÇÍ·½Úµã
+					perror("Memory allocation failed for next node");
+					free(file_path);
+					closedir(dir);
+					return;
+				}
+				// ½Úµã³õÊ¼»¯
+				strcpy(p->next->name, entry->d_name);
+				p->next->father = node;
+				p->next->next = NULL;
+				p->next->son_list_head = NULL;
+				p->next->flag = 0;
+				set_bit(&p->next->flag, 5, 0);	   // ·ÇÍ·½Úµã
+				if (depth == 0)					   // µÚÒ»¼¶Ä¿Â¼Ä¬ÈÏ¿É¼û
 					set_bit(&p->next->flag, 4, 1); // Õ¹¿ª
 
-					p = p->next;
+				p = p->next;
+				if (depth < 2) // ÏŞÖÆµİ¹éÉî¶È
 					tree_make(p, depth + 1);
-				}
-				free(file_path);
 			}
+			free(file_path);
 		}
 	}
+	//}
 	closedir(dir);
 	printf("Build %s OK\n", path);
 }
@@ -331,8 +335,172 @@ char *get_file_path(struct My_filenode *node, char *filename)
 	}
 }
 
-char *get_file_path_left(struct My_filenode *node, int x, int y);// ´Ó×óÀ¸Ö±½Óµã»÷ÎÄ¼ş¼Ğ£¬»ñÈ¡ÎÄ¼ş¼Ğ¾ø¶ÔÂ·¾¶
+// ´Ó×óÀ¸Ö±½Óµã»÷ÎÄ¼ş¼Ğ£¬´«Èëroot»ñÈ¡ÎÄ¼ş¼Ğ¾ø¶ÔÂ·¾¶****»ùÓÚ×óÀ¸×î¶àÕ¹¿ªÈı¼¶Ä¿Â¼µÄÇ°Ìá****
+char *get_file_path_left(struct My_filenode *node, int x, int y)
 {
-	//¼ÆËãµã»÷Î»ÖÃ¶ÔÓ¦µÄÎÄ¼ş
-	if()
+	// ¼ÆËãµã»÷Î»ÖÃ¶ÔÓ¦µÄÎÄ¼ş
+	struct My_filenode *p = node->son_list_head;
+	if (p == NULL)
+		return NULL;
+	int row;										  // µã»÷Î»ÖÃÎªµÚ¼¸ĞĞ£¬***Ö®ºó½«²ÎÓëÔËËã***
+	int i;											  // yÖáÏñËØ
+	for (i = 80, row = 1; i < 480; i += 10, row += 1) // µÚÒ»Ìõ´Óy=80¿ªÊ¼
+	{
+		if (y > i && y < i + 10)
+			break;
+	}
+	do
+	{
+		if (count_son_son_visible(p) + 1 >= row && x > 30) // ´ÓÒ»¼¶Ä¿Â¼¼ÆÊı
+		{
+			if (row == 1) // Ò»¼¶Ä¿Â¼Î´Õ¹¿ª
+				return get_file_path(p->father, p->name);
+			else
+			{
+				p = p->son_list_head;
+				row -= 1; // ½øÈëÒ»¼¶Ä¿Â¼£¬ÔÚ¶ş¼¶Ä¿Â¼ÖĞ²éÕÒ
+				do
+				{
+					if (count_son_visible(p) + 1 >= row && x > 40)
+					{
+						if (row == 1) // Èç¹û¸Ã¶ş¼¶Ä¿Â¼Î´Õ¹¿ª
+							return get_file_path(p->father, p->name);
+						else
+						{
+							p = p->son_list_head;
+							row -= 1;
+							for (i = 1; i < 20; i++) // 20Îª·ÀÖ¹ËÀÑ­»·µÄÈÎÒâÁ¿
+							{
+								if (i == row && x > 50)
+									return get_file_path(p->father, p->name);
+								p = p->next;
+							}
+						}
+					}
+					row -= (count_son_visible(p) + 1);
+					p = p->next;
+				} while (p != NULL);
+			}
+		}
+
+		row -= (count_son_son_visible(p) + 1);
+		p = p->next;
+	} while (p != NULL);
+
+	return NULL;
+}
+
+int count_son_visible(struct My_filenode *node) // ¼ÆËã¿É¼û×ÓÄ¿Â¼ÊıÁ¿
+{
+	if (get_bit(node->flag, 4) == 0) // Èç¹û´«ÈëÄ¿Â¼Î´Õ¹¿ª
+		return 0;
+	struct My_filenode *p = node->son_list_head;
+	int num = 0;
+	if (p == NULL)
+		return 0;
+	do
+	{
+		num++;
+		p = p->next;
+	} while (p != NULL);
+	return num;
+}
+
+// ¼ÆËã¿É¼û×ÓÄ¿Â¼¼°Æä¿É¼û×ÓÄ¿Â¼ÊıÁ¿
+int count_son_son_visible(struct My_filenode *node)
+{
+	if (get_bit(node->flag, 4) == 0) // Èç¹û´«ÈëÄ¿Â¼Î´Õ¹¿ª
+		return 0;
+	struct My_filenode *p = node->son_list_head;
+	int num = 0;
+	if (p == NULL)
+		return 0;
+	do
+	{
+		num++;
+		if (get_bit(p->flag, 4) == 1) // Èç¹û×ÓÄ¿Â¼Õ¹¿ª£¨¿É¼û£©
+			num += count_son_visible(p);
+		p = p->next;
+
+	} while (p != NULL);
+	return num;
+}
+
+int unfold(struct My_filenode *node, int x, int y) // µã»÷>Õ¹¿ª£¨·µ»Ø1£©/ÊÕÆğ£¨·µ»Ø2£©Ä¿Â¼***ÕâÀïµÄËã·¨²Î¿¼ÉÏÃæµÄget_file_path_left£¬ÕâÀï²»ÔÙĞ´ÏêÏ¸×¢ÊÍ***
+{
+	// ¼ÆËãµã»÷Î»ÖÃ¶ÔÓ¦µÄÎÄ¼ş
+	struct My_filenode *p = node->son_list_head;
+	if (p == NULL)
+		return 0;
+	int row;										  // µã»÷Î»ÖÃÎªµÚ¼¸ĞĞ£¬***Ö®ºó½«²ÎÓëÔËËã***
+	int i;											  // yÖáÏñËØ
+	for (i = 80, row = 1; i < 480; i += 10, row += 1) // µÚÒ»Ìõ´Óy=80¿ªÊ¼
+	{
+		if (y > i && y < i + 10)
+			break;
+	}
+	do
+	{
+		if (count_son_son_visible(p) + 1 >= row && 20 < x < 30) // ´ÓÒ»¼¶Ä¿Â¼¼ÆÊı
+		{
+			if (row == 1 && get_bit(p->flag, 4) == 0) // Ò»¼¶Ä¿Â¼Î´Õ¹¿ª
+			{
+				set_bit(&p->flag, 4, 1);
+				return 1;
+			}
+			else if (row == 1 && get_bit(p->flag, 4) == 1)
+			{
+				set_bit(&p->flag, 4, 0);
+				return 2;
+			}
+			else
+			{
+				p = p->son_list_head;
+				row -= 1; // ½øÈëÒ»¼¶Ä¿Â¼£¬ÔÚ¶ş¼¶Ä¿Â¼ÖĞ²éÕÒ
+				do
+				{
+					if (count_son_visible(p) + 1 >= row && 30 < x < 40)
+					{
+						if (row == 1 && get_bit(p->flag, 4) == 0) // Èç¹û¸Ã¶ş¼¶Ä¿Â¼Î´Õ¹¿ª
+						{
+							set_bit(&p->flag, 4, 1);
+							return 1;
+						}
+						else if (row == 1 && get_bit(p->flag, 4) == 1)
+						{
+							set_bit(&p->flag, 4, 0);
+							return 2;
+						}
+						else
+						{
+							p = p->son_list_head;
+							row -= 1;
+							for (i = 1; i < 20; i++) // 20Îª·ÀÖ¹ËÀÑ­»·µÄÈÎÒâÁ¿
+							{
+								if (i == row && 40 < x < 50 && get_bit(p->flag, 4) == 0)
+								{
+									set_bit(&p->flag, 4, 1);
+									return 1;
+								}
+								else if (i == row && 40 < x < 50 && get_bit(p->flag, 4) == 1)
+								{
+									set_bit(&p->flag, 4, 0);
+									return 2;
+								}
+
+								p = p->next;
+							}
+						}
+					}
+					row -= (count_son_visible(p) + 1);
+					p = p->next;
+				} while (p != NULL);
+			}
+		}
+
+		row -= (count_son_son_visible(p) + 1);
+		p = p->next;
+	} while (p != NULL);
+
+	return 0;
 }
