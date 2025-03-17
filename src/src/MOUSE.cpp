@@ -29,37 +29,10 @@ void *buffer;
 union REGS regs;
 int flag = 0;
 
-// time_t last_press_time = 0;//上次点击时间
-// time_t press_time[10] = { 0 };//用于存储鼠标左键处于按下状态的cpu时间，直接比较time[0]和time[9]，提高双击检测的成功率
 time_t last_click_time = 0; // 记录上次点击时间
 int click_count = 0;		// 点击次数计数器
 int is_mouse_down = 0;		// 鼠标按下状态
 int click_flag = 0;
-// char box[10];
-
-//// 中断向量表备份
-// void interrupt(*oldTimerInt)(void);
-//
-//// 定时器中断服务程序
-// void interrupt timerISR(void) {
-//	static unsigned int elapsed_time = 0;
-//	elapsed_time += 55; // 每个中断大约为55毫秒
-//
-//	if (elapsed_time >= 700) {
-//		elapsed_time = 0;
-//		click_count = 0; // 超过最大双击时间，重置点击计数器
-//	}
-//
-//	oldTimerInt(); // 调用原始的中断服务程序
-// }
-//
-//// 初始化定时器中断
-// void init_timer_interrupt() {
-//	// 备份原来的中断向量
-//	oldTimerInt = getvect(0x08);
-//	// 设置新的中断向量
-//	setvect(0x08, timerISR);
-// }
 
 void mouseinit() // 初始化
 {

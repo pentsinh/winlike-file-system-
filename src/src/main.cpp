@@ -1,4 +1,4 @@
-//#define TEST
+#define TEST
 
 #ifndef TEST
 #include <stdio.h>
@@ -43,8 +43,6 @@ int main()
 	root = (struct My_filenode *)malloc(sizeof(struct My_filenode));
 	tree_make(root, 0);
 	printf("Ready to start!\n");
-	while (!kbhit()) // 循环，直到按下键盘键
-		;
 
 	buffer = NULL;
 	initgraph(&gd, &gm, "C:\\BORLANDC\\BGI"); // 初始化图形模式
@@ -126,14 +124,33 @@ int main()
 					load_all(info);
 				}
 			}
-			else if (mouse_press(540, 10, 630, 30) == 1)
+			// 搜索
+			// else if (mouse_press(540, 10, 630, 30) == 1)
+			// {
+			// 	out_put_mode = 1;
+			// 	// srch_input(srch_tar);
+			// }
+			// else if (mouse_press_out(540, 10, 630, 30) == 1)
+			// {
+			// 	out_put_mode = 0;
+			// }
+
+			// 左栏目录树
+			else if (mouse_press(10, 70, 100, 470) == 1)
 			{
-				out_put_mode = 1;
-				// srch_input(srch_tar);
-			}
-			else if (mouse_press_out(540, 10, 630, 30) == 1)
-			{
-				out_put_mode = 0;
+
+				if (chdir(get_file_path_left(root, MouseX, MouseY)) != NULL)
+				{
+					getcwd(path, sizeof(path));
+					spinOnce(info);
+					cleardevice();
+					load_all(info);
+				}
+				if (unfold(root, MouseX, MouseY) != 0)
+				{
+					cleardevice();
+					load_all(info);
+				}
 			}
 		}
 	}
