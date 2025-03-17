@@ -13,6 +13,8 @@ struct My_filenode
 {
 	unsigned char flag;
 	char name[13];
+	// char *time; // 修改日期
+	// char *size; // 大小
 	struct My_filenode *next;
 	struct My_filenode *father;		   // 同一条链用同一个父节点（为了做返回上一级功能）
 	struct My_filenode *son_list_head; // 一个父节点拥有子链的头节点地址

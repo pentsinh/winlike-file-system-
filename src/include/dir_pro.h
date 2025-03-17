@@ -6,7 +6,7 @@
 #define HISTORY_LENGTH 10
 #endif
 
-void read_dir(DIR* dir, struct dirent* entry, struct file_info* info);//读取当前目录下文件
+void read_dir(char* target, struct file_info* info);//读取目标目录下文件
 void undo_dir();//撤销目录操作
 void anti_undo_dir();//反撤销目录操作
 void back();//返回上一级目录
