@@ -21,12 +21,12 @@ struct My_filenode
 };
 
 // void tree_make(struct dir_tree* tree,int depth);//构建目录树
-void tree_make(struct My_filenode *node, int depth);			  // 目录树构建
-char *get_node_path(struct My_filenode *node);					  // 获取节点绝对路径
-char *get_file_path(struct My_filenode *node, char *filename);	  // 获取某目录下某文件（夹）的绝对路径
-char *get_file_path_left(struct My_filenode *node, int x, int y); // 从左栏直接点击文件夹，传入root获取文件夹绝对路径****基于左栏最多展开三级目录的前提****
-int count_son_visible(struct My_filenode *node);				  // 计算可见子目录数量
-int count_son_son_visible(struct My_filenode *node);			  // 计算可见子目录及其可见子目录数量
-int unfold(struct My_filenode *node, int x, int y);				  // 点击>展开目录
+void tree_make(struct My_filenode *node, int depth);				// 目录树构建
+char *get_node_path(struct My_filenode *node);						// 获取节点绝对路径
+char *get_file_path_node(struct My_filenode *node, char *filename); // 获取某目录下某文件（夹）的绝对路径
+char *get_file_path_left(struct My_filenode *node, int x, int y);	// 从左栏直接点击文件夹，传入root获取文件夹绝对路径****基于左栏最多展开三级目录的前提****
+int count_son_visible(struct My_filenode *node);					// 计算可见子目录数量
+int count_son_son_visible(struct My_filenode *node);				// 计算可见子目录及其可见子目录数量
+int unfold(struct My_filenode *node, int x, int y);					// 点击>展开目录
 
 #endif // !_INDEX_H_

@@ -50,6 +50,7 @@ extern "C"
 #endif
 void get_file_info(char *half_path, char *name, struct file_info *info); // 获取文件信息
 // unsigned char get_file_type(char *name);                             // 获取文件类型
-unsigned char get_file_type_plus(char *name); // 进一步获取文件类型
+unsigned char get_file_type_plus(char *name);       // 进一步获取文件类型
+char *get_file_path(char *father_path, char *name); // 获取文件绝对路径
 
 #endif // _PRO_H_
