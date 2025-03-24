@@ -1,15 +1,7 @@
 #define TEST
 #ifdef TEST
-#include <graphics.h>
-#include <dos.h>
-#include <conio.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
-#include <bios.h>
 #include "include.h"
-// extern time_t press_time[10];
+//   extern time_t press_time[10];
 
 // 测试鼠标双击检测
 
@@ -384,37 +376,130 @@
 
 // 目录树测试+搜索测试
 struct My_filenode *root;
+
 int main()
 {
+	enum // 模式切换,0为一般，1为搜索
+	{
+		_0to0 = 1,
+		_0to1 = 2,
+		_1to0 = 3,
+		_1to1 = 4
+
+	};
+	struct file_info info[10]; // 存放文件信息
+
 	int gd = DETECT, gm; // 图形驱动和图形模式
 	int result;			 // 用来存放函数返回值，防止多次调用
-	int mode = 0;		 // 1为搜索
+	int mode = _0to0;
+	char srch_tar[16] = ""; // 搜索目标
+	char box[10];
+
 	root = (struct My_filenode *)malloc(sizeof(struct My_filenode));
 	tree_make(root, 0);
 	printf("Finished!\n");
+	while (!kbhit()) // 循环，直到按下键盘键
+		;
+	clear_keyboard_buffer();
+
 	initgraph(&gd, &gm, "C:\\BORLANDC\\BGI"); // 初始化图形模式
 	mouseinit();
+
 	setbkcolor(BLACK);
 	setcolor(WHITE);
-	settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
+	settextstyle(DEFAULT_FONT, HORIZ_DIR, 10);
 	rectangle(270, 230, 370, 250);
 	puthz(270, 230, "搜索", 16, 2, WHITE);
+
+	rectangle(10, 10, 630, 470);
+
 	while (1)
 	{
+		// printf("%d", mode);
 		newmouse(&MouseX, &MouseY, &press);
 
-		// 搜索
-		if (mouse_press(270, 230, 370, 250) == 1)
+		// 右键刷新
+		if (mouse_press_out(270, 230, 370, 250) == 2)
 		{
-			mode = 1;
+			cleardevice();
+			outtextxy(10, 10, itoa(mode, box, 10));
+			rectangle(270, 230, 370, 250);
+			puthz(270, 230, "搜索", 16, 2, WHITE);
+		}
+
+		// 搜索
+		// if (mouse_press(270, 230, 370, 250) == 1)
+		if (MouseX > 270 && MouseX < 370 && MouseY > 230 && MouseY < 250 && press == 1) // 哪个效果好用哪个
+		{
+			if (mode == _0to0 || mode == _1to0)
+				mode = _0to1;
+			else // if (mode == _0to1 || mode == _1to1)
+				mode = _1to1;
+			// if (mode == _0to1)
+			// {
+			// 	cleardevice();
+			// 	outtextxy(10, 10, itoa(mode, box, 10));
+			// 	rectangle(270, 230, 370, 250);
+			// 	puthz(270, 230, "搜索", 16, 2, WHITE);
+			// }
 		}
 		else if (mouse_press_out(270, 230, 370, 250) == 1)
 		{
-			mode = 0;
+			if (mode == _0to1 || mode == _1to1)
+				mode = _1to0;
+			else if (mode == _0to0 || mode == _1to0)
+				mode = _0to0;
+			// if (mode == _1to0)
+			// {
+			// 	cleardevice();
+			// 	outtextxy(10, 10, itoa(mode, box, 10));
+			// 	rectangle(270, 230, 370, 250);
+			// 	puthz(270, 230, "搜索", 16, 2, WHITE);
+			// }
 		}
-		if (mode == 1)
+
+		if (mode == _0to1) // 从一般模式到搜索模式
 		{
-			// srch_input(srch_tar);
+			clrmous(MouseX, MouseY);
+			clear_keyboard_buffer();
+			//  newmouse(&MouseX, &MouseY, &press);
+			setfillstyle(SOLID_FILL, BLACK);
+			bar(270, 230, 370, 250);
+			rectangle(270, 230, 370, 250);
+			outtextxy(270, 230, srch_tar);
+			mode = _1to1;
+		}
+		else if (mode == _1to0 && strcmp(srch_tar, "") == 0) // 从搜索模式到一般模式，并且搜索目标为空
+		{
+			clrmous(MouseX, MouseY);
+			// newmouse(&MouseX, &MouseY, &press);
+			setfillstyle(SOLID_FILL, BLACK);
+			bar(270, 230, 370, 250);
+			rectangle(270, 230, 370, 250);
+			puthz(270, 230, "搜索", 16, 2, WHITE);
+			mode = _0to0;
+		}
+		else if ((mode == _0to0 || mode == _1to0) && strcmp(srch_tar, "") != 0) // 处于一般模式时，搜索目标不为空
+		{
+
+			setcolor(WHITE);
+			settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
+			outtextxy(270, 230, srch_tar);
+		}
+
+		if (mode == _1to1 || mode == _0to1) // 如果处于搜索模式
+		{
+			result = srch_input(srch_tar, info);
+			if (result == 1)
+			{
+				cleardevice();
+				setcolor(WHITE);
+				settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
+				rectangle(270, 230, 370, 250);
+				outtextxy(270, 230, srch_tar);
+			}
+			else if (result == 2)
+				srch_output(info);
 		}
 	}
 

@@ -1,15 +1,15 @@
 #define TEST
 
 #ifndef TEST
-#include <stdio.h>
-#include <graphics.h>
-#include <dos.h>
-#include <conio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
-#include <dirent.h>
-#include <direct.h>
+// #include <stdio.h>
+// #include <graphics.h>
+// #include <dos.h>
+// #include <conio.h>
+// #include <string.h>
+// #include <stdlib.h>
+// #include <time.h>
+// #include <dirent.h>
+// #include <direct.h>
 #include "include.h"
 
 // int mode = 0x11;

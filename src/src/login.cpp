@@ -1,10 +1,10 @@
-#include <graphics.h>
-#include <dos.h>
-#include <conio.h>
-#include <bios.h>
-#include <string.h>
-// #include <stdlib.h>
-// #include <time.h>
+// #include <graphics.h>
+// #include <dos.h>
+// #include <conio.h>
+// #include <bios.h>
+// #include <string.h>
+// #include <stdio.h>
+
 #include "include.h"
 
 #define MAX_LENGTH 10
@@ -37,7 +37,15 @@ int login()
 		outtextxy(280, 220, password);
 
 		if (mouse_press(280, 220, 360, 260) == 1)
+		{
 			is_entering = 1;
+			clear_keyboard_buffer();
+			// char ch;
+			// while (ch = getchar() != EOF && ch != '\0')
+			// {
+			// 	// 清空误触输入的字符
+			// }
+		}
 		if (mouse_press(0, 0, 640, 220) == 1 || mouse_press(0, 220, 280, 260) == 1 || mouse_press(360, 220, 640, 260) == 1 || mouse_press(0, 260, 640, 480) == 1)
 			is_entering = 0;
 		if (is_entering == 1)
@@ -78,6 +86,7 @@ static void getbuffer_keybd(char *password)
 	// char ch;//这次输入的字符
 	if (bioskey(1) == 0)
 	{
+		// printf("%d\n", bioskey(1));
 		return;
 	}
 	else if (i < MAX_LENGTH)
@@ -118,5 +127,16 @@ void judge(char password[MAX_LENGTH])
 		is_right -= 1; // 用于统计失败的次数
 		strcpy(password, "__________\0");
 		i = -1;
+	}
+}
+
+// 清空键盘缓冲区
+void clear_keyboard_buffer()
+{
+	union REGS regs;
+	while (bioskey(1)) // 检查键盘缓冲区是否为空
+	{
+		regs.h.ah = 0x00;
+		int86(0x16, &regs, &regs); // 读取并丢弃键盘缓冲区中的字符
 	}
 }

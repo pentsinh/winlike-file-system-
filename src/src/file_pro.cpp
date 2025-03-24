@@ -3,18 +3,17 @@
 // ÒÔÉÏÁ½¸ö²»¼æÈİ£¬ËùÒÔÔÚÏÂÃæĞ´µÄ»ñÈ¡ÎÄ¼şĞÅÏ¢µÄº¯ÊıÀïÃæ²»ÔÙÊ¹ÓÃstruct dirent
 
 // ¶ÁÈ¡ÎÄ¼şÀàĞÍÊ±´æÔÚbug£¬ÔÚÓöµ½ÌØ¶¨ÎÄ¼şÀàĞÍÊ±¿¨ËÀ;Í¨¹ıÅÅ²éÎÊÌâ¿ÉÄÜÔÚget_file_type_plusÀï
-// ÎÄ¼ş×îºóĞŞ¸ÄÊ±¼äÔõÃ´¸ã£¿
 
-#include <stdio.h>
-#include <dirent.h>
-#include <string.h>
-#include <stdlib.h>
-#include <direct.h>
-#include <time.h>
-#include <sys/stat.h>
+// #include <stdio.h>
+// #include <dirent.h>
+// #include <string.h>
+// #include <stdlib.h>
+// #include <direct.h>
+// #include <time.h>
+// #include <sys/stat.h>
 
 #include "include.h"
-
+// #include "bit_pro.h"
 #ifndef FA_DIREC
 #define FA_DIREC 0x10
 #endif
@@ -23,7 +22,7 @@
 #define FA_ARCH 0x20
 #endif
 
-//extern enum file;
+// extern enum file;
 
 void get_file_info(char *half_path, char *name, struct file_info *info) // »ñÈ¡ÎÄ¼şĞÅÏ¢
 {
@@ -49,6 +48,9 @@ void get_file_info(char *half_path, char *name, struct file_info *info) // »ñÈ¡Î
     // »ñÈ¡ÎÄ¼şÃû
     // info->name = (char *)realloc(info->name, strlen(name) * sizeof(char));
     strcpy(info->name, name);
+
+    // »ñÈ¡ÎÄ¼ş¾ø¶ÔÂ·¾¶
+    strcpy(info->path, get_file_path(half_path, name));
 
     // »ñÈ¡ÎÄ¼şÀàĞÍ
     // strcpy(info->type, get_file_type(full_path));
@@ -143,4 +145,61 @@ unsigned char get_file_type_plus(char *filename) // ½øÒ»²½»ñÈ¡ÎÄ¼şÀàĞÍ
     }
     else
         return 15;
+}
+
+// char *get_file_path(char *father_path, char *name) // »ñÈ¡ÎÄ¼ş¾ø¶ÔÂ·¾¶
+// {
+//     size_t path_len = strlen(father_path);
+//     if (path_len > 0 && father_path[path_len - 1] != '\\')
+//     {
+//         // Èç¹û½ÚµãÂ·¾¶²»ÒÔ·´Ğ±¸Ü½áÎ²£¬ÔòÌí¼Ó·´Ğ±¸Ü
+//         char *path = (char *)malloc(path_len + strlen(name) + 2);
+//         if (path == NULL)
+//         {
+//             return NULL;
+//         }
+//         sprintf(path, "%s\\%s", father_path, name);
+//         return path;
+//     }
+//     else
+//     {
+//         // Èç¹û½ÚµãÂ·¾¶ÒÔ·´Ğ±¸Ü½áÎ²£¬ÔòÖ±½ÓÆ´½ÓÎÄ¼şÃû
+//         char *path = (char *)malloc(path_len + strlen(name) + 1);
+
+//         if (path == NULL)
+//         {
+//             return NULL;
+//         }
+//         sprintf(path, "%s%s", path, name);
+//         return path;
+//     }
+// }
+
+char *get_file_path(char *father_path, char *name)
+{
+    size_t path_len = strlen(father_path);
+    size_t name_len = strlen(name);
+    char *path = NULL;
+
+    // ¸ù¾İÊÇ·ñĞèÒªÌí¼Ó·´Ğ±¸ÜÀ´·ÖÅäÄÚ´æ
+    if (path_len > 0 && father_path[path_len - 1] != '\\')
+    {
+        path = (char *)malloc(path_len + name_len + 2); // +2 ÊÇÎªÁËÈİÄÉ·´Ğ±¸ÜºÍ×Ö·û´®½áÊø·û
+        if (path == NULL)
+        {
+            return NULL; // ÄÚ´æ·ÖÅäÊ§°Ü
+        }
+        sprintf(path, "%s\\%s", father_path, name); // Æ´½ÓÂ·¾¶
+    }
+    else
+    {
+        path = (char *)malloc(path_len + name_len + 1); // +1 ÊÇÎªÁËÈİÄÉ×Ö·û´®½áÊø·û
+        if (path == NULL)
+        {
+            return NULL; // ÄÚ´æ·ÖÅäÊ§°Ü
+        }
+        sprintf(path, "%s%s", father_path, name); // Æ´½ÓÂ·¾¶
+    }
+
+    return path;
 }

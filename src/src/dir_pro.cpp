@@ -1,9 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <dirent.h>
-#include <direct.h>
-#include <string.h>
-#include <graphics.h>
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include <dirent.h>
+// #include <direct.h>
+// #include <string.h>
+// #include <graphics.h>
 #include "include.h"
 
 char history[HISTORY_LENGTH][1024] = {0}; // Ä¿Â¼²Ù×÷¼ÇÂ¼

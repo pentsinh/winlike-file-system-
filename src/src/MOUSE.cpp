@@ -14,7 +14,7 @@ FUNCTION: mouse action
 ABSTRACT:
 		A.mread
 		B.newmouse
-VERSION: 3.2
+VERSION: 3.3
 2025.3.9
 在mread函数中更新了鼠标状态的全局变量；
 完善了鼠标的点击过程（从弹起到按下到弹起）；
@@ -287,14 +287,21 @@ void drawmous(int nx, int ny)
 }
 
 // 如果在框外点击，返回1；否则返回0######适用于640*480######
-int mouse_press_out(int x1, int y1, int x2, int y2) // 如果在框外点击，返回1；否则返回0
+int mouse_press_out(int x1, int y1, int x2, int y2) // 如果在框外左键，返回1；在框外右键，返回2；否则返回0
 {
-	if (press == 1 || press == 2)
+	if (press == 1)
 	{
 		if (MouseX > x1 && MouseX < x2 && MouseY > y1 && MouseY < y2)
 			return 0;
 		else
 			return 1;
+	}
+	else if (press == 2)
+	{
+		if (MouseX > x1 && MouseX < x2 && MouseY > y1 && MouseY < y2)
+			return 0;
+		else
+			return 2;
 	}
 	else
 		return 0;

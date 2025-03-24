@@ -6,15 +6,15 @@
 // left左栏：文件结构
 // main主栏：操作板
 
-#include <graphics.h>
-#include <conio.h>
-#include <dos.h>
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include <dirent.h>
-#include <direct.h>
-#include <sys/stat.h> // 文件状态
+// #include <graphics.h>
+// #include <conio.h>
+// #include <dos.h>
+// #include <stdio.h>
+// #include <string.h>
+// #include <time.h>
+// #include <dirent.h>
+// #include <direct.h>
+// #include <sys/stat.h> // 文件状态
 #include "include.h"
 
 extern char path[1024]; // 当前路径
@@ -205,4 +205,10 @@ void load_main(struct file_info *info) //(120,70)(640,480)
 			rectangle(120, 90 + j * 20, 640, 90 + j * 20 + 20);
 		}
 	}
+}
+
+void clearRectangle(int x1, int y1, int x2, int y2, unsigned char color) // 清空指定矩形区域
+{
+	setfillstyle(SOLID_FILL, color);
+	bar(x1, y1, x2, y2);
 }

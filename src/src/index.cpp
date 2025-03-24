@@ -1,10 +1,12 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <dirent.h>
-#include <direct.h>
-#include <string.h>
-#include <graphics.h>
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include <dirent.h>
+// #include <direct.h>
+// #include <string.h>
+// #include <graphics.h>
 #include "include.h"
+// #include "index.h"
+// #include "bit_pro.h"
 /*
 Óë×óÀ¸Ïà¹ØµÄº¯Êý
 */
@@ -45,7 +47,8 @@ struct dir_tree tree; // Ä¿Â¼Ê÷£¬ÓÃÓÚ¼ÓÔØ×óÀ¸£¬ÒÔ¼°Í¨¹ý×óÀ¸¿ìËÙ¶¨Î»
 		if (info_for_tree[i].flag == 2 && strcmp(info_for_tree[i].name, "DPMI16BI.OVL") != 0)
 		{
 
-			tree->branch[j] = (struct dir_tree *)malloc(sizeof(struct dir_tree)); // ÏòÄÚ´æÉêÇë¿Õ¼ä
+			tree->branch[j] = (struct d
+			ir_tree *)malloc(sizeof(struct dir_tree)); // ÏòÄÚ´æÉêÇë¿Õ¼ä
 			if (!tree->branch[j])
 			{
 				perror("Memory allocation failed\n");
@@ -173,7 +176,7 @@ void tree_make(struct My_filenode *node, int depth) // Ä¿Â¼Ê÷¹¹½¨£¬Íâ²¿µ÷ÓÃÊ±´«È
 
 		// printf("%s\n", entry->d_name);
 
-		char *file_path = get_file_path(node, entry->d_name);
+		char *file_path = get_file_path_node(node, entry->d_name);
 
 		// printf("%s\n", file_path);
 
@@ -297,7 +300,7 @@ char *get_node_path(struct My_filenode *node)
 }
 
 // »ñÈ¡½ÚµãÏÂµÄÎÄ¼þÂ·¾¶
-char *get_file_path(struct My_filenode *node, char *filename)
+char *get_file_path_node(struct My_filenode *node, char *filename)
 {
 	char *path = get_node_path(node);
 	// printf("6\n");
@@ -354,7 +357,7 @@ char *get_file_path_left(struct My_filenode *node, int x, int y)
 		if (count_son_son_visible(p) + 1 >= row && x > 30) // ´ÓÒ»¼¶Ä¿Â¼¼ÆÊý
 		{
 			if (row == 1) // Ò»¼¶Ä¿Â¼Î´Õ¹¿ª
-				return get_file_path(p->father, p->name);
+				return get_file_path_node(p->father, p->name);
 			else
 			{
 				p = p->son_list_head;
@@ -364,7 +367,7 @@ char *get_file_path_left(struct My_filenode *node, int x, int y)
 					if (count_son_visible(p) + 1 >= row && x > 40)
 					{
 						if (row == 1) // Èç¹û¸Ã¶þ¼¶Ä¿Â¼Î´Õ¹¿ª
-							return get_file_path(p->father, p->name);
+							return get_file_path_node(p->father, p->name);
 						else
 						{
 							p = p->son_list_head;
@@ -372,7 +375,7 @@ char *get_file_path_left(struct My_filenode *node, int x, int y)
 							for (i = 1; i < 20; i++) // 20Îª·ÀÖ¹ËÀÑ­»·µÄÈÎÒâÁ¿
 							{
 								if (i == row && x > 50)
-									return get_file_path(p->father, p->name);
+									return get_file_path_node(p->father, p->name);
 								p = p->next;
 							}
 						}
