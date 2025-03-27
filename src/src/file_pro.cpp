@@ -50,7 +50,14 @@ void get_file_info(char *half_path, char *name, struct file_info *info) // »ñÈ¡Î
     strcpy(info->name, name);
 
     // »ñÈ¡ÎÄ¼ş¾ø¶ÔÂ·¾¶
-    strcpy(info->path, get_file_path(half_path, name));
+    char *file_path = get_file_path(half_path, name);
+    if (file_path != NULL)
+    {
+        strcpy(info->path, file_path);
+        free(file_path); // ÊÍ·Å¶¯Ì¬·ÖÅäµÄÄÚ´æ
+    }
+    else
+        strcpy(info->path, "unknown"); // ´¦ÀíÄÚ´æ·ÖÅäÊ§°ÜµÄÇé¿ö
 
     // »ñÈ¡ÎÄ¼şÀàĞÍ
     // strcpy(info->type, get_file_type(full_path));
@@ -165,7 +172,6 @@ unsigned char get_file_type_plus(char *filename) // ½øÒ»²½»ñÈ¡ÎÄ¼şÀàĞÍ
 //     {
 //         // Èç¹û½ÚµãÂ·¾¶ÒÔ·´Ğ±¸Ü½áÎ²£¬ÔòÖ±½ÓÆ´½ÓÎÄ¼şÃû
 //         char *path = (char *)malloc(path_len + strlen(name) + 1);
-
 //         if (path == NULL)
 //         {
 //             return NULL;

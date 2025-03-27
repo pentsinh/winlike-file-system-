@@ -15,6 +15,7 @@
 // #include <dirent.h>
 // #include <direct.h>
 // #include <sys/stat.h> // 文件状态
+#include <IMAGE.h>
 #include "include.h"
 
 extern char path[1024]; // 当前路径
@@ -37,19 +38,19 @@ void load_init(struct file_info *info) // 界面初始化
 							  // load_all(info);
 }
 
-void load_all(struct file_info *info) // 加载界面
+void load_all(struct file_info *info, char *target, int mode) // 加载界面
 {
-	load_top();
+	load_top(target, mode);
 	line(1, 35, 640, 35);
-	load_head();
+	load_head(mode);
 	line(1, 65, 640, 65);
 	load_left();
 	floodfill(121, 71, BLACK);
 	line(105, 65, 105, 480);
-	load_main(info);
+	load_main(info, mode);
 }
 
-void load_top() //(10,10)(630,30)
+void load_top(char *target, int mode) //(10,10)(630,30)
 {
 	setcolor(WHITE);
 	settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
@@ -65,22 +66,74 @@ void load_top() //(10,10)(630,30)
 	outtextxy(92, 15, path);
 
 	// 搜索
-	rectangle(540, 10, 630, 30);
-	puthz(542, 12, "搜索", 16, 2, WHITE);
+	// rectangle(540, 10, 630, 30);
+	// puthz(542, 12, "搜索", 16, 2, WHITE);
+	if (mode == 1) // 搜索模式
+	{
+		setfillstyle(SOLID_FILL, BLACK);
+		bar(540, 10, 630, 30);
+		rectangle(540, 10, 630, 30);
+		outtextxy(542, 12, target);
+	}
+	else if (mode == 0 && strcmp(target, "") == 0) // 一般模式，并且搜索目标为空
+	{
+		clrmous(MouseX, MouseY);
+		setfillstyle(SOLID_FILL, BLACK);
+		bar(540, 10, 630, 30);
+		rectangle(540, 10, 630, 30);
+		puthz(542, 12, "搜索", 16, 2, WHITE);
+	}
+	else if (mode == 0 && strcmp(target, "") != 0) // 处于一般模式时，搜索目标不为空
+	{
+		setfillstyle(SOLID_FILL, BLACK);
+		bar(540, 10, 630, 30);
+		setcolor(WHITE);
+		settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
+		outtextxy(542, 12, target);
+	}
 }
 
-void load_head() //(10,40)(630,60)
+// void load_head() //(10,40)(630,60)
+// {
+// 	setcolor(WHITE);
+// 	puthz(12, 42, "新建", 16, 2, WHITE);
+// 	puthz(55, 42, "剪", 16, 2, WHITE);
+// 	puthz(75, 42, "复", 16, 2, WHITE);
+// 	puthz(95, 42, "粘", 16, 2, WHITE);
+// 	puthz(115, 42, "共", 16, 2, WHITE);
+// 	puthz(135, 42, "删", 16, 2, WHITE);
+// 	puthz(155, 42, "排序", 16, 2, WHITE);
+// 	puthz(195, 42, "查看", 16, 2, WHITE);
+// 	puthz(235, 42, "…", 16, 2, WHITE);
+// }
+
+void load_head(int mode) //(10,40)(630,60)
 {
 	setcolor(WHITE);
-	puthz(12, 42, "新建", 16, 2, WHITE);
-	puthz(55, 42, "剪", 16, 2, WHITE);
-	puthz(75, 42, "复", 16, 2, WHITE);
-	puthz(95, 42, "粘", 16, 2, WHITE);
-	puthz(115, 42, "共", 16, 2, WHITE);
-	puthz(135, 42, "删", 16, 2, WHITE);
-	puthz(155, 42, "排序", 16, 2, WHITE);
-	puthz(195, 42, "查看", 16, 2, WHITE);
-	puthz(235, 42, "…", 16, 2, WHITE);
+	// 新建
+	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\build.bmp", "C:\\PROJECT\\src\\Images\\DBM\\build.dbm");
+	show_dbm(12, 42, "C:\\PROJECT\\src\\Images\\DBM\\build.dbm", 0);
+	// 剪切
+	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\cut.bmp", "C:\\PROJECT\\src\\Images\\DBM\\cut.dbm");
+	show_dbm(65, 42, "C:\\PROJECT\\src\\Images\\DBM\\cut.dbm", 0);
+	// 复制
+	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\todo.bmp", "C:\\PROJECT\\src\\Images\\DBM\\todo.dbm");
+	show_dbm(90, 42, "C:\\PROJECT\\src\\Images\\DBM\\todo.dbm", 0);
+	// 粘贴
+	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\paste.bmp", "C:\\PROJECT\\src\\Images\\DBM\\paste.dbm");
+	show_dbm(115, 42, "C:\\PROJECT\\src\\Images\\DBM\\paste.dbm", 0);
+	// 删除
+	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\delete.bmp", "C:\\PROJECT\\src\\Images\\DBM\\delete.dbm");
+	show_dbm(150, 42, "C:\\PROJECT\\src\\Images\\DBM\\delete.dbm", 0);
+	// 排序
+	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\sort.bmp", "C:\\PROJECT\\src\\Images\\DBM\\sort.dbm");
+	show_dbm(180, 42, "C:\\PROJECT\\src\\Images\\DBM\\sort.dbm", 0);
+	// 查看
+	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\check.bmp", "C:\\PROJECT\\src\\Images\\DBM\\check.dbm");
+	show_dbm(280, 42, "C:\\PROJECT\\src\\Images\\DBM\\check.dbm", 0);
+	// 重命名
+	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\rename.bmp", "C:\\PROJECT\\src\\Images\\DBM\\rename.dbm");
+	show_dbm(400, 42, "C:\\PROJECT\\src\\Images\\DBM\\rename.dbm", 0);
 }
 
 // void load_left() //(10,70)(100,470)
@@ -149,7 +202,7 @@ void load_left_assist(struct My_filenode *head, int layer, int pen_x, int *pen_y
 	}
 }
 
-void load_main(struct file_info *info) //(120,70)(640,480)
+void load_main(struct file_info *info, int mode) //(120,70)(640,480)
 {
 	int i; // 像素
 	int j; // 文件序号

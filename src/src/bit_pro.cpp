@@ -1,3 +1,4 @@
+//#include <stdio.h>
 #include "include.h"
 
 // 将8位二进制的某一位设为特定值

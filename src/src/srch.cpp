@@ -20,6 +20,7 @@ int srch_input(char target[16], struct file_info *info)
         *strchr(target, 0x0D) = '\0';
         int position = 0;
         printf("srch start\n");
+        memset(info, 0, sizeof(struct file_info) * 10);
         srch("C:\\PROJECT", target, &position, info, 0); // 这里只能进行小范围搜索，大范围搜索会出现遗漏甚至找不到的情况
         // srch("C:\\", target, &position, info, 0);
         // srch("C:\\BORLANDC", target, &position, info, 0);
@@ -103,12 +104,12 @@ void srch(char *path, char *target, int *position, struct file_info *info, int d
     closedir(dir);
 }
 
-void srch_output(struct file_info *info)
+void srch_output(struct file_info *info, char *target)
 {
     cleardevice();
     setcolor(WHITE);
     settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
-    load_main(info);
+    load_all(info, target, 1);
 }
 
 static void getbuffer_keybd(char target[16])
