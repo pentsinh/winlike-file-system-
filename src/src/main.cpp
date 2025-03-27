@@ -90,6 +90,8 @@ int main()
 				spinOnce(info);
 				clrmous(MouseX, MouseY);
 				cleardevice();
+				if (mode == 0)
+					strcpy(srch_tar, "");
 				load_all(info, srch_tar, mode);
 			}
 
@@ -187,7 +189,8 @@ int main()
 				}
 				else if (result == 2)
 				{
-					strcpy(srch_tar, "\0");
+					// strcpy(srch_tar, "");
+					mode_shift = _0to1;
 					srch_output(info, srch_tar);
 				}
 			}

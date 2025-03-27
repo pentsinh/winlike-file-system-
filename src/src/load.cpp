@@ -88,7 +88,7 @@ void load_top(char *target, int mode) //(10,10)(630,30)
 		setfillstyle(SOLID_FILL, BLACK);
 		bar(540, 10, 630, 30);
 		setcolor(WHITE);
-		settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
+		settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
 		outtextxy(542, 12, target);
 	}
 }

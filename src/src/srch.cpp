@@ -130,7 +130,7 @@ static void getbuffer_keybd(char target[16])
                 num -= 1;
             target[num] = '\0';
         }
-        else if (num < 16 - 1) // 最大长度为16-1
+        else if (num < 16 - 1 && regs.h.al != 0x0D) // 最大长度为16-1
         {
 
             target[num] = regs.h.al;
@@ -140,7 +140,7 @@ static void getbuffer_keybd(char target[16])
         {
 
             target[num] = regs.h.al;
-            num = 0;
+            // num = 0;
         }
     }
 }
