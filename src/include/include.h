@@ -24,15 +24,15 @@ enum // 模式切换,0为一般，1为搜索
 #include <graphics.h> //图形操作函数
 #include <bios.h>     //BIOS中断调用
 
-#include "hz.h"       //汉字库
-#include "mouse.h"    //鼠标库
-#include "login.h"    //登陆
-#include "load.h"     //加载页面
-#include "bit_pro.h"  //按位操作
-#include "dir_pro.h"  //目录操作
-#include "file_pro.h" //文件操作
-#include "srch.h"     //搜索
-#include "index.h"    //目录树
-#include <IMAGE.h>    //贴图
+#include "hz.h"        //汉字库
+#include "mouse.h"     //鼠标库
+#include "login.h"     //登陆
+#include "load.h"      //加载页面
+#include "bit_pro.h"   //按位操作
+#include "dir_pro.h"   //目录操作
+#include "file_info.h" //文件操作
+#include "srch.h"      //搜索
+#include "index.h"     //目录树
+#include <IMAGE.h>     //贴图
 
 #endif
