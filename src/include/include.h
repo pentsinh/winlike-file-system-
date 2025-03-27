@@ -3,6 +3,15 @@
  *************/
 #ifndef _INCLUDE_H_
 #define _INCLUDE_H_
+
+enum // 模式切换,0为一般，1为搜索
+{
+    _0to0 = 1,
+    _0to1 = 2,
+    _1to0 = 3,
+    _1to1 = 4
+
+};
 #include <stdio.h>    //标准输入输出
 #include <dos.h>      //DOS功能调用
 #include <conio.h>    //控制台输入输出
@@ -24,5 +33,6 @@
 #include "file_pro.h" //文件操作
 #include "srch.h"     //搜索
 #include "index.h"    //目录树
+#include <IMAGE.h>    //贴图
 
 #endif

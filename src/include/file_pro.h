@@ -38,16 +38,16 @@ struct file_info
     char time[32];      // 修改时间
 };
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+// #ifdef __cplusplus
+// extern "C"
+// {
+// #endif
 
-    unsigned char get_file_type(char *name);
+unsigned char get_file_type(char *name);
 
-#ifdef __cplusplus
-}
-#endif
+// #ifdef __cplusplus
+// }
+// #endif
 void get_file_info(char *half_path, char *name, struct file_info *info); // 获取文件信息
 // unsigned char get_file_type(char *name);                             // 获取文件类型
 unsigned char get_file_type_plus(char *name);       // 进一步获取文件类型
