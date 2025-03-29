@@ -5,11 +5,46 @@
 #define HISTORY_LENGTH 10
 #endif
 
-void read_dir(char *target, struct file_info *info);  // 读取目标目录下文件
-void undo_dir();                                      // 撤销目录操作
-void anti_undo_dir();                                 // 反撤销目录操作
-void back();                                          // 返回上一级目录
-void new_history();                                   // 更新目录操作历史
-int change_dir(struct file_info *info, int x, int y); // 更改目录.返回1选中，返回2确认
+/************************************************
+ *FUNCTION:读取目标目录下文件
+ *INPUT:目标目录（绝对路径），用于存放读取结果的file_info结构体
+ *RETURN:无
+ *************************************************/
+void read_dir(char *target, struct file_info *info);
+
+/************************************************
+ *FUNCTION:撤销目录操作
+ *INPUT:操作历史，当前在历史数组中的位置
+ *RETURN:无
+ *************************************************/
+void undo_dir(char history[HISTORY_LENGTH][1024], int now_history);
+
+/************************************************
+ *FUNCTION:反撤销目录操作
+ *INPUT:操作历史，当前在历史数组中的位置
+ *RETURN:无
+ *************************************************/
+void anti_undo_dir(char history[HISTORY_LENGTH][1024], int now_history);
+
+/************************************************
+ *FUNCTION:返回上一级目录
+ *INPUT:当前路径，操作历史，当前在历史数组中的位置
+ *RETURN:无
+ *************************************************/
+void back(char path[1024], char history[HISTORY_LENGTH][1024], int now_history);
+
+/************************************************
+ *FUNCTION:更新目录操作历史
+ *INPUT:操作历史，当前路径
+ *RETURN:无
+ *************************************************/
+void new_history(char history[HISTORY_LENGTH][1024], char path[1024]);
+
+/************************************************
+ *FUNCTION: 更改目录
+ *INPUT:当前显示的info，鼠标X，鼠标Y
+ *RETURN:返回1选中，返回2确认
+ *************************************************/
+int change_dir(struct file_info *info, int x, int y);
 
 #endif // _DIR_PRO_H_

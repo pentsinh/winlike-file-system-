@@ -38,19 +38,32 @@ struct file_info
     char time[32];      // 修改时间
 };
 
-// #ifdef __cplusplus
-// extern "C"
-// {
-// #endif
-
+/************************************************
+ *FUNCTION:获取文件类型
+ *INPUT:文件绝对路径
+ *RETURN:八位二进制，参考枚举类型enum file
+ *************************************************/
 unsigned char get_file_type(char *name);
 
-// #ifdef __cplusplus
-// }
-// #endif
-void get_file_info(char *half_path, char *name, struct file_info *info); // 获取文件信息
-// unsigned char get_file_type(char *name);                             // 获取文件类型
-unsigned char get_file_type_plus(char *name);       // 进一步获取文件类型
-char *get_file_path(char *father_path, char *name); // 获取文件绝对路径
+/************************************************
+ *FUNCTION:获取文件信息
+ *INPUT:文件所在目录，文件名，用于存放信息的info
+ *RETURN:无
+ *************************************************/
+void get_file_info(char *half_path, char *name, struct file_info *info);
+
+/************************************************
+ *FUNCTION:进一步获取文件类型，辅助get_file_info
+ *INPUT:文件名
+ *RETURN:八位二进制，参考枚举类型enum file
+ *************************************************/
+unsigned char get_file_type_plus(char *name);
+
+/************************************************
+ *FUNCTION:获取文件绝对路径
+ *INPUT:文件所在目录，文件名
+ *RETURN:文件绝对路径
+ *************************************************/
+char *get_file_path(char *father_path, char *name);
 
 #endif // _PRO_H_
