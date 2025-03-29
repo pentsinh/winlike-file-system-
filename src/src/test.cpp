@@ -375,8 +375,126 @@
 // }
 
 // 目录树测试+搜索测试
-struct My_filenode *root;
+// struct My_filenode *root;
+// int main()
+// {
+// 	enum // 模式切换,0为一般，1为搜索
+// 	{
+// 		_0to0 = 1,
+// 		_0to1 = 2,
+// 		_1to0 = 3,
+// 		_1to1 = 4
+// 	};
+// 	struct file_info info[10]; // 存放文件信息
+// 	int gd = DETECT, gm; // 图形驱动和图形模式
+// 	int result;			 // 用来存放函数返回值，防止多次调用
+// 	int mode = _0to0;
+// 	char srch_tar[16] = ""; // 搜索目标
+// 	char box[10];
+// 	root = (struct My_filenode *)malloc(sizeof(struct My_filenode));
+// 	tree_make(root, 0);
+// 	printf("Finished!\n");
+// 	while (!kbhit()) // 循环，直到按下键盘键
+// 		;
+// 	clear_keyboard_buffer();
+// 	initgraph(&gd, &gm, "C:\\BORLANDC\\BGI"); // 初始化图形模式
+// 	mouseinit();
+// 	setbkcolor(BLACK);
+// 	setcolor(WHITE);
+// 	settextstyle(DEFAULT_FONT, HORIZ_DIR, 10);
+// 	rectangle(270, 230, 370, 250);
+// 	puthz(270, 230, "搜索", 16, 2, WHITE);
+// 	rectangle(10, 10, 630, 470);
+// 	while (1)
+// 	{
+// 		// printf("%d", mode);
+// 		newmouse(&MouseX, &MouseY, &press);
+//		// 右键刷新
+// 		if (mouse_press_out(540, 10, 630, 30) == 2)
+// 		{
+// 			cleardevice();
+// 			outtextxy(10, 10, itoa(mode, box, 10));
+// 			rectangle(540, 10, 630, 30);
+// 			puthz(542, 12, "搜索", 16, 2, WHITE);
+// 		}
+// 		// 搜索
+// 		// if (mouse_press(540, 10, 630, 30) == 1)
+// 		if (MouseX > 540 && MouseX < 630 && MouseY > 10 && MouseY < 30 && press == 1) // 哪个效果好用哪个
+// 		{
+// 			if (mode == _0to0 || mode == _1to0)
+// 				mode = _0to1;
+// 			else // if (mode == _0to1 || mode == _1to1)
+// 				mode = _1to1;
+// 		}
+// 		if (mouse_press_out(540, 10, 630, 30) == 1)
+// 		{
+// 			if (mode == _0to1 || mode == _1to1)
+// 				mode = _1to0;
+// 			else if (mode == _0to0 || mode == _1to0)
+// 				mode = _0to0;
+// 		}
+// 		if (mode == _0to1) // 从一般模式到搜索模式
+// 		{
+// 			clrmous(MouseX, MouseY);
+// 			clear_keyboard_buffer();
+// 			//  newmouse(&MouseX, &MouseY, &press);
+// 			setfillstyle(SOLID_FILL, BLACK);
+// 			bar(540, 10, 630, 30);
+// 			rectangle(540, 10, 630, 30);
+// 			outtextxy(542, 12, srch_tar);
+// 			mode = _1to1;
+// 		}
+// 		else if (mode == _1to0 && strcmp(srch_tar, "") == 0) // 从搜索模式到一般模式，并且搜索目标为空
+// 		{
+// 			clrmous(MouseX, MouseY);
+// 			setfillstyle(SOLID_FILL, BLACK);
+// 			bar(540, 10, 630, 30);
+// 			rectangle(540, 10, 630, 30);
+// 			puthz(542, 12, "搜索", 16, 2, WHITE);
+// 			mode = _0to0;
+// 		}
+// 		else if ((mode == _0to0 || mode == _1to0) && strcmp(srch_tar, "") != 0) // 处于一般模式时，搜索目标不为空
+// 		{
+// 			setcolor(WHITE);
+// 			settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
+// 			outtextxy(542, 12, srch_tar);
+// 		}
+// 		if (mode == _1to1 || mode == _0to1) // 如果处于搜索模式
+// 		{
+// 			result = srch_input(srch_tar, info);
+// 			if (result == 1)
+// 			{
+// 				cleardevice();
+// 				setcolor(WHITE);
+// 				settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
+// 				rectangle(540, 10, 630, 30);
+// 				outtextxy(542, 12, srch_tar);
+// 			}
+// 			else if (result == 2)
+// 				srch_output(info);
+// 		}
+// 	}
+// 	return 0;
+// }
 
+// 测试按位操作
+//
+// int main()
+// {
+// 	unsigned char num = 0b10101100; // 示例初始值
+// 	printf("Original value: %02X\n", num);
+// 	printBinary(num);
+// 	set_bit(&num, 3, 1); // 将第3位设置为1
+// 	printf("After setting bit 3 to 1: %02X\n", num);
+// 	printBinary(num);
+// 	set_bit(&num, 3, 0); // 将第5位设置为0
+// 	printf("After setting bit 3 to 0: %02X\n", num);
+// 	printBinary(num);
+// 	return 0;
+// }
+
+// 目录树负载下的排序测试
+struct My_filenode *root;
 int main()
 {
 	enum // 模式切换,0为一般，1为搜索
@@ -427,84 +545,9 @@ int main()
 			puthz(542, 12, "搜索", 16, 2, WHITE);
 		}
 
-		// 搜索
-		// if (mouse_press(540, 10, 630, 30) == 1)
-		if (MouseX > 540 && MouseX < 630 && MouseY > 10 && MouseY < 30 && press == 1) // 哪个效果好用哪个
-		{
-			if (mode == _0to0 || mode == _1to0)
-				mode = _0to1;
-			else // if (mode == _0to1 || mode == _1to1)
-				mode = _1to1;
-		}
-		if (mouse_press_out(540, 10, 630, 30) == 1)
-		{
-			if (mode == _0to1 || mode == _1to1)
-				mode = _1to0;
-			else if (mode == _0to0 || mode == _1to0)
-				mode = _0to0;
-		}
-
-		if (mode == _0to1) // 从一般模式到搜索模式
-		{
-			clrmous(MouseX, MouseY);
-			clear_keyboard_buffer();
-			//  newmouse(&MouseX, &MouseY, &press);
-			setfillstyle(SOLID_FILL, BLACK);
-			bar(540, 10, 630, 30);
-			rectangle(540, 10, 630, 30);
-			outtextxy(542, 12, srch_tar);
-			mode = _1to1;
-		}
-		else if (mode == _1to0 && strcmp(srch_tar, "") == 0) // 从搜索模式到一般模式，并且搜索目标为空
-		{
-			clrmous(MouseX, MouseY);
-
-			setfillstyle(SOLID_FILL, BLACK);
-			bar(540, 10, 630, 30);
-			rectangle(540, 10, 630, 30);
-			puthz(542, 12, "搜索", 16, 2, WHITE);
-			mode = _0to0;
-		}
-		else if ((mode == _0to0 || mode == _1to0) && strcmp(srch_tar, "") != 0) // 处于一般模式时，搜索目标不为空
-		{
-
-			setcolor(WHITE);
-			settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
-			outtextxy(542, 12, srch_tar);
-		}
-
-		if (mode == _1to1 || mode == _0to1) // 如果处于搜索模式
-		{
-			result = srch_input(srch_tar, info);
-			if (result == 1)
-			{
-				cleardevice();
-				setcolor(WHITE);
-				settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
-				rectangle(540, 10, 630, 30);
-				outtextxy(542, 12, srch_tar);
-			}
-			else if (result == 2)
-				srch_output(info);
-		}
+		// 排序
 	}
 	return 0;
 }
-
-// 测试按位操作
-//
-// int main()
-// {
-// 	unsigned char num = 0b10101100; // 示例初始值
-// 	printf("Original value: %02X\n", num);
-// 	printBinary(num);
-// 	set_bit(&num, 3, 1); // 将第3位设置为1
-// 	printf("After setting bit 3 to 1: %02X\n", num);
-// 	printBinary(num);
-// 	set_bit(&num, 3, 0); // 将第5位设置为0
-// 	printf("After setting bit 3 to 0: %02X\n", num);
-// 	printBinary(num);
-// 	return 0;
-// }
 
 #endif

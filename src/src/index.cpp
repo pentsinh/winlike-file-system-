@@ -341,10 +341,11 @@ char *get_file_path_node(struct My_filenode *node, char *filename)
 // ´Ó×óÀ¸Ö±½Óµã»÷ÎÄ¼ş¼Ğ£¬´«Èëroot»ñÈ¡ÎÄ¼ş¼Ğ¾ø¶ÔÂ·¾¶****»ùÓÚ×óÀ¸×î¶àÕ¹¿ªÈı¼¶Ä¿Â¼µÄÇ°Ìá****
 char *get_file_path_left(struct My_filenode *node, int x, int y)
 {
-	// ¼ÆËãµã»÷Î»ÖÃ¶ÔÓ¦µÄÎÄ¼ş
+
 	struct My_filenode *p = node->son_list_head;
 	if (p == NULL)
 		return NULL;
+	// ¼ÆËãµã»÷Î»ÖÃ¶ÔÓ¦µÄÎÄ¼ş
 	int row;										  // µã»÷Î»ÖÃÎªµÚ¼¸ĞĞ£¬***Ö®ºó½«²ÎÓëÔËËã***
 	int i;											  // yÖáÏñËØ
 	for (i = 80, row = 1; i < 480; i += 10, row += 1) // µÚÒ»Ìõ´Óy=80¿ªÊ¼
@@ -368,11 +369,12 @@ char *get_file_path_left(struct My_filenode *node, int x, int y)
 					{
 						if (row == 1) // Èç¹û¸Ã¶ş¼¶Ä¿Â¼Î´Õ¹¿ª
 							return get_file_path_node(p->father, p->name);
+
 						else
 						{
 							p = p->son_list_head;
 							row -= 1;
-							for (i = 1; i < 20; i++) // 20Îª·ÀÖ¹ËÀÑ­»·µÄÈÎÒâÁ¿
+							for (i = 1; p->next != NULL; i++) // 20Îª·ÀÖ¹ËÀÑ­»·µÄÈÎÒâÁ¿
 							{
 								if (i == row && x > 50)
 									return get_file_path_node(p->father, p->name);
@@ -385,7 +387,6 @@ char *get_file_path_left(struct My_filenode *node, int x, int y)
 				} while (p != NULL);
 			}
 		}
-
 		row -= (count_son_son_visible(p) + 1);
 		p = p->next;
 	} while (p != NULL);
@@ -444,16 +445,17 @@ int unfold(struct My_filenode *node, int x, int y) // µã»÷>Õ¹¿ª£¨·µ»Ø1£©/ÊÕÆğ£¨·
 	}
 	do
 	{
-		if (count_son_son_visible(p) + 1 >= row && 20 < x < 30) // ´ÓÒ»¼¶Ä¿Â¼¼ÆÊı
+		if (count_son_son_visible(p) + 1 >= row) // ´ÓÒ»¼¶Ä¿Â¼¼ÆÊı
 		{
-			if (row == 1 && get_bit(p->flag, 4) == 0) // Ò»¼¶Ä¿Â¼Î´Õ¹¿ª
+			if (row == 1 && get_bit(p->flag, 4) == 0 && x > 20 && x < 30) // Ò»¼¶Ä¿Â¼Î´Õ¹¿ª
 			{
 				set_bit(&p->flag, 4, 1);
 				return 1;
 			}
-			else if (row == 1 && get_bit(p->flag, 4) == 1)
+			else if (row == 1 && get_bit(p->flag, 4) == 1 && x > 20 && x < 30)
 			{
 				set_bit(&p->flag, 4, 0);
+				fold_sonlist(p);
 				return 2;
 			}
 			else
@@ -462,14 +464,14 @@ int unfold(struct My_filenode *node, int x, int y) // µã»÷>Õ¹¿ª£¨·µ»Ø1£©/ÊÕÆğ£¨·
 				row -= 1; // ½øÈëÒ»¼¶Ä¿Â¼£¬ÔÚ¶ş¼¶Ä¿Â¼ÖĞ²éÕÒ
 				do
 				{
-					if (count_son_visible(p) + 1 >= row && 30 < x < 40)
+					if (count_son_visible(p) + 1 >= row)
 					{
-						if (row == 1 && get_bit(p->flag, 4) == 0) // Èç¹û¸Ã¶ş¼¶Ä¿Â¼Î´Õ¹¿ª
+						if (row == 1 && get_bit(p->flag, 4) == 0 && x > 30 && x < 40) // Èç¹û¸Ã¶ş¼¶Ä¿Â¼Î´Õ¹¿ª
 						{
 							set_bit(&p->flag, 4, 1);
 							return 1;
 						}
-						else if (row == 1 && get_bit(p->flag, 4) == 1)
+						else if (row == 1 && get_bit(p->flag, 4) == 1 && x > 30 && x < 40)
 						{
 							set_bit(&p->flag, 4, 0);
 							return 2;
@@ -506,4 +508,17 @@ int unfold(struct My_filenode *node, int x, int y) // µã»÷>Õ¹¿ª£¨·µ»Ø1£©/ÊÕÆğ£¨·
 	} while (p != NULL);
 
 	return 0;
+}
+
+// ÕÛµş´«Èë½ÚµãµÄËùÓĞ×ÓÄ¿Â¼
+void fold_sonlist(struct My_filenode *node)
+{
+	struct My_filenode *p = node->son_list_head;
+	if (p == NULL)
+		return;
+	do
+	{
+		set_bit(&p->flag, 4, 0);
+		p = p->next;
+	} while (p != NULL);
 }

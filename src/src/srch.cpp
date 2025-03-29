@@ -104,12 +104,14 @@ void srch(char *path, char *target, int *position, struct file_info *info, int d
     closedir(dir);
 }
 
-void srch_output(struct file_info *info, char *target)
+void srch_output(char path[1024], struct file_info *info, struct My_filenode *root, char *target)
 {
     cleardevice();
     setcolor(WHITE);
     settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
-    load_all(info, target, 1);
+    clearRectangle(120, 70, 640, 480, BLACK);
+    load_main(info, 1);
+    load_all(path, info, root, target, 1);
 }
 
 static void getbuffer_keybd(char target[16])

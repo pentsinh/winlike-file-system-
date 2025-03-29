@@ -18,19 +18,19 @@
 #include <IMAGE.h>
 #include "include.h"
 
-extern char path[1024]; // 当前路径
-extern char history[HISTORY_LENGTH][1024];
-extern char chosen_name[13];	 // 被选中的文件名
-extern struct dir_tree tree;	 // 目录树，用于加载左栏，以及通过左栏快速定位
-extern struct My_filenode *root; //
+// extern char path[1024]; // 当前路径
+// extern char history[HISTORY_LENGTH][1024];
+extern char chosen_name[13]; // 被选中的文件名
+// extern struct dir_tree tree;	 // 目录树，用于加载左栏，以及通过左栏快速定位
+// extern struct My_filenode *root; //
 
-void load_init(struct file_info *info) // 界面初始化
+void load_init(char path[1024], struct file_info *info, char history[HISTORY_LENGTH][1024]) // 界面初始化
 {
 	setbkcolor(BLACK);
 	chdir("C:\\PROJECT");
-	if (getcwd(path, sizeof(path)) == NULL) // 获取当前路径
+	if (getcwd(path, sizeof(path) * 1024) == NULL) // 获取当前路径
 	{
-		perror("无法获取当前路径");
+		perror("Can't get current dir");
 		return;
 	}
 	strcpy(history[0], path); // 路径操作历史开始记录
@@ -38,19 +38,19 @@ void load_init(struct file_info *info) // 界面初始化
 							  // load_all(info);
 }
 
-void load_all(struct file_info *info, char *target, int mode) // 加载界面
+void load_all(char path[1024], struct file_info *info, struct My_filenode *root, char *target, int mode) // 加载界面
 {
-	load_top(target, mode);
+	load_top(path, target, mode);
 	line(1, 35, 640, 35);
 	load_head(mode);
 	line(1, 65, 640, 65);
-	load_left();
+	load_left(root);
 	floodfill(121, 71, BLACK);
 	line(105, 65, 105, 480);
 	load_main(info, mode);
 }
 
-void load_top(char *target, int mode) //(10,10)(630,30)
+void load_top(char path[1024], char *target, int mode) //(10,10)(630,30)
 {
 	setcolor(WHITE);
 	settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
@@ -168,7 +168,7 @@ void load_head(int mode) //(10,40)(630,60)
 // 			load_left_assist(p->branch[i], layer, pen_x, pen_y);
 // }
 
-void load_left() //(10,70)(100,470)
+void load_left(struct My_filenode *root) //(10,70)(100,470)
 {
 	// int i;			// 循环变量
 	int layer = 0;	// 目录的层数，设c盘问第0层
@@ -225,6 +225,7 @@ void load_main(struct file_info *info, int mode) //(120,70)(640,480)
 		"PDF",
 		"OTHER",
 	};
+	settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
 
 	puthz(120, 70, "名称", 16, 2, WHITE);
 	line(320, 70, 320, 90);
@@ -264,4 +265,9 @@ void clearRectangle(int x1, int y1, int x2, int y2, unsigned char color) // 清空
 {
 	setfillstyle(SOLID_FILL, color);
 	bar(x1, y1, x2, y2);
+}
+
+// 下拉菜单
+void pull_list(int x, int y, int height, char menu[8][16])
+{
 }

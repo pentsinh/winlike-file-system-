@@ -37,10 +37,12 @@ void get_file_info(char *half_path, char *name, struct file_info *info) // »ñÈ¡Î
     strcpy(full_path, half_path);
     strcat(full_path, "\\");
     strcat(full_path, name);
+    // printf("%s\n", full_path);
 
     // »ñÈ¡ÎÄ¼þ×´Ì¬ÐÅÏ¢
     if (stat(full_path, &file_stat) == -1)
     {
+        // printf("error\n");
         perror("stat");
         return;
     }

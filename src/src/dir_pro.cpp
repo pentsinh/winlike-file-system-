@@ -6,10 +6,10 @@
 // #include <graphics.h>
 #include "include.h"
 
-char history[HISTORY_LENGTH][1024] = {0}; // 目录操作记录
-char path[1024];						  // 当前路径
-int now_history = 0;					  // 当前在路径在history中的位置，服务撤销操作
-char chosen_name[13] = {-1};			  // 被选中的文件名
+// char history[HISTORY_LENGTH][1024] = {0}; // 目录操作记录
+// char path[1024];						  // 当前路径
+// int now_history = 0;					  // 当前在路径在history中的位置，服务撤销操作
+char chosen_name[13] = {-1}; // 被选中的文件名
 
 void read_dir(char *target, struct file_info *info) // 读取指定目录下文件
 {
@@ -30,6 +30,7 @@ void read_dir(char *target, struct file_info *info) // 读取指定目录下文件
 		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
 			continue;
 		info[j].num = j;
+		// printf("%s", target);
 		get_file_info(target, entry->d_name, &info[j]);
 		j++;
 
@@ -39,19 +40,21 @@ void read_dir(char *target, struct file_info *info) // 读取指定目录下文件
 	closedir(dir);
 }
 
-void undo_dir()
+void undo_dir(char history[HISTORY_LENGTH][1024], int now_history)
 {
 	if (now_history < HISTORY_LENGTH - 1 && strcmp(history[now_history + 1], "\0") != 0)
 		now_history++;
 	chdir(history[now_history]);
 }
-void anti_undo_dir()
+
+void anti_undo_dir(char history[HISTORY_LENGTH][1024], int now_history)
 {
 	if (now_history > 0)
 		now_history--;
 	chdir(history[now_history]);
 }
-void back()
+
+void back(char path[1024], char history[HISTORY_LENGTH][1024], int now_history)
 {
 	int i;
 	chdir("..");
@@ -66,7 +69,7 @@ void back()
 	}
 }
 
-void new_history() // 更新目录操作历史
+void new_history(char history[HISTORY_LENGTH][1024], char path[1024]) // 更新目录操作历史
 {
 	int i;
 	for (i = HISTORY_LENGTH; i > 1; i--)
