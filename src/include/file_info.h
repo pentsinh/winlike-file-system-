@@ -1,6 +1,9 @@
 #ifndef _PRO_H_
 #define _PRO_H_
 #include <sys/stat.h>
+
+#define INFO_LENGTH 10
+
 // 文件类型枚举
 enum file
 {
@@ -65,5 +68,12 @@ unsigned char get_file_type_plus(char *name);
  *RETURN:文件绝对路径
  *************************************************/
 char *get_file_path(char *father_path, char *name);
+
+/************************************************
+ *FUNCTION:初始化info
+ *INPUT:info链
+ *RETURN:无
+ *************************************************/
+void info_init(struct file_info *info);
 
 #endif // _PRO_H_

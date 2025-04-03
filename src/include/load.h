@@ -58,9 +58,9 @@ void load_main(struct file_info *info, int mode);
 void clearRectangle(int x1, int y1, int x2, int y2, unsigned char color);
 
 /************************************************
- *FUNCTION:显示下拉菜单
- *INPUT:点击X，点击Y，单个选项的高度，选项们
+ *FUNCTION:下拉菜单，原版来自学长杨征坷
+ *INPUT:点击X，点击Y，菜单宽度，单个选项高度，选项数量，字体大小，选项们，，，用户选择的内容
  *RETURN:无
  *************************************************/
-void pull_list(int x, int y, int height, char menu[8][16]);
+void drop_down_menu(int x, int y, int wide, int h, int n, int lettersize, char **msgs, int lightcolor, int darkcolor, char *record);
 #endif // !_LOAD_H_

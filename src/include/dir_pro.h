@@ -15,23 +15,23 @@ void read_dir(char *target, struct file_info *info);
 /************************************************
  *FUNCTION:撤销目录操作
  *INPUT:操作历史，当前在历史数组中的位置
- *RETURN:无
+ *RETURN:1 操作有效；0 操作无效
  *************************************************/
-void undo_dir(char history[HISTORY_LENGTH][1024], int now_history);
+int undo_dir(char history[HISTORY_LENGTH][1024], int *now_history);
 
 /************************************************
  *FUNCTION:反撤销目录操作
  *INPUT:操作历史，当前在历史数组中的位置
- *RETURN:无
+ *RETURN:1 操作有效；0 操作无效
  *************************************************/
-void anti_undo_dir(char history[HISTORY_LENGTH][1024], int now_history);
+int anti_undo_dir(char history[HISTORY_LENGTH][1024], int *now_history);
 
 /************************************************
  *FUNCTION:返回上一级目录
  *INPUT:当前路径，操作历史，当前在历史数组中的位置
- *RETURN:无
+ *RETURN:1 操作有效；0 操作无效
  *************************************************/
-void back(char path[1024], char history[HISTORY_LENGTH][1024], int now_history);
+int back(char path[1024], char history[HISTORY_LENGTH][1024], int *now_history);
 
 /************************************************
  *FUNCTION:更新目录操作历史
