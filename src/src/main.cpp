@@ -22,25 +22,29 @@ void spinOnce(char path[1024], struct file_info *info, int mode, char history[HI
 	newmouse(&MouseX, &MouseY, &press);
 	if (mode == 0)
 	{
-		getcwd(path, sizeof(path));
-		read_dir(path, info);
+		getcwd(path, sizeof(path) * 1024);
+		// read_dir(path, info);
 	}
+	// printf("%s [%d]%s\n", path, now_history, history[now_history]);
+
 	if (now_history == 0 && strcmp(path, history[now_history]) != 0)
+	{
 		new_history(history, path);
+	}
 }
 
 int main()
 {
-	struct My_filenode *root;			// 目录树的根
-	char path[1024];					// 当前路径
-	char history[HISTORY_LENGTH][1024]; // 操作历史
-	int now_history;					// 当前在路径在history中的位置，服务撤销操作
-	struct file_info info[10];			// 存放文件信息
-	int gd = DETECT, gm;				// 图形驱动和图形模式
-	char mode = 0;						// 主视窗显示模式，0为一般模式，1为搜索模式
-	char mode_shift = _0to0;			// 模式切换
-	char srch_tar[16];					// 搜索目标
-	int result;							// 用来存放函数返回值，防止多次调用
+	struct My_filenode *root;				  // 目录树的根
+	char path[1024];						  // 当前路径
+	char history[HISTORY_LENGTH][1024] = {0}; // 操作历史
+	int now_history = 0;					  // 当前在路径在history中的位置，服务撤销操作
+	struct file_info info[10];				  // 存放文件信息
+	int gd = DETECT, gm;					  // 图形驱动和图形模式
+	char mode = 0;							  // 主视窗显示模式，0为一般模式，1为搜索模式
+	char mode_shift = _0to0;				  // 模式切换
+	char srch_tar[16];						  // 搜索目标
+	int result;								  // 用来存放函数返回值，防止多次调用
 	root = (struct My_filenode *)malloc(sizeof(struct My_filenode));
 	tree_make(root, 0); // 目录树开始构建
 	printf("Ready to start!\n");
@@ -57,6 +61,7 @@ int main()
 		cleardevice();
 		clrmous(MouseX, MouseY);
 		load_init(path, info, history); // 界面初始化
+		read_dir(path, info);
 
 		spinOnce(path, info, mode, history, now_history); // 刷新info
 		load_all(path, info, root, srch_tar, mode);		  // 显示
@@ -64,27 +69,34 @@ int main()
 		while (1)
 		{
 			spinOnce(path, info, mode, history, now_history);
+			// newmouse(&MouseX, &MouseY, &press);
 
 			if (mouse_press(10, 10, 30, 30) == 1) //|| mouse_press(10, 10, 30, 30) == 4)//如果点击<-撤销目录操作
 			{
-				undo_dir(history, now_history);
+
 				spinOnce(path, info, mode, history, now_history);
+				if (result == 1)
+					read_dir(path, info);
 				clrmous(MouseX, MouseY);
 				cleardevice();
 				load_all(path, info, root, srch_tar, mode);
 			}
 			else if (mouse_press(30, 10, 50, 30) == 1) // || mouse_press(30, 10, 50, 30) == 4)//如果点击->反撤销目录操作
 			{
-				anti_undo_dir(history, now_history);
+				result = anti_undo_dir(history, &now_history);
 				spinOnce(path, info, mode, history, now_history);
+				if (result == 1)
+					read_dir(path, info);
 				clrmous(MouseX, MouseY);
 				cleardevice();
 				load_all(path, info, root, srch_tar, mode);
 			}
 			else if (mouse_press(50, 10, 70, 30) == 1) //|| mouse_press(50, 10, 70, 30) == 4)//如果点击返回上一级目录
 			{
-				back(path, history, now_history);
+				result = back(path, history, &now_history);
 				spinOnce(path, info, mode, history, now_history);
+				if (result == 1)
+					read_dir(path, info);
 				clrmous(MouseX, MouseY);
 				cleardevice();
 				load_all(path, info, root, srch_tar, mode);
@@ -92,6 +104,7 @@ int main()
 			else if (mouse_press(70, 10, 90, 30) == 1) //|| mouse_press(70, 10, 90, 30) == 4)//如果点击刷新
 			{
 				spinOnce(path, info, mode, history, now_history);
+				read_dir(path, info);
 				clrmous(MouseX, MouseY);
 				cleardevice();
 				if (mode == 0)
@@ -107,6 +120,7 @@ int main()
 					clrmous(MouseX, MouseY);
 					cleardevice();
 					spinOnce(path, info, mode, history, now_history);
+					read_dir(path, info);
 					delay(200);
 					load_all(path, info, root, srch_tar, mode);
 				}
@@ -118,13 +132,13 @@ int main()
 					delay(200);
 					load_all(path, info, root, srch_tar, mode);
 				}
-				else if (result == 0)
-				{
-					clrmous(MouseX, MouseY);
-					cleardevice();
-					delay(200);
-					load_all(path, info, root, srch_tar, mode);
-				}
+				// else if (result == 0)
+				// {
+				// 	clrmous(MouseX, MouseY);
+				// 	cleardevice();
+				// 	delay(200);
+				// 	load_all(path, info, root, srch_tar, mode);
+				// }
 			}
 
 			// 左栏目录树

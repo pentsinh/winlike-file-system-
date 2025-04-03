@@ -1,4 +1,4 @@
-// #define TEST
+//#define TEST
 #ifdef TEST
 #include "include.h"
 //   extern time_t press_time[10];
@@ -494,7 +494,35 @@
 // }
 
 // 目录树负载下的排序测试
-struct My_filenode *root;
+void spinOnce(char path[1024], struct file_info *info, int mode, char history[HISTORY_LENGTH][1024], int now_history) // 更新状态检测函数
+{
+	newmouse(&MouseX, &MouseY, &press);
+	if (mode == 0)
+	{
+		getcwd(path, sizeof(path));
+		read_dir(path, info);
+	}
+	if (now_history == 0 && strcmp(path, history[now_history]) != 0)
+		new_history(history, path);
+}
+
+void load_menu() // test函数，显示选项(10,40)(630,60)
+{
+	setcolor(WHITE);
+	settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
+	rectangle(0, 0, 30, 30);
+	outtextxy(0, 0, "name");
+	rectangle(30, 0, 60, 30);
+	outtextxy(30, 0, "date");
+	rectangle(60, 0, 90, 30);
+	outtextxy(60, 0, "type");
+	rectangle(90, 0, 120, 30);
+	outtextxy(90, 0, "size");
+	rectangle(0, 30, 30, 60);
+	outtextxy(0, 30, "up");
+	rectangle(30, 30, 60, 60);
+	outtextxy(30, 30, "down");
+}
 int main()
 {
 	enum // 模式切换,0为一般，1为搜索
@@ -505,29 +533,39 @@ int main()
 		_1to1 = 4
 
 	};
-	struct file_info info[10]; // 存放文件信息
+	struct My_filenode *root;			// 目录树的根
+	char path[1024];					// 当前路径
+	char history[HISTORY_LENGTH][1024]; // 操作历史
+	int now_history;					// 当前在路径在history中的位置，服务撤销操作
+	struct file_info info[10];			// 存放文件信息
+	int gd = DETECT, gm;				// 图形驱动和图形模式
+	char mode = 0;						// 主视窗显示模式，0为一般模式，1为搜索模式
+	char mode_shift = _0to0;			// 模式切换
+	char srch_tar[16];					// 搜索目标
+	int result;							// 用来存放函数返回值，防止多次调用
 
-	int gd = DETECT, gm; // 图形驱动和图形模式
-	int result;			 // 用来存放函数返回值，防止多次调用
-	int mode = _0to0;
-	char srch_tar[16] = ""; // 搜索目标
-	char box[10];
+	int sort_mode = 1; // 排序方法
+	int UpOrDown = 1;  // 升序/降序
 
 	root = (struct My_filenode *)malloc(sizeof(struct My_filenode));
-	tree_make(root, 0);
-	printf("Finished!\n");
-	while (!kbhit()) // 循环，直到按下键盘键
-		;
-	clear_keyboard_buffer();
-
+	tree_make(root, 0); // 目录树开始构建
+	printf("Ready to start!\n");
 	initgraph(&gd, &gm, "C:\\BORLANDC\\BGI"); // 初始化图形模式
 	mouseinit();
+
+	MouseS = 0;
+	cleardevice();
+	clrmous(MouseX, MouseY);
+	load_init(path, info, history); // 界面初始化
+
+	spinOnce(path, info, mode, history, now_history); // 刷新info
+
+	load_main(info, mode);
+	load_menu();
 
 	setbkcolor(BLACK);
 	setcolor(WHITE);
 	settextstyle(DEFAULT_FONT, HORIZ_DIR, 10);
-	rectangle(270, 230, 370, 250);
-	puthz(270, 230, "搜索", 16, 2, WHITE);
 
 	rectangle(10, 10, 630, 470);
 
@@ -535,18 +573,47 @@ int main()
 	{
 		// printf("%d", mode);
 		newmouse(&MouseX, &MouseY, &press);
-
 		// 右键刷新
 		if (mouse_press_out(540, 10, 630, 30) == 2)
 		{
 			cleardevice();
-			outtextxy(10, 10, itoa(mode, box, 10));
-			rectangle(540, 10, 630, 30);
-			puthz(542, 12, "搜索", 16, 2, WHITE);
-		}
 
+			spinOnce(path, info, mode, history, now_history); // 刷新info
+			sort(info, sort_mode, UpOrDown);
+			load_main(info, mode);
+			load_menu();
+		}
 		// 排序
+		if (mouse_press(0, 0, 30, 30) == 1)
+			sort_mode = -1;
+
+		else if (mouse_press(30, 0, 60, 30) == 1)
+			sort_mode = 1;
+
+		else if (mouse_press(60, 0, 90, 30) == 1)
+			sort_mode = 2;
+
+		else if (mouse_press(90, 0, 120, 30) == 1)
+			sort_mode = 3;
+
+		else if (mouse_press(0, 30, 30, 60) == 1)
+			UpOrDown = 1;
+
+		else if (mouse_press(30, 30, 60, 60) == 1)
+			UpOrDown = 0;
 	}
+
+	// char sort_menu[4][8] = {"name", "date", "type", "size"};
+	// char **p = (char **)malloc(4 * sizeof(char *));
+	// for (int i = 0; i < 4; i++)
+	// {
+	// 	p[i] = (char *)malloc(8 * sizeof(char));
+	// 	strcpy(p[i], sort_menu[i]);
+	// }
+	// char record[8];
+	// drop_down_menu(100, 100, 50, 20, 4, 1, p, WHITE, BLACK, record);
+	// while (!kbhit()) // 循环，直到按下键盘键
+	// 	newmouse(&MouseX, &MouseY, &press);
 	return 0;
 }
 

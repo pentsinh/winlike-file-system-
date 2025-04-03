@@ -2,8 +2,6 @@
 // ÎªÁË»ñÈ¡¸üÈ«ÃæµÄÎÄ¼şĞÅÏ¢£¬Ê¹ÓÃDIR.HÀïÃæµÄstruct ffblk£¬
 // ÒÔÉÏÁ½¸ö²»¼æÈİ£¬ËùÒÔÔÚÏÂÃæĞ´µÄ»ñÈ¡ÎÄ¼şĞÅÏ¢µÄº¯ÊıÀïÃæ²»ÔÙÊ¹ÓÃstruct dirent
 
-// ¶ÁÈ¡ÎÄ¼şÀàĞÍÊ±´æÔÚbug£¬ÔÚÓöµ½ÌØ¶¨ÎÄ¼şÀàĞÍÊ±¿¨ËÀ;Í¨¹ıÅÅ²éÎÊÌâ¿ÉÄÜÔÚget_file_type_plusÀï
-
 // #include <stdio.h>
 // #include <dirent.h>
 // #include <string.h>
@@ -62,22 +60,16 @@ void get_file_info(char *half_path, char *name, struct file_info *info) // »ñÈ¡Î
         strcpy(info->path, "unknown"); // ´¦ÀíÄÚ´æ·ÖÅäÊ§°ÜµÄÇé¿ö
 
     // »ñÈ¡ÎÄ¼şÀàĞÍ
-    // strcpy(info->type, get_file_type(full_path));
     info->flag = get_file_type(full_path);
 
     // »ñÈ¡ÎÄ¼ş´óĞ¡
     ltoa(file_stat.st_size, info->size, 10);
-    // info->size = (char *)realloc(info->size, strlen(info->size) * sizeof(char) + sizeof("byte"));
     strcat(info->size, " byte");
 
     // »ñÈ¡×îºóĞŞ¸ÄÊ±¼ä
     local_time = localtime(&file_stat.st_mtime);
     strftime(formatted_time, sizeof(formatted_time), "%Y/%m/%d %H:%M", local_time); // ¸ñÊ½»¯Ê±¼ä
-                                                                                    // info->time = (char *)realloc(info->time, strlen(formatted_time) * sizeof(char));
     strcpy(info->time, formatted_time);
-    //  strcpy(info->time, ltoa((long)file_stat.st_mtime,formatted_time,10));
-
-    // gc_collect();
 }
 
 // unsigned char get_file_type(char *filename) // »ñÈ¡ÎÄ¼şÀàĞÍ£¬´Ë´¦´«Èë¾ø¶ÔÂ·¾¶
@@ -210,4 +202,18 @@ char *get_file_path(char *father_path, char *name)
     }
 
     return path;
+}
+
+// infoÁ´³õÊ¼»¯
+void info_init(struct file_info *info)
+{
+    for (int i = 0; i < INFO_LENGTH; i++)
+    {
+        (info + i)->num = 0;
+        strcpy((info + i)->name, "");
+        (info + i)->flag = 0;
+        strcpy((info + i)->path, "");
+        strcpy((info + i)->size, "");
+        strcpy((info + i)->time, "");
+    }
 }
