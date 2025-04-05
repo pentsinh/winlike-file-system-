@@ -356,6 +356,31 @@ int detect_complete_click(int press, time_t current_press_time)
 	return 0; // 默认返回值
 }
 
+// 检测右键完整点击
+int detect_complete_click_R(int press)
+{
+	static int initial_press_detected_R = 0; // 标记是否检测到初始按下
+	printf("%d ", initial_press_detected_R);
+	if (press == 2) // 鼠标右键被按下
+	{
+		if (!initial_press_detected_R)
+		{
+			initial_press_detected_R = 1; // 标记初始按下
+			return 11;					  // 返回0表示正在按下，等待释放
+		}
+	}
+	else if (press == 0) // 鼠标右键被释放
+	{
+		if (initial_press_detected_R)
+		{
+			initial_press_detected_R = 0; // 重置标记
+			return 3;					  // 返回单击标识
+		}
+	}
+
+	return 12; // 默认返回值
+}
+
 int mouse_press(int x1, int y1, int x2, int y2) //
 {
 	time_t current_press_time = clock(); // 当前点击时间
@@ -363,7 +388,10 @@ int mouse_press(int x1, int y1, int x2, int y2) //
 	// 检查鼠标位置是否在指定框内
 	if (MouseX > x1 && MouseX < x2 && MouseY > y1 && MouseY < y2)
 	{
+		// result = detect_complete_click_R(press);
+		// printf("%d/%d ", result, press);
 		if (press == 2) // 右键点击
+		// if (result == 3)
 		{
 			click_count = 0;	 // 重置点击计数器
 			last_click_time = 0; // 重置最后点击时间

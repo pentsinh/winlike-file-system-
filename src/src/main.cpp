@@ -40,18 +40,27 @@ void spinOnce(char path[1024], struct file_info *info, int mode, char history[HI
 
 int main()
 {
+	int gd = DETECT, gm; // 图形驱动和图形模式
+
 	struct My_filenode *root;				  // 目录树的根
 	char path[1024];						  // 当前路径
 	char history[HISTORY_LENGTH][1024] = {0}; // 操作历史
 	int now_history = 0;					  // 当前在路径在history中的位置，服务撤销操作
 	struct file_info info[10];				  // 存放文件信息
-	int gd = DETECT, gm;					  // 图形驱动和图形模式
-	int sort_mode = 0;						  // 排序方法
-	int UpOrDown = 1;						  // 升序/降序
-	char mode = 0;							  // 主视窗显示模式，0为一般模式，1为搜索模式
-	char mode_shift = _0to0;				  // 模式切换
-	char srch_tar[16];						  // 搜索目标
-	int result;								  // 用来存放函数返回值，防止多次调用
+
+	int i; // 循环变量
+
+	int sort_mode = 0; // 排序方法
+	int UpOrDown = 1;  // 升序/降序
+
+	char mode = 0;			 // 主视窗显示模式，0为一般模式，1为搜索模式
+	char mode_shift = _0to0; // 模式切换
+	char srch_tar[16];		 // 搜索目标
+
+	int choose_mode = 0; // 点击选择模式
+
+	int result; // 用来存放函数返回值，防止多次调用
+
 	root = (struct My_filenode *)malloc(sizeof(struct My_filenode));
 	tree_make(root, 0); // 目录树开始构建
 	printf("Ready to start!\n");
@@ -76,10 +85,19 @@ int main()
 		// 排序菜单初始化
 		char sort_menu[6][16] = {"名称", "修改时间", "类型", "大小", "递增", "递减"};
 		char **sort_menu_p = (char **)malloc(6 * sizeof(char *));
-		for (int i = 0; i < 6; i++)
+		for (i = 0; i < 6; i++)
 		{
 			sort_menu_p[i] = (char *)malloc(16 * sizeof(char));
 			strcpy(sort_menu_p[i], sort_menu[i]);
+		}
+
+		// 右键菜单初始化
+		char RB_menu[4][16] = {"排序方式", "撤销", "新建", "属性"};
+		char **RB_menu_p = (char **)malloc(4 * sizeof(char *));
+		for (i = 0; i < 4; i++)
+		{
+			RB_menu_p[i] = (char *)malloc(16 * sizeof(char));
+			strcpy(RB_menu_p[i], RB_menu[i]);
 		}
 
 		while (1)
@@ -201,6 +219,10 @@ int main()
 				}
 			}
 
+			// 结束
+			else if (mouse_press(620, 0, 640, 20) == 2)
+				end();
+
 			// 搜索
 			// 模式切换判别
 			// if (mouse_press(540, 10, 630, 30) == 1)
@@ -214,7 +236,7 @@ int main()
 				else // if (mode_shift == _0to1 || mode_shift == _1to1)
 					mode_shift = _1to1;
 			}
-			if (mouse_press_out(540, 10, 630, 30) == 1)
+			if (mouse_press_out(540, 10, 620, 30) == 1)
 			{
 				if (mode_shift == _0to1 || mode_shift == _1to1)
 				{
@@ -226,8 +248,26 @@ int main()
 			}
 
 			// 右键处理
-			if (mouse_press(120, 70, 640, 480) == 2)
+			if (mouse_press(120, 70, 640, 480) == 3)
 			{
+				delay(200);
+				result = 0;
+
+				result = drop_down_menu(MouseX, MouseY, 85, 30, 4, 12, RB_menu_p, WHITE, BLACK);
+				if (result == 0) // 排序方式
+				{
+					int result_0 = -1;
+					// result_0 = drop_down_menu(MouseX, MouseY, 85, 30, 4, 16, RB_menu_p, WHITE, BLACK);
+				}
+				else if (result == 1) // 撤销
+				{
+				}
+				else if (result == 2) // 新建
+				{
+				}
+				else if (result == 3) // 属性
+				{
+				}
 			}
 
 			// 模式切换处理

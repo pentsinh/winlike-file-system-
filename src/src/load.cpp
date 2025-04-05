@@ -66,31 +66,35 @@ void load_top(char path[1024], char *target, int mode) //(10,10)(630,30)
 	outtextxy(92, 15, path);
 
 	// 搜索
-	// rectangle(540, 10, 630, 30);
+	// rectangle(540, 10, 620, 30);
 	// puthz(542, 12, "搜索", 16, 2, WHITE);
 	if (mode == 1) // 搜索模式
 	{
 		setfillstyle(SOLID_FILL, BLACK);
-		bar(540, 10, 630, 30);
-		rectangle(540, 10, 630, 30);
+		bar(540, 10, 620, 30);
+		rectangle(540, 10, 620, 30);
 		outtextxy(542, 12, target);
 	}
 	else if (mode == 0 && strcmp(target, "") == 0) // 一般模式，并且搜索目标为空
 	{
 		clrmous(MouseX, MouseY);
 		setfillstyle(SOLID_FILL, BLACK);
-		bar(540, 10, 630, 30);
-		rectangle(540, 10, 630, 30);
+		bar(540, 10, 620, 30);
+		rectangle(540, 10, 620, 30);
 		puthz(542, 12, "搜索", 16, 2, WHITE);
 	}
 	else if (mode == 0 && strcmp(target, "") != 0) // 处于一般模式时，搜索目标不为空
 	{
 		setfillstyle(SOLID_FILL, BLACK);
-		bar(540, 10, 630, 30);
+		bar(540, 10, 620, 30);
 		setcolor(WHITE);
 		settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
 		outtextxy(542, 12, target);
 	}
+
+	// 退出小叉叉
+	line(620, 0, 640, 20);
+	line(640, 0, 620, 20);
 }
 
 // void load_head() //(10,40)(630,60)
@@ -135,38 +139,6 @@ void load_head(int mode) //(10,40)(630,60)
 	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\rename.bmp", "C:\\PROJECT\\src\\Images\\DBM\\rename.dbm");
 	show_dbm(400, 42, "C:\\PROJECT\\src\\Images\\DBM\\rename.dbm", 0);
 }
-
-// void load_left() //(10,70)(100,470)
-// {
-// 	int i;			// 循环变量
-// 	int layer = 0;	// 目录的层数，设c盘问第0层
-// 	int pen_x = 10; // 画笔位置
-// 	int pen_y = 70;
-// 	setcolor(WHITE);
-// 	settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
-// 	outtextxy(pen_x, pen_y, ">");
-// 	pen_x += 10;
-// 	// if (strcmp(tree.name, "") == 0)
-// 	// 	exit(0);
-// 	outtextxy(pen_x, pen_y, tree.name);
-// 	// printf("%s:%d,%d\n", tree.name, pen_x, pen_y);
-// 	if (tree.is_branch_on != 0) // 如果子目录可见
-// 		for (i = 0; tree.branch[i] != NULL; i++)
-// 			load_left_assist(tree.branch[i], layer, pen_x, &pen_y);
-// }
-// void load_left_assist(struct dir_tree *p, int layer, int pen_x, int *pen_y) //(加载左栏辅助函数)加载出传入地址的所有子目录
-// {
-// 	int i; // 循环变量
-// 	layer++;
-// 	*pen_y += 10;
-// 	outtextxy(pen_x, *pen_y, ">");
-// 	pen_x += 10;
-// 	outtextxy(pen_x, *pen_y, p->name);
-// 	// printf("%s:%d,%d\n", p->name, pen_x, *pen_y);
-// 	if (p->is_branch_on != 0 && layer < 2) // 如果子目录可见
-// 		for (i = 0; p->branch[i] != NULL; i++)
-// 			load_left_assist(p->branch[i], layer, pen_x, pen_y);
-// }
 
 void load_left(struct My_filenode *root) //(10,70)(100,470)
 {

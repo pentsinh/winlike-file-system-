@@ -2,16 +2,11 @@
 // 排序
 void sort(struct file_info *info, unsigned char sort_mode, int UpOrDown)
 {
-    int num = 0;
-    ;      // info的有效数据量
-    int i; // 循环变量
-    int j; // 循环变量
-    i = 0;
-    while (strcmp((info + i)->name, "\0") != 0)
-    {
-        num++;
-        i++;
-    }
+    int num; // info的有效数据量
+    int i;   // 循环变量
+    int j;   // 循环变量
+
+    num = get_info_num(info);
     // printf("num=%d\n", num);
     // printf("UpOrDown=%d\n", UpOrDown);
     switch (sort_mode)

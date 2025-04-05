@@ -234,3 +234,17 @@ time_t formatted_tm_to_stamp(char *formatted_time)
         return mktime(&tm);
     }
 }
+
+// 获取有效info数量
+int get_info_num(struct file_info *info)
+{
+    int num = 0;
+    int i = 0; // 循环变量
+
+    while (strcmp((info + i)->name, "\0") != 0)
+    {
+        num++;
+        i++;
+    }
+    return num;
+}

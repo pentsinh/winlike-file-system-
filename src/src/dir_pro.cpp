@@ -9,7 +9,7 @@
 // char history[HISTORY_LENGTH][1024] = {0}; // Ä¿Â¼²Ù×÷¼ÇÂ¼
 // char path[1024];						  // µ±Ç°Â·¾¶
 // int now_history = 0;					  // µ±Ç°ÔÚÂ·¾¶ÔÚhistoryÖĞµÄÎ»ÖÃ£¬·şÎñ³·Ïú²Ù×÷
-char chosen_name[13] = {-1}; // ±»Ñ¡ÖĞµÄÎÄ¼şÃû
+// char chosen_name[13] = {-1}; // ±»Ñ¡ÖĞµÄÎÄ¼şÃû
 
 void read_dir(char *target, struct file_info *info) // ¶ÁÈ¡Ö¸¶¨Ä¿Â¼ÏÂÎÄ¼ş
 {
@@ -94,69 +94,36 @@ void new_history(char history[HISTORY_LENGTH][1024], char path[1024]) // ¸üĞÂÄ¿Â
 	strcpy(history[0], path);
 }
 
-// int change_dir(struct file_info *info, int x, int y) // ¸ü¸ÄÄ¿Â¼.·µ»Ø1Ñ¡ÖĞ£¬·µ»Ø2È·ÈÏ
-// {
-// 	int i, j;
-// 	// static int is_chosen = 0;//ÊÇ·ñ´¦ÓÚÑ¡ÖĞ×´Ì¬
-// 	// static char chosen_name[13];//¼ÇÂ¼Ñ¡ÖĞµÄÎÄ¼ş
-// 	char target[1024];
-// 	// ²éÕÒÊó±êµã»÷µÄÇøÓòµÄÎÄ¼şĞòºÅ
-// 	for (j = 0; j < INFO; j++)
-// 		if (y > 90 + j * 20 && y < 90 + j * 20 + 20)
-// 		{
-// 			i = j;
-// 			break;
-// 		}
-
-// 	if ((info + i)->name == 0 || strcmp((info + i)->name, "") == 0) // Èç¹ûµã»÷¿Õ°×
-// 	{
-// 		strcpy(chosen_name, 0);
-// 		return 0;
-// 	}
-
-// 	else if ((info + i)->name != 0 && (info + i)->flag == 2 && strcmp(chosen_name, (info + i)->name) == 0) // Èç¹ûµã»÷Á½´Î£¬½øÈë
-// 	{
-// 		strcpy(chosen_name, 0);
-// 		strcpy(target, ".");
-// 		strcat(target, "\\");
-// 		strcat(target, (info + i)->name);
-// 		chdir(target);
-// 		return 2;
-// 	}
-// 	else if ((info + i)->name != 0 && strcmp(chosen_name, (info + i)->name) != 0) // Èç¹ûµã»÷Ò»´Î£¬Ñ¡ÖĞ
-// 	{
-// 		strcpy(chosen_name, (info + i)->name);
-// 		// setcolor(YELLOW);
-// 		// rectangle(120, 90 + i * 20, 640, 90 + i * 20 + 20);
-// 		return 1;
-// 	}
-
-// 	else
-// 	{
-// 		strcpy(chosen_name, 0);
-// 		return 0;
-// 	}
-// }
-
 int change_dir(struct file_info *info, int x, int y) // ¸ü¸ÄÄ¿Â¼.·µ»Ø1Ñ¡ÖĞ£¬·µ»Ø2È·ÈÏ
 {
-	int i = 0; // Ä¿±êÎÄ¼ş±êºÅ
-	int j;	   // Ñ­»·±äÁ¿
+	int i = 0;		   // Ä¿±êÎÄ¼ş±êºÅ
+	int j;			   // Ñ­»·±äÁ¿
+	int num = 0;	   // ÓĞĞ§ÎÄ¼şÊıÁ¿
+	char target[1024]; // Ä¿±êÎÄ¼ş¾ø¶ÔÂ·¾¶
+	int flag = 0;	   // µã»÷ÊÇ·ñÓĞĞ§
 
-	char target[1024];
+	num = get_info_num(info);
 	// ²éÕÒÊó±êµã»÷µÄÇøÓòµÄÎÄ¼şĞòºÅ
-	for (j = 0; j < INFO_LENGTH; j++)
+	for (j = 0; j < num; j++)
 		if (y > 90 + j * 20 && y < 90 + j * 20 + 20)
 		{
 			i = j;
+			flag = 1;
 			break;
 		}
 
-	if ((info + i)->name == 0 || strcmp((info + i)->name, "") == 0) // Èç¹ûµã»÷¿Õ°×
+	if (flag == 0) // µã»÷ÎŞĞ§
 	{
+
 		for (j = 0; j < INFO_LENGTH; j++) // ËùÓĞÎÄ¼ş²»Ñ¡ÖĞ
 			set_bit(&(info + j)->flag, 7, 0);
+		return 0;
 	}
+	// if ((info + i)->name == 0 || strcmp((info + i)->name, "") == 0) // Èç¹ûµã»÷¿Õ°×
+	// {
+	// 	for (j = 0; j < INFO_LENGTH; j++) // ËùÓĞÎÄ¼ş²»Ñ¡ÖĞ
+	// 		set_bit(&(info + j)->flag, 7, 0);
+	// }
 
 	else if (strcmp((info + i)->name, "") != 0 && get_bit((info + i)->flag, 7) == 1 && get_bit((info + i)->flag, 0) == 0 && get_bit((info + i)->flag, 1) == 1 && get_bit((info + i)->flag, 2) == 0 && get_bit((info + i)->flag, 3) == 0) // Èç¹ûµã»÷Á½´ÎÎÄ¼ş¼Ğ£¬½øÈë
 	{
@@ -175,10 +142,6 @@ int change_dir(struct file_info *info, int x, int y) // ¸ü¸ÄÄ¿Â¼.·µ»Ø1Ñ¡ÖĞ£¬·µ»Ø
 		// rectangle(120, 90 + i * 20, 640, 90 + i * 20 + 20);
 		return 1;
 	}
-
 	else
-	{
-		strcpy(chosen_name, 0);
 		return 0;
-	}
 }
