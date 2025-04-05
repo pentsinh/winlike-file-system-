@@ -76,4 +76,11 @@ char *get_file_path(char *father_path, char *name);
  *************************************************/
 void info_init(struct file_info *info);
 
+/************************************************
+ *FUNCTION:格式化时间转换为时间戳
+ *INPUT:格式化的时间
+ *RETURN:时间戳
+ *************************************************/
+time_t formatted_tm_to_stamp(char *formatted_time);
+
 #endif // _PRO_H_
