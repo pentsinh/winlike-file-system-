@@ -35,5 +35,6 @@ enum // 模式切换,0为一般，1为搜索
 #include "index.h"     //目录树
 #include "sort.h"      //排序
 #include <IMAGE.h>     //贴图
+#include "exit.h"      //退出
 
 #endif

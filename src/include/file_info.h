@@ -83,4 +83,11 @@ void info_init(struct file_info *info);
  *************************************************/
 time_t formatted_tm_to_stamp(char *formatted_time);
 
+/************************************************
+ *FUNCTION:获取有效info数量，而不是序号
+ *INPUT:info链
+ *RETURN:数量
+ *************************************************/
+int get_info_num(struct file_info *info);
+
 #endif // _PRO_H_
