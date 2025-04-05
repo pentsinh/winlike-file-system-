@@ -31,8 +31,8 @@ int flag = 0;
 
 time_t last_click_time = 0; // 记录上次点击时间
 int click_count = 0;		// 点击次数计数器
-int is_mouse_down = 0;		// 鼠标按下状态
-int click_flag = 0;
+// int is_mouse_down = 0;		// 鼠标按下状态
+// int click_flag = 0;
 
 void mouseinit() // 初始化
 {
@@ -337,7 +337,7 @@ int detect_complete_click(int press, time_t current_press_time)
 				{
 					click_count = 0;	 // 重置点击计数器
 					last_click_time = 0; // 重置最后点击时间
-					click_flag = 0;
+					// click_flag = 0;
 					return 4; // 返回双击标识
 				}
 			}
@@ -346,7 +346,7 @@ int detect_complete_click(int press, time_t current_press_time)
 				// 如果超过双击时间间隔，视为单击
 				click_count = 1;					  // 重置为单击
 				last_click_time = current_press_time; // 更新最后点击时间
-				click_flag = 1;
+				// click_flag = 1;
 
 				return 1; // 返回单击标识
 			}

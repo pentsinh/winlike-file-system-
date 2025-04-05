@@ -17,7 +17,7 @@
 extern void *buffer; // 缓存
 // extern struct dir_tree tree;			   // 目录树，用于加载左栏，以及通过左栏快速定位
 
-void spinOnce(char path[1024], struct file_info *info, int mode, char history[HISTORY_LENGTH][1024], int now_history) // 更新状态检测函数
+void spinOnce(char path[1024], struct file_info *info, int mode, char history[HISTORY_LENGTH][1024], int now_history, int sort_mode, int UpOrDown) // 更新状态检测函数
 {
 	newmouse(&MouseX, &MouseY, &press);
 	if (mode == 0)
@@ -26,11 +26,16 @@ void spinOnce(char path[1024], struct file_info *info, int mode, char history[HI
 		// read_dir(path, info);
 	}
 	// printf("%s [%d]%s\n", path, now_history, history[now_history]);
+	sort(info, sort_mode, UpOrDown);
 
 	if (now_history == 0 && strcmp(path, history[now_history]) != 0)
 	{
 		new_history(history, path);
 	}
+
+	// for (int i = 0; i < HISTORY_LENGTH; i++)
+	// 	printf("[%d]%s    ", i, history[i]);
+	// printf("\n");
 }
 
 int main()
@@ -41,6 +46,8 @@ int main()
 	int now_history = 0;					  // 当前在路径在history中的位置，服务撤销操作
 	struct file_info info[10];				  // 存放文件信息
 	int gd = DETECT, gm;					  // 图形驱动和图形模式
+	int sort_mode = 0;						  // 排序方法
+	int UpOrDown = 1;						  // 升序/降序
 	char mode = 0;							  // 主视窗显示模式，0为一般模式，1为搜索模式
 	char mode_shift = _0to0;				  // 模式切换
 	char srch_tar[16];						  // 搜索目标
@@ -63,18 +70,27 @@ int main()
 		load_init(path, info, history); // 界面初始化
 		read_dir(path, info);
 
-		spinOnce(path, info, mode, history, now_history); // 刷新info
-		load_all(path, info, root, srch_tar, mode);		  // 显示
+		spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown); // 刷新info
+		load_all(path, info, root, srch_tar, mode);							   // 显示
+
+		// 排序菜单初始化
+		char sort_menu[6][16] = {"名称", "修改时间", "类型", "大小", "递增", "递减"};
+		char **sort_menu_p = (char **)malloc(6 * sizeof(char *));
+		for (int i = 0; i < 6; i++)
+		{
+			sort_menu_p[i] = (char *)malloc(16 * sizeof(char));
+			strcpy(sort_menu_p[i], sort_menu[i]);
+		}
 
 		while (1)
 		{
-			spinOnce(path, info, mode, history, now_history);
-			// newmouse(&MouseX, &MouseY, &press);
+			spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
+			newmouse(&MouseX, &MouseY, &press);
 
 			if (mouse_press(10, 10, 30, 30) == 1) //|| mouse_press(10, 10, 30, 30) == 4)//如果点击<-撤销目录操作
 			{
-
-				spinOnce(path, info, mode, history, now_history);
+				result = undo_dir(history, &now_history);
+				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
 				if (result == 1)
 					read_dir(path, info);
 				clrmous(MouseX, MouseY);
@@ -84,7 +100,7 @@ int main()
 			else if (mouse_press(30, 10, 50, 30) == 1) // || mouse_press(30, 10, 50, 30) == 4)//如果点击->反撤销目录操作
 			{
 				result = anti_undo_dir(history, &now_history);
-				spinOnce(path, info, mode, history, now_history);
+				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
 				if (result == 1)
 					read_dir(path, info);
 				clrmous(MouseX, MouseY);
@@ -94,7 +110,7 @@ int main()
 			else if (mouse_press(50, 10, 70, 30) == 1) //|| mouse_press(50, 10, 70, 30) == 4)//如果点击返回上一级目录
 			{
 				result = back(path, history, &now_history);
-				spinOnce(path, info, mode, history, now_history);
+				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
 				if (result == 1)
 					read_dir(path, info);
 				clrmous(MouseX, MouseY);
@@ -103,13 +119,31 @@ int main()
 			}
 			else if (mouse_press(70, 10, 90, 30) == 1) //|| mouse_press(70, 10, 90, 30) == 4)//如果点击刷新
 			{
-				spinOnce(path, info, mode, history, now_history);
+				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
 				read_dir(path, info);
 				clrmous(MouseX, MouseY);
 				cleardevice();
 				if (mode == 0)
 					strcpy(srch_tar, "");
 				load_all(path, info, root, srch_tar, mode);
+			}
+			else if (mouse_press(180, 42, 260, 60) == 1) // 如果排序下拉菜单
+			{
+				result = drop_down_menu(180, 60, 100, 40, 6, 16, sort_menu_p, WHITE, BLACK);
+				if (result >= 0 && result <= 3)
+					sort_mode = result;
+				else if (result == 4)
+					UpOrDown = 1;
+				else if (result == 5)
+					UpOrDown = -1;
+				if (result != -1)
+				{
+					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
+					clrmous(MouseX, MouseY);
+					cleardevice();
+					load_all(path, info, root, srch_tar, mode);
+					delay(200);
+				}
 			}
 
 			else if (mouse_press(120, 70, 640, 480) == 1) // || mouse_press(120, 70, 640, 480) == 4)//如果点击文件（夹）区域
@@ -119,7 +153,7 @@ int main()
 				{
 					clrmous(MouseX, MouseY);
 					cleardevice();
-					spinOnce(path, info, mode, history, now_history);
+					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
 					read_dir(path, info);
 					delay(200);
 					load_all(path, info, root, srch_tar, mode);
@@ -128,7 +162,7 @@ int main()
 				{
 					clrmous(MouseX, MouseY);
 					cleardevice();
-					spinOnce(path, info, mode, history, now_history);
+					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
 					delay(200);
 					load_all(path, info, root, srch_tar, mode);
 				}
@@ -150,7 +184,7 @@ int main()
 					mode = 0;
 
 					getcwd(path, sizeof(path));
-					spinOnce(path, info, mode, history, now_history);
+					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
 					clrmous(MouseX, MouseY);
 					// cleardevice();
 					// load_all(path, info, root, srch_tar, mode);

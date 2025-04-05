@@ -522,6 +522,11 @@ void load_menu() // test函数，显示选项(10,40)(630,60)
 	outtextxy(0, 30, "up");
 	rectangle(30, 30, 60, 60);
 	outtextxy(30, 30, "down");
+
+	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\sort.bmp", "C:\\PROJECT\\src\\Images\\DBM\\sort.dbm");
+	show_dbm(180, 42, "C:\\PROJECT\\src\\Images\\DBM\\sort.dbm", 0);
+	setcolor(YELLOW);
+	rectangle(180, 42, 260, 60);
 }
 int main()
 {
@@ -544,7 +549,7 @@ int main()
 	char srch_tar[16];					// 搜索目标
 	int result;							// 用来存放函数返回值，防止多次调用
 
-	int sort_mode = 1; // 排序方法
+	int sort_mode = 0; // 排序方法
 	int UpOrDown = 1;  // 升序/降序
 
 	root = (struct My_filenode *)malloc(sizeof(struct My_filenode));
@@ -569,6 +574,23 @@ int main()
 
 	rectangle(10, 10, 630, 470);
 
+	char sort_menu[6][16] = {"名称", "修改时间", "类型", "大小", "递增", "递减"};
+	char **p = (char **)malloc(6 * sizeof(char *));
+	for (int i = 0; i < 6; i++)
+	{
+		p[i] = (char *)malloc(16 * sizeof(char));
+		strcpy(p[i], sort_menu[i]);
+	}
+	// char record[8];
+
+	char MX[8], MY[8];
+	itoa(MouseX, MX, 10);
+	itoa(MouseY, MY, 10);
+	clearRectangle(0, 100, 100, 150, BLACK);
+	setcolor(WHITE);
+	outtextxy(0, 100, MX);
+	outtextxy(50, 100, MX);
+
 	while (1)
 	{
 		// printf("%d", mode);
@@ -577,30 +599,36 @@ int main()
 		if (mouse_press_out(540, 10, 630, 30) == 2)
 		{
 			cleardevice();
-
 			spinOnce(path, info, mode, history, now_history); // 刷新info
 			sort(info, sort_mode, UpOrDown);
 			load_main(info, mode);
 			load_menu();
 		}
 		// 排序
-		if (mouse_press(0, 0, 30, 30) == 1)
-			sort_mode = -1;
+		// if (mouse_press(0, 0, 30, 30) == 1)
+		// 	sort_mode = 0;
+		// else if (mouse_press(30, 0, 60, 30) == 1)
+		// 	sort_mode = 1;
+		// else if (mouse_press(60, 0, 90, 30) == 1)
+		// 	sort_mode = 2;
+		// else if (mouse_press(90, 0, 120, 30) == 1)
+		// 	sort_mode = 3;
+		// else if (mouse_press(0, 30, 30, 60) == 1)
+		// 	UpOrDown = 1;
+		// else if (mouse_press(30, 30, 60, 60) == 1)
+		// 	UpOrDown = -1;
 
-		else if (mouse_press(30, 0, 60, 30) == 1)
-			sort_mode = 1;
-
-		else if (mouse_press(60, 0, 90, 30) == 1)
-			sort_mode = 2;
-
-		else if (mouse_press(90, 0, 120, 30) == 1)
-			sort_mode = 3;
-
-		else if (mouse_press(0, 30, 30, 60) == 1)
-			UpOrDown = 1;
-
-		else if (mouse_press(30, 30, 60, 60) == 1)
-			UpOrDown = 0;
+		if (mouse_press(180, 42, 260, 60) == 1)
+		{
+			result = drop_down_menu(180, 60, 100, 40, 6, 16, p, WHITE, BLACK);
+			if (result >= 0 && result <= 3)
+				sort_mode = result;
+			else if (result == 4)
+				UpOrDown = 1;
+			else if (result == 5)
+				UpOrDown = -1;
+		}
+		// eles if(mouse_press_out(180,42,22,60)==1)
 	}
 
 	// char sort_menu[4][8] = {"name", "date", "type", "size"};

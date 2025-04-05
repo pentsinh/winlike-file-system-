@@ -51,6 +51,7 @@ int undo_dir(char history[HISTORY_LENGTH][1024], int *now_history)
 
 	else if (now < HISTORY_LENGTH - 1 && strcmp(history[now + 1], "\0") != 0)
 		(*now_history) = now + 1;
+	// printf("entering [%d]%s\n", *now_history, history[*now_history]);
 	chdir(history[*now_history]);
 	return 1;
 }
@@ -62,6 +63,7 @@ int anti_undo_dir(char history[HISTORY_LENGTH][1024], int *now_history)
 		return 0;
 	else if (now > 0)
 		(*now_history) = now - 1;
+	// printf("entering [%d]%s\n", *now_history, history[*now_history]);
 	chdir(history[*now_history]);
 }
 

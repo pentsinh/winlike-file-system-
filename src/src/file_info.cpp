@@ -217,3 +217,20 @@ void info_init(struct file_info *info)
         strcpy((info + i)->time, "");
     }
 }
+
+// 格式化时间转换为时间戳
+time_t formatted_tm_to_stamp(char *formatted_time)
+{
+    struct tm tm = {0};
+
+    // 使用 sscanf 解析字符串
+    if (sscanf(formatted_time, "%d/%d/%d %d:%d", &tm.tm_year, &tm.tm_mon, &tm.tm_mday, &tm.tm_hour, &tm.tm_min) == 5)
+    {
+        // 调整年份和月份
+        tm.tm_year -= 1900; // 年份需要减去 1900
+        tm.tm_mon -= 1;     // 月份需要减去 1
+
+        // 转换为时间戳
+        return mktime(&tm);
+    }
+}

@@ -277,165 +277,111 @@ void clearRectangle(int x1, int y1, int x2, int y2, unsigned char color) // 清空
 	bar(x1, y1, x2, y2);
 }
 
-// 下拉菜单
-void drop_down_menu(int x, int y, int wide, int h, int n, int lettersize, char **msgs, int lightcolor, int darkcolor, char *record)
+// 下拉菜单，原版来自杨征坷学长，此为中文版，点击选项后收起，点击外部收起，菜单增加了x方向的出画面判断（优化掉了一半代码）（改变了x,y的含义），取消record参数
+int drop_down_menu(int x, int y, int wide, int h, int n, int lettersize, char **msgs, int lightcolor, int darkcolor)
 {
-	int i;
-	int size;
-	void *drop_down_buffer;
-	int flag = n + 1;
-	int place = 0;
-	int num[10];
+	int i;					 // 循环变量
+	int size;				 // 记录图像的大小
+	void *drop_down_buffer;	 // 暂存被下拉菜单遮挡的图像
+	int flag = n + 1;		 // 记录当前高亮的选项索引
+	int place = 0;			 // 标记当前的状态
+	int num[10] = {0};		 // 记录每个选项的高亮状态
+	int selected_index = -1; // 用于存储选中的选项索引
 	clrmous(MouseX, MouseY);
-	mouseinit();
+	//  mouseinit();
 
-	if (y + n * h < 470) // 判断是否超出屏幕
-	{
-		size = imagesize(x, y, x + wide, y + n * h + 5);
-		drop_down_buffer = malloc(size);
-		if (drop_down_buffer != NULL)
-			getimage(x, y, x + wide, y + n * h + 5, drop_down_buffer);
-		else
-		{
-			// perror("ERROR IN REMEMBERING");
-			// delay(3000);
-			// exit(1);
-		}
-		setfillstyle(SOLID_FILL, lightcolor);
-		bar(x, y, x + wide, y + n * h);
-		setfillstyle(SOLID_FILL, darkcolor);
-		bar(x, y, x + 5, y + n * h);
-		bar(x + wide - 5, y, x + wide, y + n * h);
-		for (i = 0; i <= n; i++)
-		{
-			bar(x, y + i * h, x + wide, y + i * h + 5);
-		}
-		settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
-		for (i = 0; i < n; i++)
-		{
-			outtextxy(x + 10, y + i * h + 10, msgs[i]);
-		}
+	// 调整菜单位置，使之位于屏幕内
+	if (y + n * h > 470)
+		y = y - n * h;
+	if (x + wide > 630)
+		x = x - wide;
 
-		while (1)
-		{
-			place = 0;
-			newmouse(&MouseX, &MouseY, &press);
-			for (i = 0; i < n; i++)
-			{
-				if (mouse_press(x, y + i * h, x + wide, y + (i + 1) * h) == 2)
-				{
-					if (flag != i)
-					{
-						MouseS = 1;
-						flag = i;
-						num[i] = 1;
-						clrmous(MouseX, MouseY);
-						setcolor(CYAN);
-						settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
-						outtextxy(x + 10, y + i * h + 10, msgs[i]);
-					}
-					place = 1;
-				}
-				else if (mouse_press(x, y + i * h, x + wide, y + (i + 1) * h) == 1)
-				{
-					strcpy(record, msgs[i]);
-					clrmous(MouseX, MouseY);
-					putimage(x, y, drop_down_buffer, COPY_PUT);
-					free(drop_down_buffer);
-					place = 2;
-					break;
-				}
-
-				if (flag != i && num[i] == 1)
-				{
-					setcolor(DARKGRAY);
-					settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
-					outtextxy(x + 10, y + i * h + 10, msgs[i]);
-				}
-			}
-			if (place == 0)
-			{
-				MouseS = 0;
-				flag = n + 1;
-			}
-			else if (place == 2)
-			{
-				break;
-			}
-		}
-	}
+	size = imagesize(x, y, x + wide, y + n * h + 5);
+	drop_down_buffer = malloc(size);
+	if (drop_down_buffer != NULL)
+		getimage(x, y, x + wide, y + n * h + 5, drop_down_buffer);
 	else
 	{
-		size = imagesize(x, y - n * h - 5, x + wide, y);
-		drop_down_buffer = malloc(size);
-		if (drop_down_buffer != NULL)
-			getimage(x, y - n * h - 5, x + wide, y, drop_down_buffer);
-		else
-		{
-			// perror("ERROR IN REMEMBERING");
-			// delay(3000);
-			// exit(1);
-		}
-		setfillstyle(SOLID_FILL, lightcolor);
-		bar(x, y, x + wide, y - n * h);
-		setfillstyle(SOLID_FILL, darkcolor);
-		bar(x, y, x + 5, y - n * h);
-		bar(x + wide - 5, y, x + wide, y - n * h);
-		for (i = 0; i <= n; i++)
-		{
-			bar(x, y - i * h, x + wide, y - i * h - 5);
-		}
-		settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
+		// perror("ERROR IN REMEMBERING");
+		// delay(3000);
+		// exit(1);
+	}
+	setfillstyle(SOLID_FILL, lightcolor);
+	bar(x, y, x + wide, y + n * h);
+	setfillstyle(SOLID_FILL, darkcolor);
+	bar(x, y, x + 5, y + n * h);
+	bar(x + wide - 5, y, x + wide, y + n * h);
+	for (i = 0; i <= n; i++)
+	{
+		bar(x, y + i * h, x + wide, y + i * h + 5);
+	}
+	// settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
+	for (i = 0; i < n; i++)
+	{
+		puthz(x + 10, y + i * h + 10, msgs[i], lettersize, 2, DARKGRAY);
+		// outtextxy(x + 10, y + i * h + 10, msgs[i]);
+	}
+
+	while (1)
+	{
+		place = 0;
+		newmouse(&MouseX, &MouseY, &press);
+
 		for (i = 0; i < n; i++)
 		{
-			outtextxy(x + 10, y - (i + 1) * h + 10, msgs[i]);
-		}
-		while (1)
-		{
-			place = 0;
-			newmouse(&MouseX, &MouseY, &press);
-			for (i = 0; i < n; i++)
+			int result = mouse_press(x, y + i * h, x + wide, y + (i + 1) * h); // 防止多次调用
+			if (result == 2)
 			{
-				if (mouse_press(x, y - (i + 1) * h, x + wide, y - i * h) == 2)
+				if (flag != i)
 				{
-					if (flag != i)
-					{
-						MouseS = 1;
-						flag = i;
-						num[i] = 1;
-						clrmous(MouseX, MouseY);
-						setcolor(YELLOW);
-						settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
-						outtextxy(x + 10, y - (i + 1) * h + 10, msgs[i]);
-					}
-					place = 1;
+					MouseS = 1;
+					flag = i;
+					num[i] = 1;
+					// clrmous(MouseX, MouseY);
+					//  setcolor(CYAN);
+					//  settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
+					puthz(x + 10, y + i * h + 10, msgs[i], lettersize, 2, CYAN);
+					// outtextxy(x + 10, y + i * h + 10, msgs[i]);
 				}
-				else if (mouse_press(x, y - (i + 1) * h, x + wide, y - i * h) == 1)
-				{
-					strcpy(record, msgs[i]);
-					clrmous(MouseX, MouseY);
-					putimage(x, y - n * h - 5, drop_down_buffer, COPY_PUT);
-					free(drop_down_buffer);
-					place = 2;
-					break;
-				}
-
-				if (flag != i && num[i] == 1)
-				{
-					setcolor(DARKGRAY);
-					settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
-					outtextxy(x + 10, y - (i + 1) * h + 10, msgs[i]);
-				}
+				place = 1;
 			}
-			if (place == 0)
+			else if (result == 1)
 			{
-				MouseS = 0;
-				flag = n + 1;
-			}
-			else if (place == 2)
-			{
+				// strcpy(record, msgs[i]);
+				selected_index = i; // 记录选中的选项索引
+				clrmous(MouseX, MouseY);
+				putimage(x, y, drop_down_buffer, COPY_PUT);
+				free(drop_down_buffer);
+				place = 2;
 				break;
 			}
+
+			if (flag != i && num[i] == 1)
+			{
+				// setcolor(DARKGRAY);
+				// settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
+				puthz(x + 10, y + i * h + 10, msgs[i], lettersize, 2, DARKGRAY);
+				// outtextxy(x + 10, y + i * h + 10, msgs[i]);
+			}
+		}
+		if (mouse_press_out(x, y, x + wide, y + n * h + 5))
+		{
+			selected_index = -1;
+			clrmous(MouseX, MouseY);
+			putimage(x, y, drop_down_buffer, COPY_PUT);
+			free(drop_down_buffer);
+			place = 2;
+		}
+		if (place == 0)
+		{
+			MouseS = 0;
+			flag = n + 1;
+		}
+		else if (place == 2)
+		{
+			break;
 		}
 	}
+	MouseS = 0;
+	return selected_index; // 返回选中的选项索引
 }
