@@ -12,10 +12,14 @@
 // #include <direct.h>
 #include "include.h"
 
-// int mode_shift = 0x11;
-
 extern void *buffer; // 缓存
-// extern struct dir_tree tree;			   // 目录树，用于加载左栏，以及通过左栏快速定位
+
+struct menu
+{
+	char *option;
+	struct menu *next;
+	struct menu *son_menu_head;
+};
 
 void spinOnce(char path[1024], struct file_info *info, int mode, char history[HISTORY_LENGTH][1024], int now_history, int sort_mode, int UpOrDown) // 更新状态检测函数
 {
@@ -102,7 +106,7 @@ int main()
 
 		while (1)
 		{
-			spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
+			// spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
 			newmouse(&MouseX, &MouseY, &press);
 
 			if (mouse_press(10, 10, 30, 30) == 1) //|| mouse_press(10, 10, 30, 30) == 4)//如果点击<-撤销目录操作
@@ -147,7 +151,7 @@ int main()
 			}
 			else if (mouse_press(180, 42, 260, 60) == 1) // 如果排序下拉菜单
 			{
-				result = drop_down_menu(180, 60, 100, 40, 6, 16, sort_menu_p, WHITE, BLACK);
+				result = drop_down_menu(180, 60, 100, 40, 6, 16, sort_menu_p, WHITE, BLACK, 0);
 				if (result >= 0 && result <= 3)
 					sort_mode = result;
 				else if (result == 4)
@@ -173,24 +177,21 @@ int main()
 					cleardevice();
 					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
 					read_dir(path, info);
-					delay(200);
 					load_all(path, info, root, srch_tar, mode);
 				}
 				else if (result == 1) // 选中
 				{
-					clrmous(MouseX, MouseY);
-					cleardevice();
 					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
-					delay(200);
+					cleardevice();
 					load_all(path, info, root, srch_tar, mode);
 				}
-				// else if (result == 0)
-				// {
-				// 	clrmous(MouseX, MouseY);
-				// 	cleardevice();
-				// 	delay(200);
-				// 	load_all(path, info, root, srch_tar, mode);
-				// }
+				else if (result == 0) // 点击空白
+				{
+					cleardevice();
+					for (int j = 0; j < INFO_LENGTH; j++)
+						set_bit(&(info + j)->flag, 7, 0); // 这里暂且这样写，等你写多选优化
+					load_all(path, info, root, srch_tar, mode);
+				}
 			}
 
 			// 左栏目录树
@@ -201,8 +202,9 @@ int main()
 					mode_shift = _1to0;
 					mode = 0;
 
-					getcwd(path, sizeof(path));
+					// getcwd(path, sizeof(path));
 					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
+					read_dir(path, info);
 					clrmous(MouseX, MouseY);
 					// cleardevice();
 					// load_all(path, info, root, srch_tar, mode);
@@ -250,14 +252,37 @@ int main()
 			// 右键处理
 			if (mouse_press(120, 70, 640, 480) == 3)
 			{
+				int tmp_x = MouseX, tmp_y = MouseY; // 记录右击时的鼠标位置
+
 				delay(200);
 				result = 0;
 
-				result = drop_down_menu(MouseX, MouseY, 85, 30, 4, 12, RB_menu_p, WHITE, BLACK);
+				result = drop_down_menu(MouseX, MouseY, 75, 25, 4, 12, RB_menu_p, WHITE, BLACK, 1);
+
 				if (result == 0) // 排序方式
 				{
 					int result_0 = -1;
-					// result_0 = drop_down_menu(MouseX, MouseY, 85, 30, 4, 16, RB_menu_p, WHITE, BLACK);
+					result_0 = drop_down_menu(tmp_x + 75, tmp_y, 75, 25, 6, 12, sort_menu_p, WHITE, BLACK, 0);
+					if (result_0 >= 0 && result_0 <= 3)
+						sort_mode = result_0;
+					else if (result_0 == 4)
+						UpOrDown = 1;
+					else if (result_0 == 5)
+						UpOrDown = -1;
+					if (result_0 != -1)
+					{
+						spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
+						clrmous(MouseX, MouseY);
+						cleardevice();
+						load_all(path, info, root, srch_tar, mode);
+						delay(200);
+					}
+					else
+					{
+						clrmous(MouseX, MouseY);
+						cleardevice();
+						load_all(path, info, root, srch_tar, mode);
+					}
 				}
 				else if (result == 1) // 撤销
 				{
@@ -267,6 +292,15 @@ int main()
 				}
 				else if (result == 3) // 属性
 				{
+					if (get_file_num(tmp_x, tmp_y, info) != -1)
+						set_bit(&(info + get_file_num(tmp_x, tmp_y, info) - 1)->flag, 7, 1);
+
+					if (is_selected(info) != 0)
+						property(NULL, info + is_selected(info) - 1);
+					else
+						property(path, NULL);
+					cleardevice();
+					load_all(path, info, root, srch_tar, mode);
 				}
 			}
 

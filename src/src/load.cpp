@@ -249,8 +249,8 @@ void clearRectangle(int x1, int y1, int x2, int y2, unsigned char color) // 清空
 	bar(x1, y1, x2, y2);
 }
 
-// 下拉菜单，原版来自杨征坷学长，此为中文版，点击选项后收起，点击外部收起，菜单增加了x方向的出画面判断（优化掉了一半代码）（改变了x,y的含义），取消record参数
-int drop_down_menu(int x, int y, int wide, int h, int n, int lettersize, char **msgs, int lightcolor, int darkcolor)
+// 下拉菜单，原版来自杨征坷学长，此为中文版，点击选项后收起，点击外部收起，菜单增加了x方向的出画面判断（优化掉了一半代码）（改变了x,y的含义），取消record参数，增加son_menu参数
+int drop_down_menu(int x, int y, int wide, int h, int n, int lettersize, char **msgs, int lightcolor, int darkcolor, int son_menu)
 {
 	int i;					 // 循环变量
 	int size;				 // 记录图像的大小
@@ -322,7 +322,8 @@ int drop_down_menu(int x, int y, int wide, int h, int n, int lettersize, char **
 				// strcpy(record, msgs[i]);
 				selected_index = i; // 记录选中的选项索引
 				clrmous(MouseX, MouseY);
-				putimage(x, y, drop_down_buffer, COPY_PUT);
+				if (son_menu == 0)
+					putimage(x, y, drop_down_buffer, COPY_PUT);
 				free(drop_down_buffer);
 				place = 2;
 				break;

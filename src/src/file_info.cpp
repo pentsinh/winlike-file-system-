@@ -70,6 +70,12 @@ void get_file_info(char *half_path, char *name, struct file_info *info) // »ñÈ¡Î
     local_time = localtime(&file_stat.st_mtime);
     strftime(formatted_time, sizeof(formatted_time), "%Y/%m/%d %H:%M", local_time); // ¸ñÊ½»¯Ê±¼ä
     strcpy(info->time, formatted_time);
+
+    // »ñÈ¡°üº¬ÏîÄ¿ÊıÁ¿
+    if (info->flag == 2) // Ä¿Â¼
+        info->sons = count_sons(info->path);
+    else
+        info->sons = -1;
 }
 
 // unsigned char get_file_type(char *filename) // »ñÈ¡ÎÄ¼şÀàĞÍ£¬´Ë´¦´«Èë¾ø¶ÔÂ·¾¶
@@ -246,5 +252,56 @@ int get_info_num(struct file_info *info)
         num++;
         i++;
     }
+    return num;
+}
+
+// »ñÈ¡µã»÷Î»ÖÃµÄÎÄ¼ş±êºÅ
+int get_file_num(int x, int y, struct file_info *info)
+{
+    int num; // infoÁ´ÖĞÓĞĞ§ÎÄ¼şÊıÁ¿
+    int j;   // Ñ­»·±äÁ¿
+    num = get_info_num(info);
+    // ²éÕÒÊó±êµã»÷µÄÇøÓòµÄÎÄ¼şĞòºÅ
+    for (j = 0; j < num; j++)
+        if (y > 90 + j * 20 && y < 90 + j * 20 + 20)
+            return j + 1;
+
+    return -1;
+}
+
+//  ÅĞ¶ÏinfoÁ´ÖĞÊÇ·ñÓĞÒÑ¾­Ñ¡ÖĞµÄÎÄ¼ş
+int is_selected(struct file_info *info)
+{
+    int i; // Ñ­»·±äÁ¿
+    for (i = 0; i < INFO_LENGTH; i++)
+        if (get_bit((info + i)->flag, 7) == 1)
+            return (info + i)->num;
+    return 0;
+}
+
+// ¼ÆËã°üº¬ÏîÄ¿ÊıÁ¿
+int count_sons(char *path)
+{
+    DIR *dir;
+    struct dirent *entry;
+    int num = 0; // ÊıÁ¿
+    int j = 0;   // Ñ­»·±äÁ¿
+    dir = opendir(path);
+    if (!dir)
+    {
+        perror("Failed to open directory");
+        return -1; // Èç¹û´ò¿ªÄ¿Â¼Ê§°Ü£¬Í£Ö¹¶ÁÈ¡
+    }
+    while ((entry = readdir(dir)) != NULL)
+    {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+            continue;
+        if (strcmp(entry->d_name, "\0") != 0)
+            num++;
+        j++;
+        if (j >= INFO_LENGTH) //***********ÔİÊ±Ö»¶ÁÈ¡10¸ö
+            break;
+    }
+    closedir(dir);
     return num;
 }

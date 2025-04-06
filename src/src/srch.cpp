@@ -23,7 +23,7 @@ int srch_input(char target[16], struct file_info *info)
         memset(info, 0, sizeof(struct file_info) * 10);
         srch("C:\\PROJECT", target, &position, info, 0); // 这里只能进行小范围搜索，大范围搜索会出现遗漏甚至找不到的情况
         // srch("C:\\", target, &position, info, 0);
-        // srch("C:\\BORLANDC", target, &position, info, 0);
+        //  srch("C:\\BORLANDC", target, &position, info, 0);
         return 2;
     }
     if (strcmp(pre_target, target) != 0) // 如果用户输入了
