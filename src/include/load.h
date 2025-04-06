@@ -59,9 +59,9 @@ void clearRectangle(int x1, int y1, int x2, int y2, unsigned char color);
 
 /************************************************
  *FUNCTION:下拉菜单
- *NOTICE:原版来自杨征坷学长，此为中文版，点击选项后收起，点击外部收起，菜单增加了x方向的出画面判断（优化掉了一半代码）（改变了x,y的含义），取消record参数
- *INPUT:菜单左上X，菜单左上Y，菜单宽度，单个选项高度，选项数量，字体大小，选项们，亮部颜色，暗部颜色
+ *NOTICE:原版来自杨征坷学长，此为中文版，点击选项后收起，点击外部收起，菜单增加了x方向的出画面判断（优化掉了一半代码）（改变了x,y的含义），取消record参数，新增son_menu参数
+ *INPUT:菜单左上X，菜单左上Y，菜单宽度，单个选项高度，选项数量，字体大小，选项们，亮部颜色，暗部颜色，是否有子菜单
  *RETURN:点击选项在msgs中的序号，未选择返回 -1
  *************************************************/
-int drop_down_menu(int x, int y, int wide, int h, int n, int lettersize, char **msgs, int lightcolor, int darkcolor);
+int drop_down_menu(int x, int y, int wide, int h, int n, int lettersize, char **msgs, int lightcolor, int darkcolor, int son_menu);
 #endif // !_LOAD_H_

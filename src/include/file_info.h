@@ -31,14 +31,13 @@ enum file
 };
 struct file_info
 {
-    int num; // 标号
-    // int is_chosen;//是否被选中
-    char name[13]; // 名称
-    // char type[16];   // 类型暂时用英文
+    int num;            // 标号从1开始
+    char name[13];      // 名称
     unsigned char flag; // 八位二进制，表示的信息参考枚举变量file
     char path[64];      // 路径**********路径暂时没有值，在做搜索时填补
     char size[16];      // 大小
     char time[32];      // 修改时间
+    int sons;           // 包含项目数量
 };
 
 /************************************************
@@ -89,5 +88,26 @@ time_t formatted_tm_to_stamp(char *formatted_time);
  *RETURN:数量
  *************************************************/
 int get_info_num(struct file_info *info);
+
+/************************************************
+ *FUNCTION:获取点击位置的文件标号
+ *INPUT:点击X，点击Y，info链
+ *RETURN:标号，返回-1表示点击位置没有文件
+ *************************************************/
+int get_file_num(int x, int y, struct file_info *info);
+
+/************************************************
+ *FUNCTION:判断info链中是否有已经选中的文件
+ *INPUT:info链
+ *RETURN:第一个被选中的文件的标号，返回0表示没有文件被选中
+ *************************************************/
+int is_selected(struct file_info *info);
+
+/************************************************
+ *FUNCTION:计算包含项目数量
+ *INPUT:文件夹绝对路径
+ *RETURN:数量
+ *************************************************/
+int count_sons(char *path);
 
 #endif // _PRO_H_
