@@ -23,6 +23,7 @@ enum // 模式切换,0为一般，1为搜索
 #include <sys/stat.h> //文件状态查询
 #include <graphics.h> //图形操作函数
 #include <bios.h>     //BIOS中断调用
+#include <MATH.H>     //数学
 
 #include "hz.h"        //汉字库
 #include "mouse.h"     //鼠标库
