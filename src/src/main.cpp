@@ -66,11 +66,16 @@ int main()
 	int result; // 用来存放函数返回值，防止多次调用
 
 	root = (struct My_filenode *)malloc(sizeof(struct My_filenode));
+
+	initgraph(&gd, &gm, "C:\\BORLANDC\\BGI"); // 初始化图形模式
+	power_on();
+	welcome();
+
 	tree_make(root, 0); // 目录树开始构建
-	printf("Ready to start!\n");
+	// printf("Ready to start!\n");
 
 	buffer = NULL;
-	initgraph(&gd, &gm, "C:\\BORLANDC\\BGI"); // 初始化图形模式
+
 	mouseinit();
 
 	if (!login()) // 登陆失败

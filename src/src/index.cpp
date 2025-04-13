@@ -38,25 +38,21 @@ void tree_make(struct My_filenode *node, int depth) // Ä¿Â¼Ê÷¹¹½¨£¬Íâ²¿µ÷ÓÃÊ±´«È
 		strcpy(path, get_node_path(node));
 	}
 	dir = opendir(path);
-	printf("Building %s\n", path);
+	// printf("Building %s\n", path);
 	if (!dir)
 	{
 		perror("Failed to open directory");
 		return; // Èç¹û´ò¿ªÄ¿Â¼Ê§°Ü£¬Í£Ö¹¶ÁÈ¡
 	}
-	printf("Build %s OK\n", path);
-	// if (depth < 3) // Ä¿Ç°Ö»ÄÜ¶ÁÈ¡µ½µÚ¶þ²ãµÄ×ÓÄ¿Â¼
-	// {
+	// printf("Build %s OK\n", path);
+	//  if (depth < 3) // Ä¿Ç°Ö»ÄÜ¶ÁÈ¡µ½µÚ¶þ²ãµÄ×ÓÄ¿Â¼
+	//  {
 	while ((entry = readdir(dir)) != NULL)
 	{
 		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
 			continue;
 
-		// printf("%s\n", entry->d_name);
-
 		char *file_path = get_file_path_node(node, entry->d_name);
-
-		// printf("%s\n", file_path);
 
 		if (!file_path)
 		{
@@ -119,7 +115,7 @@ void tree_make(struct My_filenode *node, int depth) // Ä¿Â¼Ê÷¹¹½¨£¬Íâ²¿µ÷ÓÃÊ±´«È
 	}
 	//}
 	closedir(dir);
-	printf("Build %s OK\n", path);
+	// printf("Build %s OK\n", path);
 }
 
 // »ñÈ¡½Úµã¾ø¶ÔÂ·¾¶

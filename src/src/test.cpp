@@ -1,4 +1,4 @@
-//#define TEST
+// #define TEST
 #ifdef TEST
 #include "include.h"
 //   extern time_t press_time[10];
