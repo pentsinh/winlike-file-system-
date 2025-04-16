@@ -2,6 +2,7 @@
 #define _mouse_h_
 #include <time.h>
 
+int detect_mouse(int x1, int y1, int x2, int y2);                // 检测鼠标是否在框内
 int detect_complete_click(int press, time_t current_press_time); // 是否完成完整点击，服务双击检测
 int mouse_press(int x1, int y1, int x2, int y2);                 // 如果在框中点击，则返回1；在框中未点击，则返回2；在框中右键，返回3；在框中双击，返回4；不在框中则返回0
 int mouse_press_out(int x1, int y1, int x2, int y2);             // 如果在框外点击，返回1；否则返回0

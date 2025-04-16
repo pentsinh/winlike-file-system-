@@ -23,13 +23,6 @@ void user();
 void welcome();
 
 /************************************************
- *FUNCTION:获取键盘输入（登陆专用，等待优化）
- *INPUT:无
- *RETURN:无
- *************************************************/
-void getbuffer_keybd(char *);
-
-/************************************************
  *FUNCTION:判断密码
  *INPUT:无
  *RETURN:无
@@ -37,38 +30,10 @@ void getbuffer_keybd(char *);
 void judge(char *);
 
 /************************************************
- *FUNCTION:清除键盘缓冲区
- *INPUT:无
- *RETURN:无
- *************************************************/
-void clear_keyboard_buffer();
-
-/************************************************
- *FUNCTION:// 计算三点圆弧，原版算法来自github，修改后提高了功能性但是可能降低了可移植性
- *INPUT:点1的x，点1的y，点2的x，点2的y，点3的x，点3的y，用于储存圆弧的数据的数组的头地址
- *RETURN:无
- *************************************************/
-void radius_3pts(float x1, float y1, float x2, float y2, float x3, float y3, int *circle);
-
-/************************************************
  *FUNCTION:在welcome之前的开机动画
  *INPUT:无
  *RETURN:无
  *************************************************/
 void power_on();
-
-/************************************************
- *FUNCTION:绘制4个window
- *INPUT:无
- *RETURN:无
- *************************************************/
-void draw_windows(int x, int y, int size);
-
-/************************************************
- *FUNCTION:绘制单个window
- *INPUT:无
- *RETURN:无
- *************************************************/
-void draw_window(int x, int y, int size, int color);
 
 #endif // !_LOGIN_H_
