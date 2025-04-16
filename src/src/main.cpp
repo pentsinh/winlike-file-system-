@@ -1,4 +1,4 @@
-// #define TEST
+//#define TEST
 
 #ifndef TEST
 // #include <stdio.h>
@@ -154,9 +154,18 @@ int main()
 					strcpy(srch_tar, "");
 				load_all(path, info, root, srch_tar, mode);
 			}
+			else if (mouse_press(10, 40, 180, 65) == 1) //|| mouse_press(10, 40, 500, 65) == 4)//如果点击上方功能区域
+			{
+
+				func();
+				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
+				clrmous(MouseX, MouseY);
+				cleardevice();
+				load_all(path, info, root, srch_tar, mode);
+			}
 			else if (mouse_press(180, 42, 260, 60) == 1) // 如果排序下拉菜单
 			{
-				result = drop_down_menu(180, 60, 100, 40, 6, 16, sort_menu_p, WHITE, BLACK, 0);
+				result = drop_down_menu(180, 60, 100, 40, 6, 16, sort_menu_p, WHITE, BLACK, 0, 0);
 				if (result >= 0 && result <= 3)
 					sort_mode = result;
 				else if (result == 4)
@@ -262,12 +271,12 @@ int main()
 				delay(200);
 				result = 0;
 
-				result = drop_down_menu(MouseX, MouseY, 75, 25, 4, 12, RB_menu_p, WHITE, BLACK, 1);
+				result = drop_down_menu(MouseX, MouseY, 75, 25, 4, 12, RB_menu_p, WHITE, BLACK, 0, 1);
 
 				if (result == 0) // 排序方式
 				{
 					int result_0 = -1;
-					result_0 = drop_down_menu(tmp_x + 75, tmp_y, 75, 25, 6, 12, sort_menu_p, WHITE, BLACK, 0);
+					result_0 = drop_down_menu(tmp_x + 75, tmp_y, 75, 25, 6, 12, sort_menu_p, WHITE, BLACK, 0, 0);
 					if (result_0 >= 0 && result_0 <= 3)
 						sort_mode = result_0;
 					else if (result_0 == 4)

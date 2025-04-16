@@ -12,8 +12,8 @@ void property(char *path, struct file_info *info)
     }
     else if (path != NULL && info == NULL) // 如果传入的为path
     {
-        // get_file_info()
-        return;
+        char *father_path = get_father_path(path);
+        get_file_info(father_path, path_to_name(path), &ppt);
     }
     else
     {

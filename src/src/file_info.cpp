@@ -149,6 +149,7 @@ unsigned char get_file_type_plus(char *filename) // 进一步获取文件类型
         for (i = 0; i < 16; i++)
             if (!strcmp(dot + 1, file_type_strings[i]))
                 return i;
+        return 15;
     }
     else
         return 15;
@@ -304,4 +305,60 @@ int count_sons(char *path)
     }
     closedir(dir);
     return num;
+}
+
+// 计算传入文件所在目录
+char *get_father_path(char *path)
+{
+    if (strchr(path, '\\') == NULL)
+        return path;
+    else
+    {
+        int flag = 0;           // 循环退出标志
+        int len = strlen(path); // path长度
+        int i = len - 1;        // 寻呼按变量
+        char tmp[1024];
+        strcpy(tmp, path);
+        do
+        {
+            if (tmp[i] == '\\')
+                flag = 1;
+            tmp[i] = '\0';
+            i = i - 1;
+        } while (flag != 1);
+        return tmp;
+    }
+}
+
+// 从绝对路径获取文件名
+char *path_to_name(char *path)
+{
+    char *name;
+    if (strchr(path, '\\') == NULL)
+        return path;
+    else
+    {
+        name = strchr(path, '\\') + 1;
+        return path_to_name(name);
+    }
+}
+
+// 全选
+void select_all(struct file_info *info)
+{
+    if (info == NULL)
+        return;
+    else
+        for (int i = 0; i < get_info_num(info); i++)
+            set_bit(&(info + i)->flag, 7, 1);
+}
+
+// 全不选
+void unselect_all(struct file_info *info)
+{
+    if (info == NULL)
+        return;
+    else
+        for (int i = 0; i < get_info_num(info); i++)
+            set_bit(&(info + i)->flag, 7, 0);
 }

@@ -250,7 +250,7 @@ void clearRectangle(int x1, int y1, int x2, int y2, unsigned char color) // 清空
 }
 
 // 下拉菜单，原版来自杨征坷学长，此为中文版，点击选项后收起，点击外部收起，菜单增加了x方向的出画面判断（优化掉了一半代码）（改变了x,y的含义），取消record参数，增加son_menu参数
-int drop_down_menu(int x, int y, int wide, int h, int n, int lettersize, char **msgs, int lightcolor, int darkcolor, int son_menu)
+int drop_down_menu(int x, int y, int wide, int h, int n, int lettersize, char **msgs, int lightcolor, int darkcolor, int language, int son_menu)
 {
 	int i;					 // 循环变量
 	int size;				 // 记录图像的大小
@@ -287,11 +287,14 @@ int drop_down_menu(int x, int y, int wide, int h, int n, int lettersize, char **
 	{
 		bar(x, y + i * h, x + wide, y + i * h + 5);
 	}
-	// settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
+	if (language == 1)
+		settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
 	for (i = 0; i < n; i++)
 	{
-		puthz(x + 10, y + i * h + 10, msgs[i], lettersize, 2, DARKGRAY);
-		// outtextxy(x + 10, y + i * h + 10, msgs[i]);
+		if (language == 0)
+			puthz(x + 10, y + i * h + 10, msgs[i], lettersize, 2, DARKGRAY);
+		else if (language == 1)
+			outtextxy(x + 10, y + i * h + 10, msgs[i]);
 	}
 
 	while (1)
@@ -310,10 +313,14 @@ int drop_down_menu(int x, int y, int wide, int h, int n, int lettersize, char **
 					flag = i;
 					num[i] = 1;
 					// clrmous(MouseX, MouseY);
-					//  setcolor(CYAN);
-					//  settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
-					puthz(x + 10, y + i * h + 10, msgs[i], lettersize, 2, CYAN);
-					// outtextxy(x + 10, y + i * h + 10, msgs[i]);
+					if (language == 1)
+					{
+						setcolor(CYAN);
+						settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
+						outtextxy(x + 10, y + i * h + 10, msgs[i]);
+					}
+					else if (language == 0)
+						puthz(x + 10, y + i * h + 10, msgs[i], lettersize, 2, CYAN);
 				}
 				place = 1;
 			}
@@ -331,10 +338,14 @@ int drop_down_menu(int x, int y, int wide, int h, int n, int lettersize, char **
 
 			if (flag != i && num[i] == 1)
 			{
-				// setcolor(DARKGRAY);
-				// settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
-				puthz(x + 10, y + i * h + 10, msgs[i], lettersize, 2, DARKGRAY);
-				// outtextxy(x + 10, y + i * h + 10, msgs[i]);
+				if (language == 1)
+				{
+					setcolor(DARKGRAY);
+					settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
+					outtextxy(x + 10, y + i * h + 10, msgs[i]);
+				}
+				else if (language == 0)
+					puthz(x + 10, y + i * h + 10, msgs[i], lettersize, 2, DARKGRAY);
 			}
 		}
 		if (mouse_press_out(x, y, x + wide, y + n * h + 5))
@@ -343,7 +354,7 @@ int drop_down_menu(int x, int y, int wide, int h, int n, int lettersize, char **
 			clrmous(MouseX, MouseY);
 			putimage(x, y, drop_down_buffer, COPY_PUT);
 			free(drop_down_buffer);
-			place = 2;
+			return -1;
 		}
 		if (place == 0)
 		{

@@ -103,6 +103,10 @@ int change_dir(struct file_info *info, int x, int y) // 更改目录.返回1选中，返回
 	int file_num;	   // 目标文件标号
 	char target[1024]; // 目标文件绝对路径
 
+	static time_t last_click_time = 0; // 记录上次点击时间
+	time_t current_click_time = clock();
+	time_t elapsed_ticks = current_click_time - last_click_time;
+
 	// 查找鼠标点击的区域的文件序号
 	file_num = get_file_num(x, y, info);
 	i = file_num - 1;
@@ -114,8 +118,9 @@ int change_dir(struct file_info *info, int x, int y) // 更改目录.返回1选中，返回
 		return 0;
 	}
 
-	else if (strcmp((info + i)->name, "") != 0 && get_bit((info + i)->flag, 7) == 1 && get_bit((info + i)->flag, 0) == 0 && get_bit((info + i)->flag, 1) == 1 && get_bit((info + i)->flag, 2) == 0 && get_bit((info + i)->flag, 3) == 0) // 如果点击两次文件夹，进入
+	else if (strcmp((info + i)->name, "") != 0 && get_bit((info + i)->flag, 7) == 1 && get_bit((info + i)->flag, 0) == 0 && get_bit((info + i)->flag, 1) == 1 && get_bit((info + i)->flag, 2) == 0 && get_bit((info + i)->flag, 3) == 0 && elapsed_ticks > 1 && elapsed_ticks < 12 && last_click_time != -1) // 如果点击两次文件夹，进入
 	{
+		last_click_time = -1;
 		set_bit(&(info + i)->flag, 7, 0);
 		strcpy(target, ".");
 		strcat(target, "\\");
@@ -125,6 +130,9 @@ int change_dir(struct file_info *info, int x, int y) // 更改目录.返回1选中，返回
 	}
 	else if (strcmp((info + i)->name, "") != 0 && get_bit((info + i)->flag, 7) == 0) // 如果点击一次，选中，这里等待你做多选优化
 	{
+		last_click_time = current_click_time;
+		if (is_selected(info) != 0)
+			unselect_all(info);
 		set_bit(&(info + i)->flag, 7, 1);
 
 		return 1;

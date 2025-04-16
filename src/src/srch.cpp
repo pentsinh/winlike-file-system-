@@ -11,13 +11,14 @@
 int srch_input(char target[16], struct file_info *info)
 {
     static char pre_target[16]; // 上一次循环的target
-    strcpy(pre_target, target);
-    getbuffer_keybd(target);
-    if (strchr(target, 0x0D) != NULL) // 如果按下回车
+    // strcpy(pre_target, target);
+    //  getbuffer_keybd(target, 16);
+    int result = getbuffer_keybd(target, 16);
+    if (result == 2) // 如果按下回车
     {
 
         printf("srch preparing\n");
-        *strchr(target, 0x0D) = '\0';
+        //*strchr(target, 0x0D) = '\0';
         int position = 0;
         printf("srch start\n");
         memset(info, 0, sizeof(struct file_info) * 10);
@@ -26,7 +27,7 @@ int srch_input(char target[16], struct file_info *info)
         //  srch("C:\\BORLANDC", target, &position, info, 0);
         return 2;
     }
-    if (strcmp(pre_target, target) != 0) // 如果用户输入了
+    if (result == 1) // 如果用户输入了
         return 1;
     else
         return 0;
@@ -86,17 +87,6 @@ void srch(char *path, char *target, int *position, struct file_info *info, int d
             }
         }
 
-        // if (strcmp(entry->d_name, target) == 0 && *position < 10)
-        // {
-        //     get_file_info(path, entry->d_name, info + *position);
-        //     *position++;
-        //     if (get_file_type(file_path) == 2)
-        //     {
-        //         if (depth < 5) // 限制递归深度
-        //             srch(file_path, target, position, info, depth + 1);
-        //     }
-        // }
-
         free(file_path);
     }
     printf("srch %s OK\n", path);
@@ -112,37 +102,4 @@ void srch_output(char path[1024], struct file_info *info, struct My_filenode *ro
     clearRectangle(120, 70, 640, 480, BLACK);
     load_main(info, 1);
     load_all(path, info, root, target, 1);
-}
-
-static void getbuffer_keybd(char target[16])
-{
-    union REGS regs;    // 用于读取键盘缓冲区
-    static int num = 0; // 正在输入的位置在target中的位置
-    if (bioskey(1) == 0)
-    {
-        return;
-    }
-    else if (num < 16)
-    {
-        regs.h.ah = 0x00;
-        int86(0x16, &regs, &regs); // 获取16位寄存器的后八位ASCII码
-        if (regs.h.al == 0x08)     // 退格
-        {
-            if (num != 0)
-                num -= 1;
-            target[num] = '\0';
-        }
-        else if (num < 16 - 1 && regs.h.al != 0x0D) // 最大长度为16-1
-        {
-
-            target[num] = regs.h.al;
-            num = num + 1;
-        }
-        else if (num < 16 && regs.h.al == 0x0D) // 只有回车才可以占据第16个位置
-        {
-
-            target[num] = regs.h.al;
-            // num = 0;
-        }
-    }
 }

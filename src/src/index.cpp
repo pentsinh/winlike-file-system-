@@ -10,7 +10,7 @@
 /*
 Óë×óÀ¸Ïà¹ØµÄº¯Êı
 */
-
+#define TEST
 #define MAX_DEPTH 10  // Éè¶¨×î´óµİ¹éÉî¶È
 struct dir_tree tree; // Ä¿Â¼Ê÷£¬ÓÃÓÚ¼ÓÔØ×óÀ¸£¬ÒÔ¼°Í¨¹ı×óÀ¸¿ìËÙ¶¨Î»
 
@@ -38,13 +38,17 @@ void tree_make(struct My_filenode *node, int depth) // Ä¿Â¼Ê÷¹¹½¨£¬Íâ²¿µ÷ÓÃÊ±´«È
 		strcpy(path, get_node_path(node));
 	}
 	dir = opendir(path);
-	// printf("Building %s\n", path);
+#ifdef TEST
+	printf("Building %s\n", path);
+#endif
 	if (!dir)
 	{
 		perror("Failed to open directory");
 		return; // Èç¹û´ò¿ªÄ¿Â¼Ê§°Ü£¬Í£Ö¹¶ÁÈ¡
 	}
-	// printf("Build %s OK\n", path);
+#ifdef TEST
+	printf("Build %s OK\n", path);
+#endif
 	//  if (depth < 3) // Ä¿Ç°Ö»ÄÜ¶ÁÈ¡µ½µÚ¶ş²ãµÄ×ÓÄ¿Â¼
 	//  {
 	while ((entry = readdir(dir)) != NULL)
@@ -115,7 +119,9 @@ void tree_make(struct My_filenode *node, int depth) // Ä¿Â¼Ê÷¹¹½¨£¬Íâ²¿µ÷ÓÃÊ±´«È
 	}
 	//}
 	closedir(dir);
-	// printf("Build %s OK\n", path);
+#ifdef TEST
+	printf("Build %s OK\n", path);
+#endif
 }
 
 // »ñÈ¡½Úµã¾ø¶ÔÂ·¾¶
