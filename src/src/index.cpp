@@ -221,6 +221,7 @@ char *get_file_path_node(struct My_filenode *node, char *filename)
 // 从左栏直接点击文件夹，传入root获取文件夹绝对路径****基于左栏最多展开三级目录的前提****
 char *get_file_path_left(struct My_filenode *node, int x, int y)
 {
+	x += 10; // 左栏左移10像素，修复显示出界的bug
 
 	struct My_filenode *p = node->son_list_head;
 	if (p == NULL)
@@ -312,6 +313,7 @@ int count_son_son_visible(struct My_filenode *node)
 
 int unfold(struct My_filenode *node, int x, int y) // 点击>展开（返回1）/收起（返回2）目录***这里的算法参考上面的get_file_path_left，这里不再写详细注释***
 {
+	x += 10; // 左栏左移10像素，修复显示出界的bug
 	// 计算点击位置对应的文件
 	struct My_filenode *p = node->son_list_head;
 	if (p == NULL)

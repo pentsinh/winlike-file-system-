@@ -20,6 +20,7 @@ void out_keybd(char *text, int max, int x, int y, int lettersize, int bkcolor, i
     clrmous(MouseX, MouseY);
     bar(x, y, x + lettersize * 8 * max, y + lettersize * 15);
     settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
+    setcolor(lettercolor);
     outtextxy(x, y + lettersize * 5, box);
 }
 
@@ -63,9 +64,9 @@ void draw_window(int x, int y, int size, int color)
 // 获取键盘输入，返回2表示输入完毕，返回1表示正在输入，返回0表示无效输入（未输入）
 int getbuffer_keybd(char *target, int max)
 {
-    union REGS regs;    // 用于读取键盘缓冲区
-    static int num = 0; // 正在输入的位置在target中的位置
-
+    union REGS regs;          // 用于读取键盘缓冲区
+    int num = strlen(target); // 正在输入的位置在target中的位置
+                              // printf("%d", num);
     if (bioskey(1) == 0)
     {
         return 0;
@@ -122,4 +123,114 @@ void radius_3pts(float x1, float y1, float x2, float y2, float x3, float y3, int
     circle[2] = (int)r;
     circle[3] = (int)(atan2(y - y2, x2 - x) / M_PI * 180); // 注意BC的y轴是向下的
     circle[4] = (int)(atan2(y - y1, x1 - x) / M_PI * 180);
+}
+
+// 在文本末尾光标blinblin闪烁
+void blbl(int x, int y, char *str, int size, int lightcolor, int darkcolor)
+{
+
+    static time_t blbl_lasttime = 0;
+    time_t blbl_nowtime = clock();
+    static int flag = 0; // 当前颜色
+    settextstyle(DEFAULT_FONT, HORIZ_DIR, size);
+    if (blbl_nowtime - blbl_lasttime > 2 && flag == 0)
+    {
+        flag = 1;
+        blbl_lasttime = blbl_nowtime;
+        setcolor(lightcolor);
+        // outtextxy(x + size * strlen(str) * 4, y, "|");
+        line(x + size * strlen(str) * 4, y, x + size * strlen(str) * 4, y + size * 8);
+    }
+    else if (blbl_nowtime - blbl_lasttime > 2 && flag == 1)
+    {
+        flag = 0;
+        blbl_lasttime = blbl_nowtime;
+        setcolor(darkcolor);
+        // outtextxy(x + size * strlen(str) * 4, y, "|");
+        line(x + size * strlen(str) * 4, y, x + size * strlen(str) * 4, y + size * 8);
+    }
+}
+
+// 高亮,不包括边框
+void highlight(int x1, int y1, int x2, int y2, int darkcolor, int lightcolor)
+{
+    int i, j; // 循环变量
+
+    if (x2 - x1 < 2 || y2 - y1 < 2) // 不需要高亮
+        return;
+
+    for (i = x1 + 1; i < x2; i++)
+        for (j = y1 + 1; j < y2; j++)
+            if (getpixel(i, j) == darkcolor)
+                putpixel(i, j, lightcolor);
+}
+
+// 高亮侦测（不想大改main了，就水了这么个函数）
+void highlight_detector(struct file_info *info, struct My_filenode *root)
+{
+#define CAPACITY 32
+    static int flag[CAPACITY] = {0}; // 高亮标签1:高亮;0:取消高亮
+    int i;                           // 循环变量
+
+    int pos[CAPACITY][4] = {
+        {5, 5, 25, 25},     // 0左箭头
+        {25, 5, 45, 25},    // 1右箭头
+        {45, 5, 65, 25},    // 2上箭头
+        {65, 5, 85, 25},    // 3刷新
+        {5, 37, 60, 62},    // 4新建
+        {60, 37, 85, 62},   // 5剪切
+        {85, 37, 110, 62},  // 6复制
+        {110, 37, 135, 62}, // 7粘贴
+        {135, 37, 165, 62}, // 8重命名
+        {165, 37, 190, 62}, // 9删除
+        {190, 37, 275, 62}, // 10排序
+        {275, 37, 365, 62}  // 11查看
+    };
+    int len = 12;
+    for (i = 0; i < len; i++)
+    {
+        if (detect_mouse(pos[i][0], pos[i][1], pos[i][2], pos[i][3]) == 1 && flag[i] == 0)
+        {
+            clrmous(MouseX, MouseY);
+            highlight(pos[i][0], pos[i][1], pos[i][2], pos[i][3], BLACK, DARKGRAY);
+            flag[i] = 1;
+        }
+        else if (detect_mouse(pos[i][0], pos[i][1], pos[i][2], pos[i][3]) == 0 && flag[i] == 1)
+        {
+            clrmous(MouseX, MouseY);
+            highlight(pos[i][0], pos[i][1], pos[i][2], pos[i][3], DARKGRAY, BLACK);
+            flag[i] = 0;
+        }
+    }
+
+    // 文件夹区域采用不同的高亮方式,大区域putpixel流畅度低
+    if (info == NULL)
+        return;
+    for (i = 0; i < get_info_num(info); i++)
+    {
+        pos[len + i][0] = 120;
+        pos[len + i][1] = 90 + i * 20;
+        pos[len + i][2] = 630;
+        pos[len + i][3] = 90 + i * 20 + 20;
+    }
+    for (i = len; i < len + get_info_num(info); i++)
+    {
+        if (detect_mouse(pos[i][0], pos[i][1], pos[i][2], pos[i][3]) == 1 && flag[i] == 0)
+        {
+            clrmous(MouseX, MouseY);
+            clearRectangle(pos[i][0], pos[i][1] + 1, pos[i][2], pos[i][3] - 1, DARKGRAY);
+            load_file_info(pos[i][0], pos[i][1] + 5, info + i - len);
+            flag[i] = 1;
+        }
+        else if (detect_mouse(pos[i][0], pos[i][1], pos[i][2], pos[i][3]) == 0 && flag[i] == 1)
+        {
+            clrmous(MouseX, MouseY);
+            clearRectangle(pos[i][0], pos[i][1] + 1, pos[i][2], pos[i][3] - 1, BLACK);
+            load_file_info(pos[i][0], pos[i][1] + 5, info + i - len);
+            flag[i] = 0;
+        }
+    }
+
+    if (root == NULL)
+        return;
 }

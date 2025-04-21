@@ -1,16 +1,34 @@
 #include "include.h"
-// æ˜¾ç¤ºæ–‡ä»¶ï¼ˆå¤¹ï¼‰å±žæ€§
+// ÏÔÊ¾ÎÄ¼þ£¨¼Ð£©ÊôÐÔ
 void property(char *path, struct file_info *info)
 {
-    struct file_info ppt;  // å­˜æ”¾å°†è¦æ˜¾ç¤ºçš„æ–‡ä»¶ï¼ˆå¤¹ï¼‰çš„å±žæ€§
-    int size;              // è®°å½•å›¾åƒçš„å¤§å°
-    void *property_buffer; // æš‚å­˜è¢«é®æŒ¡çš„å›¾åƒ
+    struct file_info ppt;  // ´æ·Å½«ÒªÏÔÊ¾µÄÎÄ¼þ£¨¼Ð£©µÄÊôÐÔ
+    int size;              // ¼ÇÂ¼Í¼ÏñµÄ´óÐ¡
+    void *property_buffer; // ÔÝ´æ±»ÕÚµ²µÄÍ¼Ïñ
+    char *file_type_strings[] = {
+        "THIS_PC",
+        "C_DISK",
+        "FOLD",
+        "TXT",
+        "C",
+        "CPP",
+        "H",
+        "OBJ",
+        "EXE",
+        "JPG",
+        "PNG",
+        "DOC",
+        "XLS",
+        "PPT",
+        "PDF",
+        "OTHER",
+    };
 
-    if (path == NULL && info != NULL) // å¦‚æžœä¼ å…¥çš„ä¸ºinfo
+    if (path == NULL && info != NULL) // Èç¹û´«ÈëµÄÎªinfo
     {
         ppt = *info;
     }
-    else if (path != NULL && info == NULL) // å¦‚æžœä¼ å…¥çš„ä¸ºpath
+    else if (path != NULL && info == NULL) // Èç¹û´«ÈëµÄÎªpath
     {
         char *father_path = get_father_path(path);
         get_file_info(father_path, path_to_name(path), &ppt);
@@ -18,102 +36,111 @@ void property(char *path, struct file_info *info)
     else
     {
         perror("ERROR");
-        return; // å¦‚æžœä¼ å…¥å‚æ•°ä¸ç¬¦åˆNOTICE
+        return; // Èç¹û´«Èë²ÎÊý²»·ûºÏNOTICE
     }
 
     clrmous(MouseX, MouseY);
 
-    int x1 = 210, y1 = 30, x2 = 420, y2 = 450;
+    int x1 = 210, y1 = 30, x2 = 520, y2 = 450;
+    int type = get_file_type(ppt.name);
 
-    // ä¿å­˜é®æŒ¡å›¾ç‰‡
-    size = imagesize(x1, y1, x2, y2);
-    property_buffer = malloc(size);
-    if (property_buffer != NULL)
-        getimage(x1, y1, x2, y2, property_buffer);
-    else
-    {
-        perror("ERROR IN REMEMBERING");
-        // delay(3000);
-        // exit(1);
-        // return;
-    }
-    // ç»˜åˆ¶å¼¹çª—
+    // »æÖÆµ¯´°
     setcolor(BLACK);
     settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
     rectangle(x1, y1, x2, y2);
     setfillstyle(SOLID_FILL, WHITE);
     bar(x1 + 1, y1 + 1, x2 - 1, y2 - 1);
-    // é€€å‡ºæ¡†
+    // ÍË³ö¿ò
     rectangle(x2 - 2 - 20, y1 + 2, x2, y1 + 20);
     line(x2 - 1 - 20, y1 + 1, x2 - 1, y1 + 1 + 20);
     line(x2 - 1 - 20, y1 + 1 + 20, x2 - 1, y1 + 1);
-    // æ ‡é¢˜
-    int len = strlen(ppt.name); // åç§°é•¿åº¦
+    // ±êÌâ
+    int len = strlen(ppt.name); // Ãû³Æ³¤¶È
     outtextxy(x1 + 30, y1 + 5, ppt.name);
-    // puthz(x1 + 30 + len * 5, y1 + 5, "å±žæ€§", 12, 2, BLACK);
-    //  è¿™é‡Œå¯ä»¥æ”¾ä¸€å¼ å›¾ç‰‡
-    outtextxy(x1 + 60, y1 + 50, ppt.name);
+    puthz(x1 + 30 + len * 8, y1 + 5, "ÊôÐÔ", 12, 2, BLACK);
+    //  ÕâÀï¿ÉÒÔ·ÅÒ»ÕÅÍ¼Æ¬
+    // setcolor(RED);
+    // rectangle(x1 + 10, y1 + 15, x1 + 60, y1 + 65); // 50*50
+    switch (type)
+    {
+    case 2:
+    {
+        draw_file(x1 + 10, y1 + 15, 1);
+        break;
+    }
+    }
+
+    // setfillstyle(SOLID_FILL, RED);
+    // bar(x1 + 10, y1 + 15, x1 + 60, y1 + 65);
+    // bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\fold_m.bmp", "C:\\PROJECT\\src\\Images\\DBM\\fold_m.dbm");
+    // show_dbm(x1 + 10, y1 + 15, "C:\\PROJECT\\src\\Images\\DBM\\fold_m.dbm", 0);
+    setcolor(BLACK);
+    outtextxy(x1 + 70, y1 + 50, ppt.name);
     line(x1 + 10, y1 + 80, x2 - 10, y1 + 80);
-    // ç±»åž‹
-    // puthz(x1 + 10, y1 + 120, "ç±»åž‹", 12, 2, BLACK);
-    // ä½ç½®
-    // puthz(x1 + 10, y1 + 160, "ä½ç½®", 12, 2, BLACK);
-    outtextxy(x1 + 60, y1 + 160, ppt.path);
-    // å¤§å°
-    // puthz(x1 + 10, y1 + 200, "å¤§å°", 12, 2, BLACK);
-    outtextxy(x1 + 60, y1 + 200, ppt.size);
-    // åŒ…å«
-    // puthz(x1 + 10, y1 + 240, "åŒ…å«", 12, 2, BLACK);
+    // ÀàÐÍ
+    puthz(x1 + 10, y1 + 120, "ÀàÐÍ", 12, 2, BLACK);
+    outtextxy(x1 + 70, y1 + 120, file_type_strings[type]);
+
+    // Î»ÖÃ
+    puthz(x1 + 10, y1 + 160, "Î»ÖÃ", 12, 2, BLACK);
+    outtextxy(x1 + 70, y1 + 160, ppt.path);
+    // ´óÐ¡
+    puthz(x1 + 10, y1 + 200, "´óÐ¡", 12, 2, BLACK);
+    outtextxy(x1 + 70, y1 + 200, ppt.size);
+    // °üº¬
+    puthz(x1 + 10, y1 + 240, "°üº¬", 12, 2, BLACK);
     char *sons;
     unsigned char flag = ppt.flag;
-    if (get_bit(flag, 0) * 1 + get_bit(flag, 1) * 2 + get_bit(flag, 2) * 2 * 2 + get_bit(flag, 3) * 2 * 2 * 2 == 2) // æ˜¯æ–‡ä»¶å¤¹
+    if (get_bit(flag, 0) * 1 + get_bit(flag, 1) * 2 + get_bit(flag, 2) * 2 * 2 + get_bit(flag, 3) * 2 * 2 * 2 == 2) // ÊÇÎÄ¼þ¼Ð
         itoa(ppt.sons, sons, 10);
     else
-        sons = "N\\A"; // éžæ–‡ä»¶å¤¹
-    outtextxy(x1 + 60, y1 + 240, sons);
+        sons = "N\\A"; // ·ÇÎÄ¼þ¼Ð
+    outtextxy(x1 + 70, y1 + 240, sons);
     len = strlen(sons);
-    // puthz(x1 + 30 + len * 10, y1 + 240, "ä¸ªé¡¹ç›®", 12, 2, BLACK);
-    //  ä¿®æ”¹æ—¥æœŸ
-    // puthz(x1 + 10, y1 + 280, "ä¿®æ”¹æ—¥æœŸ", 12, 2, BLACK);
-    outtextxy(x1 + 60, y1 + 280, ppt.time);
-    // ç¡®å®š
+    puthz(x1 + 30 + 50, y1 + 240, "¸öÏîÄ¿", 12, 2, BLACK);
+    //  ÐÞ¸ÄÈÕÆÚ
+    puthz(x1 + 10, y1 + 280, "ÐÞ¸ÄÈÕÆÚ", 12, 2, BLACK);
+    outtextxy(x1 + 70, y1 + 280, ppt.time);
+    // È·¶¨
     rectangle(x2 - 50, y2 - 25, x2 - 5, y2 - 5);
-    // puthz(x2 - 45, y2 - 25, "ç¡®å®š", 12, 2, BLACK);
+    puthz(x2 - 45, y2 - 25, "È·¶¨", 16, 2, BLACK);
+    // puthz(45, 25, "È·¶¨", 16, 2, YELLOW);
 
+    int flag_1 = 0; // ÍË³ö
+    int flag_2 = 0; // È·¶¨
     while (1)
     {
         newmouse(&MouseX, &MouseY, &press);
-        if (MouseX > x2 - 2 - 20 && MouseY > y1 + 2 && MouseX < x2 && MouseY < y1 + 20)
+
+        if (detect_mouse(x2 - 2 - 20, y1 + 2, x2, y1 + 20) == 1 && flag_1 == 0)
         {
             clrmous(MouseX, MouseY);
-            setfillstyle(SOLID_FILL, RED);
-            bar(x2 - 1 - 20, y1 + 1, x2 - 1, y1 + 1 + 20);
-            line(x2 - 1 - 20, y1 + 1, x2 - 1, y1 + 1 + 20);
-            line(x2 - 1 - 20, y1 + 1 + 20, x2 - 1, y1 + 1);
-            while (1)
-            {
-                newmouse(&MouseX, &MouseY, &press);
-                // result = mouse_press(610, 0, 640, 30);
-                int flag = 0; // æ˜¯å¦åœ¨æ¡†å†…ï¼Œä¸è°ƒç”¨mouse_presså› ä¸ºå®ƒçš„return=0ä¹Ÿå¯ä»¥æ˜¯æŒ‰ä¸‹é¼ æ ‡æœªå¼¹èµ·
+            highlight(x2 - 2 - 20, y1 + 2, x2, y1 + 20, WHITE, RED);
+            flag_1 = 1;
+        }
+        else if (detect_mouse(x2 - 2 - 20, y1 + 2, x2, y1 + 20) == 0 && flag_1 == 1)
+        {
+            clrmous(MouseX, MouseY);
+            highlight(x2 - 2 - 20, y1 + 2, x2, y1 + 20, RED, WHITE);
+            flag_1 = 0;
+        }
 
-                if (MouseX > x2 - 2 - 20 && MouseY > y1 + 2 && MouseX < x2 && MouseY < y1 + 20 && press == 1)
-                {
-                    clrmous(MouseX, MouseY);
-                    return;
-                }
-                if (MouseX > x2 - 2 - 20 && MouseY > y1 + 2 && MouseX < x2 && MouseY < y1 + 20)
-                    flag = 1;
-                if (flag == 0)
-                {
-                    clrmous(MouseX, MouseY);
-                    setfillstyle(SOLID_FILL, WHITE);
-                    bar(x2 - 1 - 20, y1 + 1, x2 - 1, y1 + 1 + 20);
-                    rectangle(x2 - 2 - 20, y1 + 2, x2, y1 + 20);
-                    line(x2 - 1 - 20, y1 + 1, x2 - 1, y1 + 1 + 20);
-                    line(x2 - 1 - 20, y1 + 1 + 20, x2 - 1, y1 + 1);
-                    break;
-                }
-            }
+        if (detect_mouse(x2 - 50, y2 - 25, x2 - 5, y2 - 5) == 1 && flag_2 == 0)
+        {
+            clrmous(MouseX, MouseY);
+            highlight(x2 - 50, y2 - 25, x2 - 5, y2 - 5, WHITE, LIGHTGRAY);
+            flag_2 = 1;
+        }
+        else if (detect_mouse(x2 - 50, y2 - 25, x2 - 5, y2 - 5) == 0 && flag_2 == 1)
+        {
+            clrmous(MouseX, MouseY);
+            highlight(x2 - 50, y2 - 25, x2 - 5, y2 - 5, LIGHTGRAY, WHITE);
+            flag_2 = 0;
+        }
+        if (mouse_press(x2 - 2 - 20, y1 + 2, x2, y1 + 20) == 1 || mouse_press(x2 - 50, y2 - 25, x2 - 5, y2 - 5) == 1)
+        {
+            clrmous(MouseX, MouseY);
+            return;
         }
     }
 }

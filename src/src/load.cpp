@@ -1,10 +1,10 @@
 /********加载页面********/
-
-// 把界面划分为
-// top顶栏：调整级别，当前路径
-// head上栏：各种功能按钮
-// left左栏：文件结构
-// main主栏：操作板
+// #define TEST
+//  把界面划分为
+//  top顶栏：调整级别，当前路径
+//  head上栏：各种功能按钮
+//  left左栏：文件结构
+//  main主栏：操作板
 
 // #include <graphics.h>
 // #include <conio.h>
@@ -41,26 +41,37 @@ void load_init(char path[1024], struct file_info *info, char history[HISTORY_LEN
 void load_all(char path[1024], struct file_info *info, struct My_filenode *root, char *target, int mode) // 加载界面
 {
 	load_top(path, target, mode);
+	setcolor(WHITE);
 	line(1, 35, 640, 35);
 	load_head(mode);
+	setcolor(WHITE);
 	line(1, 65, 640, 65);
 	load_left(root);
 	floodfill(121, 71, BLACK);
+	setcolor(WHITE);
 	line(105, 65, 105, 480);
 	load_main(info, mode);
 }
 
 void load_top(char path[1024], char *target, int mode) //(10,10)(630,30)
 {
-	setcolor(WHITE);
-	settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
+	// setcolor(WHITE);
+	// settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
 	// 操作
-	puthz(10, 10, "左", 16, 0, WHITE); // 前期这些符号就不去画了
-	puthz(30, 10, "右", 16, 0, WHITE);
-	puthz(50, 10, "上", 16, 0, WHITE);
-	outtextxy(70, 10, "@");
+	draw_left(10, 10);	  // 10，10，22，22
+	draw_right(30, 10);	  // 30，10，42，22
+	draw_up(50, 10);	  // 50，10，62，22
+	draw_refresh(70, 10); // 70，10，82，22
+#ifdef TEST
+	setcolor(YELLOW);
+	rectangle(5, 5, 25, 25);
+	rectangle(25, 5, 45, 25);
+	rectangle(45, 5, 65, 25);
+	rectangle(65, 5, 85, 25);
+#endif
 
 	// 路径
+	setcolor(WHITE);
 	settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
 	rectangle(90, 10, 500, 30);
 	outtextxy(92, 15, path);
@@ -73,6 +84,8 @@ void load_top(char path[1024], char *target, int mode) //(10,10)(630,30)
 		setfillstyle(SOLID_FILL, BLACK);
 		bar(540, 10, 620, 30);
 		rectangle(540, 10, 620, 30);
+		setcolor(WHITE);
+		settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
 		outtextxy(542, 12, target);
 	}
 	else if (mode == 0 && strcmp(target, "") == 0) // 一般模式，并且搜索目标为空
@@ -97,54 +110,44 @@ void load_top(char path[1024], char *target, int mode) //(10,10)(630,30)
 	line(640, 0, 620, 20);
 }
 
-// void load_head() //(10,40)(630,60)
-// {
-// 	setcolor(WHITE);
-// 	puthz(12, 42, "新建", 16, 2, WHITE);
-// 	puthz(55, 42, "剪", 16, 2, WHITE);
-// 	puthz(75, 42, "复", 16, 2, WHITE);
-// 	puthz(95, 42, "粘", 16, 2, WHITE);
-// 	puthz(115, 42, "共", 16, 2, WHITE);
-// 	puthz(135, 42, "删", 16, 2, WHITE);
-// 	puthz(155, 42, "排序", 16, 2, WHITE);
-// 	puthz(195, 42, "查看", 16, 2, WHITE);
-// 	puthz(235, 42, "…", 16, 2, WHITE);
-// }
-
 void load_head(int mode) //(10,40)(630,60)
 {
 	setcolor(WHITE);
 	// 新建
-	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\build.bmp", "C:\\PROJECT\\src\\Images\\DBM\\build.dbm");
-	show_dbm(12, 42, "C:\\PROJECT\\src\\Images\\DBM\\build.dbm", 0);
+	draw_new(10, 42); // 10，42，56，58
 	// 剪切
-	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\cut.bmp", "C:\\PROJECT\\src\\Images\\DBM\\cut.dbm");
-	show_dbm(65, 42, "C:\\PROJECT\\src\\Images\\DBM\\cut.dbm", 0);
+	draw_scissor(65, 42); // 65，42，80，57
 	// 复制
-	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\todo.bmp", "C:\\PROJECT\\src\\Images\\DBM\\todo.dbm");
-	show_dbm(90, 42, "C:\\PROJECT\\src\\Images\\DBM\\todo.dbm", 0);
+	draw_copy(90, 42); // 90，42，106，58
 	// 粘贴
-	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\paste.bmp", "C:\\PROJECT\\src\\Images\\DBM\\paste.dbm");
-	show_dbm(115, 42, "C:\\PROJECT\\src\\Images\\DBM\\paste.dbm", 0);
+	draw_paste(115, 42); // 115，42，131，60
+	//  重命名
+	draw_rename(140, 42); // 140，42，160，56
 	// 删除
-	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\delete.bmp", "C:\\PROJECT\\src\\Images\\DBM\\delete.dbm");
-	show_dbm(150, 42, "C:\\PROJECT\\src\\Images\\DBM\\delete.dbm", 0);
+	draw_trash(170, 42); // 170, 42，188，60
 	// 排序
-	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\sort.bmp", "C:\\PROJECT\\src\\Images\\DBM\\sort.dbm");
-	show_dbm(180, 42, "C:\\PROJECT\\src\\Images\\DBM\\sort.dbm", 0);
+	draw_sort(195, 42); // 195, 42，270，59.5
 	// 查看
-	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\check.bmp", "C:\\PROJECT\\src\\Images\\DBM\\check.dbm");
-	show_dbm(280, 42, "C:\\PROJECT\\src\\Images\\DBM\\check.dbm", 0);
-	// 重命名
-	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\rename.bmp", "C:\\PROJECT\\src\\Images\\DBM\\rename.dbm");
-	show_dbm(400, 42, "C:\\PROJECT\\src\\Images\\DBM\\rename.dbm", 0);
+	draw_check(280, 42); // 280，42，362.5，57
+#ifdef TEST
+	setcolor(YELLOW);
+	rectangle(5, 37, 60, 62);
+	rectangle(60, 37, 85, 62);
+	rectangle(85, 37, 110, 62);
+	rectangle(110, 37, 135, 62);
+	rectangle(135, 37, 165, 62);
+	rectangle(165, 37, 190, 62);
+	rectangle(190, 37, 275, 62);
+	rectangle(275, 37, 365, 62);
+
+#endif
 }
 
 void load_left(struct My_filenode *root) //(10,70)(100,470)
 {
 	// int i;			// 循环变量
-	int layer = 0;	// 目录的层数，设c盘问第0层
-	int pen_x = 10; // 画笔位置
+	int layer = 0; // 目录的层数，设c盘问第0层
+	int pen_x = 0; // 画笔位置
 	int pen_y = 70;
 	struct My_filenode *p;
 	setcolor(WHITE);
@@ -178,25 +181,25 @@ void load_main(struct file_info *info, int mode) //(120,70)(640,480)
 {
 	int i; // 像素
 	int j; // 文件序号
-	int k; // 循环变量
-	char *file_type_strings[] = {
-		"THIS_PC",
-		"C_DISK",
-		"FOLD",
-		"TXT",
-		"C",
-		"CPP",
-		"H",
-		"OBJ",
-		"EXE",
-		"JPG",
-		"PNG",
-		"DOC",
-		"XLS",
-		"PPT",
-		"PDF",
-		"OTHER",
-	};
+	// int k; // 循环变量
+	// char *file_type_strings[] = {
+	// 	"THIS_PC",
+	// 	"C_DISK",
+	// 	"FOLD",
+	// 	"TXT",
+	// 	"C",
+	// 	"CPP",
+	// 	"H",
+	// 	"OBJ",
+	// 	"EXE",
+	// 	"JPG",
+	// 	"PNG",
+	// 	"DOC",
+	// 	"XLS",
+	// 	"PPT",
+	// 	"PDF",
+	// 	"OTHER",
+	// };
 	settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
 
 	puthz(120, 70, "名称", 16, 2, WHITE);
@@ -216,30 +219,79 @@ void load_main(struct file_info *info, int mode) //(120,70)(640,480)
 
 	for (j = 0, i = 95; j < INFO_LENGTH && strcmp((info + j)->name, "") != 0; j++, i += 20)
 	{
-		setcolor(WHITE);
-		settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
-		outtextxy(120, i, (info + j)->name); // 名称
+		load_file_info(120, i, info + j);
+		// setcolor(WHITE);
+		// settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
+		// outtextxy(120, i, (info + j)->name); // 名称
 
-		outtextxy(240, i, (info + j)->time); // 修改日期
+		// outtextxy(240, i, (info + j)->time); // 修改日期
 
-		// 类型
-		unsigned char flag, flag_4;
-		flag = (info + j)->flag;
-		flag_4 = get_bit(flag, 0) * 1 + get_bit(flag, 1) * 2 + get_bit(flag, 2) * 2 * 2 + get_bit(flag, 3) * 2 * 2 * 2;
-		for (k = 0; k < 16; k++)
-		{ // 取前4位
+		// // 类型
+		// unsigned char flag, flag_4;
+		// flag = (info + j)->flag;
+		// flag_4 = get_bit(flag, 0) * 1 + get_bit(flag, 1) * 2 + get_bit(flag, 2) * 2 * 2 + get_bit(flag, 3) * 2 * 2 * 2;
+		// for (k = 0; k < 16; k++)
+		// { // 取前4位
 
-			if (flag_4 == k) // 此电脑
-				outtextxy(400, i, file_type_strings[k]);
-		}
-		outtextxy(540, i, (info + j)->size); // 大小
+		// 	if (flag_4 == k) // 此电脑
+		// 		outtextxy(400, i, file_type_strings[k]);
+		// }
+		// outtextxy(540, i, (info + j)->size); // 大小
 
-		// if (strcmp(chosen_name, (info + j)->name) == 0 && (info + j)->name != 0)
-		if (get_bit((info + j)->flag, 7) == 1)
-		{
-			setcolor(YELLOW);
-			rectangle(120, 90 + j * 20, 640, 90 + j * 20 + 20);
-		}
+		// // if (strcmp(chosen_name, (info + j)->name) == 0 && (info + j)->name != 0)
+		// if (get_bit((info + j)->flag, 7) == 1)
+		// {
+		// 	setcolor(YELLOW);
+		// 	rectangle(120, 90 + j * 20, 640, 90 + j * 20 + 20);
+		// }
+	}
+}
+
+// 加载一条文件
+void load_file_info(int x, int y, struct file_info *info)
+{
+	int k; // 循环变量
+	char *file_type_strings[] = {
+		"THIS_PC",
+		"C_DISK",
+		"FOLD",
+		"TXT",
+		"C",
+		"CPP",
+		"H",
+		"OBJ",
+		"EXE",
+		"JPG",
+		"PNG",
+		"DOC",
+		"XLS",
+		"PPT",
+		"PDF",
+		"OTHER",
+	};
+	setcolor(WHITE);
+	settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
+	outtextxy(120, y, info->name); // 名称
+
+	outtextxy(240, y, info->time); // 修改日期
+
+	// 类型
+	unsigned char flag, flag_4;
+	flag = info->flag;
+	flag_4 = get_bit(flag, 0) * 1 + get_bit(flag, 1) * 2 + get_bit(flag, 2) * 2 * 2 + get_bit(flag, 3) * 2 * 2 * 2;
+	for (k = 0; k < 16; k++)
+	{ // 取前4位
+
+		if (flag_4 == k) // 此电脑
+			outtextxy(400, y, file_type_strings[k]);
+	}
+	outtextxy(540, y, info->size); // 大小
+
+	// if (strcmp(chosen_name, (info + j)->name) == 0 && (info + j)->name != 0)
+	if (get_bit(info->flag, 7) == 1)
+	{
+		setcolor(YELLOW);
+		rectangle(120, y - 5, 640, y + 15);
 	}
 }
 
@@ -252,15 +304,11 @@ void clearRectangle(int x1, int y1, int x2, int y2, unsigned char color) // 清空
 // 下拉菜单，原版来自杨征坷学长，此为中文版，点击选项后收起，点击外部收起，菜单增加了x方向的出画面判断（优化掉了一半代码）（改变了x,y的含义），取消record参数，增加son_menu参数
 int drop_down_menu(int x, int y, int wide, int h, int n, int lettersize, char **msgs, int lightcolor, int darkcolor, int language, int son_menu)
 {
-	int i;					 // 循环变量
-	int size;				 // 记录图像的大小
-	void *drop_down_buffer;	 // 暂存被下拉菜单遮挡的图像
-	int flag = n + 1;		 // 记录当前高亮的选项索引
-	int place = 0;			 // 标记当前的状态
-	int num[10] = {0};		 // 记录每个选项的高亮状态
-	int selected_index = -1; // 用于存储选中的选项索引
+	int i;					   // 循环变量
+	int now_mouse_on = n + 1;  // 现在鼠标在哪
+	int last_mouse_on = n + 1; // 刚才鼠标在哪里
+	int selected_index = -1;   // 用于存储选中的选项索引
 	clrmous(MouseX, MouseY);
-	//  mouseinit();
 
 	// 调整菜单位置，使之位于屏幕内
 	if (y + n * h > 470)
@@ -268,38 +316,21 @@ int drop_down_menu(int x, int y, int wide, int h, int n, int lettersize, char **
 	if (x + wide > 630)
 		x = x - wide;
 
-	size = imagesize(x, y, x + wide, y + n * h + 5);
-	drop_down_buffer = malloc(size);
-	if (drop_down_buffer != NULL)
-		getimage(x, y, x + wide, y + n * h + 5, drop_down_buffer);
-	else
-	{
-		// perror("ERROR IN REMEMBERING");
-		// delay(3000);
-		// exit(1);
-	}
-	setfillstyle(SOLID_FILL, lightcolor);
-	bar(x, y, x + wide, y + n * h);
 	setfillstyle(SOLID_FILL, darkcolor);
-	bar(x, y, x + 5, y + n * h);
-	bar(x + wide - 5, y, x + wide, y + n * h);
-	for (i = 0; i <= n; i++)
-	{
-		bar(x, y + i * h, x + wide, y + i * h + 5);
-	}
+	bar(x, y, x + wide, y + n * h);
+	setcolor(lightcolor); // 字体颜色
 	if (language == 1)
 		settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
 	for (i = 0; i < n; i++)
 	{
 		if (language == 0)
-			puthz(x + 10, y + i * h + 10, msgs[i], lettersize, 2, DARKGRAY);
+			puthz(x + 10, y + i * h + 5, msgs[i], lettersize, 2, lightcolor);
 		else if (language == 1)
-			outtextxy(x + 10, y + i * h + 10, msgs[i]);
+			outtextxy(x + 10, y + i * h + 5, msgs[i]);
 	}
 
 	while (1)
 	{
-		place = 0;
 		newmouse(&MouseX, &MouseY, &press);
 
 		for (i = 0; i < n; i++)
@@ -307,65 +338,302 @@ int drop_down_menu(int x, int y, int wide, int h, int n, int lettersize, char **
 			int result = mouse_press(x, y + i * h, x + wide, y + (i + 1) * h); // 防止多次调用
 			if (result == 2)
 			{
-				if (flag != i)
+				now_mouse_on = i;
+				if (last_mouse_on != i) // 如果刚才鼠标不在这一条
 				{
 					MouseS = 1;
-					flag = i;
-					num[i] = 1;
-					// clrmous(MouseX, MouseY);
+					clrmous(MouseX, MouseY);
+
+					// 将这一条高亮
+					setfillstyle(SOLID_FILL, LIGHTGRAY);
+					bar(x, y + i * h, x + wide, y + (i + 1) * h);
 					if (language == 1)
 					{
-						setcolor(CYAN);
+						setcolor(lightcolor);
 						settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
-						outtextxy(x + 10, y + i * h + 10, msgs[i]);
+						outtextxy(x + 10, y + i * h + 5, msgs[i]);
 					}
 					else if (language == 0)
-						puthz(x + 10, y + i * h + 10, msgs[i], lettersize, 2, CYAN);
+						puthz(x + 10, y + i * h + 5, msgs[i], lettersize, 2, lightcolor);
 				}
-				place = 1;
 			}
-			else if (result == 1)
+			else if (result == 1) // 点击
 			{
-				// strcpy(record, msgs[i]);
 				selected_index = i; // 记录选中的选项索引
 				clrmous(MouseX, MouseY);
-				if (son_menu == 0)
-					putimage(x, y, drop_down_buffer, COPY_PUT);
-				free(drop_down_buffer);
-				place = 2;
-				break;
-			}
-
-			if (flag != i && num[i] == 1)
-			{
-				if (language == 1)
-				{
-					setcolor(DARKGRAY);
-					settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
-					outtextxy(x + 10, y + i * h + 10, msgs[i]);
-				}
-				else if (language == 0)
-					puthz(x + 10, y + i * h + 10, msgs[i], lettersize, 2, DARKGRAY);
+				MouseS = 0;
+				return selected_index;
 			}
 		}
-		if (mouse_press_out(x, y, x + wide, y + n * h + 5))
+
+		// 将刚才的取消高亮
+		if (now_mouse_on != last_mouse_on && last_mouse_on != n + 1)
+		{
+			clrmous(MouseX, MouseY);
+			setfillstyle(SOLID_FILL, darkcolor);
+			bar(x, y + last_mouse_on * h, x + wide, y + (last_mouse_on + 1) * h);
+			if (language == 1)
+			{
+				setcolor(lightcolor);
+				settextstyle(DEFAULT_FONT, HORIZ_DIR, lettersize);
+				outtextxy(x + 10, y + last_mouse_on * h + 5, msgs[last_mouse_on]);
+			}
+			else if (language == 0)
+				puthz(x + 10, y + last_mouse_on * h + 5, msgs[last_mouse_on], lettersize, 2, lightcolor);
+		}
+		last_mouse_on = now_mouse_on;
+
+		if (mouse_press_out(x, y, x + wide, y + n * h)) // 如果鼠标点击外面
 		{
 			selected_index = -1;
 			clrmous(MouseX, MouseY);
-			putimage(x, y, drop_down_buffer, COPY_PUT);
-			free(drop_down_buffer);
-			return -1;
-		}
-		if (place == 0)
-		{
 			MouseS = 0;
-			flag = n + 1;
+			return selected_index;
 		}
-		else if (place == 2)
+
+		if (detect_mouse(x, y, x + wide, y + n * h) == 0) // 如果鼠标在外面
 		{
-			break;
+			now_mouse_on = n + 1;
 		}
 	}
-	MouseS = 0;
-	return selected_index; // 返回选中的选项索引
+}
+
+void loading(void *buffer) // 加载中。。。
+{
+	int size; // 被遮挡的图像的大小
+	size = imagesize(220, 200, 420, 280);
+	buffer = malloc(size);
+	if (buffer != NULL)
+		getimage(220, 200, 420, 280, buffer);
+	else
+	{
+		// perror("ERROR IN REMEMBERING");
+		// delay(3000);
+		// exit(1);
+	}
+
+	clrmous(MouseX, MouseY);
+	setfillstyle(SOLID_FILL, LIGHTGRAY);
+	bar(220, 200, 420, 280);
+	setcolor(BLACK);
+	settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
+	outtextxy(240, 240, "loading . . .");
+}
+
+void loading_ok(void *buffer) // 加载完成
+{
+	putimage(220, 200, buffer, COPY_PUT);
+	free(buffer);
+}
+
+// 画新建46*16
+void draw_new(int x, int y)
+{
+	int size = 8;
+	setcolor(WHITE);
+	circle(x + size, y + size, size);
+	setcolor(LIGHTBLUE);
+	line(x + size, y + 1, x + size, y + 2 * size - 1);
+	line(x + 1, y + size, x + 2 * size - 1, y + size);
+	puthz(x + size * 2 + 5, y + size / 2, "新建", 12, 2, WHITE);
+	// setcolor(YELLOW);
+	// rectangle(x, y, x + size * 2 + 30, y + size * 2);
+}
+
+// 画剪切剪刀15*15
+void draw_scissor(int x, int y)
+{
+	int size = 3;
+	setcolor(WHITE);
+	line(x + size, y, x + size * 3, y + size * 3);
+	line(x + size * 4, y, x + size * 2, y + size * 3);
+	setcolor(LIGHTBLUE);
+	circle(x + size, y + size * 4, size);
+	circle(x + size * 4, y + size * 4, size);
+	// setcolor(YELLOW);
+	// rectangle(x, y, x + size * 5, y + size * 5);
+}
+
+// 画复制16*16
+void draw_copy(int x, int y)
+{
+	int size = 4;
+	setcolor(LIGHTBLUE);
+	rectangle(x + size * 1.5, y, x + size * 4, y + size * 3);
+	setcolor(WHITE);
+	line(x, y + size, x + size * 1.5, y + size);
+	line(x, y + size, x, y + size * 4);
+	line(x, y + size * 4, x + size * 2.5, y + size * 4);
+	line(x + size * 2.5, y + size * 4, x + size * 2.5, y + size * 3);
+	// setcolor(YELLOW);
+	// rectangle(x, y, x + size * 4, y + size * 4);
+}
+
+// 画粘贴16*18
+void draw_paste(int x, int y)
+{
+	int size = 4;
+	setcolor(LIGHTBLUE);
+	rectangle(x + size * 2, y + size * 1.5, x + size * 4, y + size * 4.5);
+	setcolor(WHITE);
+	rectangle(x + size * 1.5, y - size * 0.5, x + size * 2.5, y + size * 0.5);
+	line(x, y, x + size * 1.5, y);
+	line(x + size * 2.5, y, x + size * 3.5, y);
+	line(x, y, x, y + size * 4.5);
+	line(x, y + size * 4.5, x + size * 2, y + size * 4.5);
+	line(x + size * 3.5, y, x + size * 3.5, y + size * 1.5);
+	// setcolor(YELLOW);
+	// rectangle(x, y, x + size * 4, y + size * 4.5);
+}
+
+// 画重命名20*14
+void draw_rename(int x, int y)
+{
+	int size = 4;
+	setcolor(WHITE);
+	rectangle(x, y, x + size * 5, y + size * 3.5);
+	setcolor(LIGHTBLUE);
+	line(x + size * 2.5, y - size * 1, x + size * 4, y - size * 1);
+	line(x + size * 3.25, y - size * 1, x + size * 3.25, y + size * 4);
+	line(x + size * 2.5, y + size * 4, x + size * 4, y + size * 4);
+	line(x + size * 2, y + size * 1, x + size * 1, y + size * 2.5);
+	line(x + size * 2, y + size * 1, x + size * 2.5, y + size * 2.5);
+	line(x + size * 1.5, y + size * 2, x + size * 2.5, y + size * 2);
+	// setcolor(YELLOW);
+	// rectangle(x, y, x + size * 5, y + size * 3.5);
+}
+
+// 画垃圾桶18*18
+void draw_trash(int x, int y)
+{
+	int size = 4;
+	setcolor(WHITE);
+	line(x, y + size * 0.5, x + size * 4.5, y + size * 0.5);
+	line(x + size * 0.5, y + size * 0.5, x + size * 1, y + size * 4.5);
+	line(x + size * 4, y + size * 0.5, x + size * 3.5, y + size * 4.5);
+	line(x + size * 1, y + size * 4.5, x + size * 3.5, y + size * 4.5);
+	line(x + size * 1.75, y + size * 2, x + size * 1.75, y + size * 3.5);
+	line(x + size * 2.75, y + size * 2, x + size * 2.75, y + size * 3.5);
+	arc(x + size * 2.25, y + size * 0.5, 0, 180, size * 1);
+	// setcolor(YELLOW);
+	// rectangle(x, y, x + size * 4.5, y + size * 4.5);
+}
+
+// 画排序75*17.5
+void draw_sort(int x, int y)
+{
+	int size = 5;
+	setcolor(WHITE);
+	line(x + size * 1.5, y, x + size * 1.5, y + size * 3.5);
+	line(x + size * 1.5, y, x, y + size * 1.5);
+	line(x + size * 1.5, y, x + size * 3, y + size * 1.5);
+	setcolor(LIGHTBLUE);
+	line(x + size * 3.5, y, x + size * 3.5, y + size * 3.5);
+	line(x + size * 2, y + size * 2, x + size * 3.5, y + size * 3.5);
+	line(x + size * 5, y + size * 2, x + size * 3.5, y + size * 3.5);
+	puthz(x + size * 7.5, y + size / 2, "排序", 12, 2, WHITE);
+	setcolor(WHITE);
+	line(x + size * 14.5, y + size * 2, x + size * 15, y + size * 2.5);
+	line(x + size * 15.5, y + size * 2, x + size * 15, y + size * 2.5);
+	// setcolor(YELLOW);
+	// rectangle(x, y, x + size * 15, y + size * 3.5);
+}
+
+// 画查看82.5*15
+void draw_check(int x, int y)
+{
+	int size = 5;
+	setcolor(WHITE);
+	line(x, y, x + size * 5, y);
+	line(x, y + size * 1, x + size * 5, y + size * 1);
+	line(x, y + size * 2, x + size * 5, y + size * 2);
+	line(x, y + size * 3, x + size * 5, y + size * 3);
+	puthz(x + size * 7, y + size / 2, "查看", 12, 2, WHITE);
+	line(x + size * 15.5, y + size * 1, x + size * 16, y + size * 2);
+	line(x + size * 16.5, y + size * 1, x + size * 16, y + size * 2);
+	// setcolor(YELLOW);
+	// rectangle(x, y, x + size * 16.5, y + size * 3);
+}
+
+// 画左箭头12*12
+void draw_left(int x, int y)
+{
+	int size = 3;
+	setcolor(WHITE);
+	line(x, x + size * 2, y + size * 2, y);
+	line(x, y + size * 2, x + size * 4, y + size * 2);
+	line(x, y + size * 2, x + size * 2, y + size * 4);
+	// setcolor(YELLOW);
+	// rectangle(x, y, x + size * 4, y + size * 4);
+}
+
+// 画右箭头12*12
+void draw_right(int x, int y)
+{
+	int size = 3;
+	setcolor(WHITE);
+	line(x, y + size * 2, x + size * 4, y + size * 2);
+	line(x + size * 2, y, x + size * 4, y + size * 2);
+	line(x + size * 4, y + size * 2, x + size * 2, y + size * 4);
+	// setcolor(YELLOW);
+	// rectangle(x, y, x + size * 4, y + size * 4);
+}
+
+// 画上箭头12*12
+void draw_up(int x, int y)
+{
+	int size = 3;
+	setcolor(WHITE);
+	line(x + size * 2, y, x + size * 2, y + size * 4);
+	line(x + size * 2, y, x, y + size * 2);
+	line(x + size * 2, y, x + size * 4, y + size * 2);
+	// setcolor(YELLOW);
+	// rectangle(x, y, x + size * 4, y + size * 4);
+}
+
+// 画刷新12*12
+void draw_refresh(int x, int y)
+{
+	int size = 3;
+	int radius = size * 2;
+	double start = 30.0 / 180.0 * M_PI;
+	setcolor(WHITE);
+	arc(x + radius, y + radius, 30, 360, radius);
+	line(x + radius + radius * cos(start), y + radius - radius * sin(start), x + radius + radius * cos(start) - size, y + radius - radius * sin(start));
+	line(x + radius + radius * cos(start), y + radius - radius * sin(start), x + radius + radius * cos(start), y + radius - radius * sin(start) - size);
+	// setcolor(YELLOW);
+	// rectangle(x, y, x + size * 4, y + size * 4);
+}
+
+// 画文件夹
+void draw_file(int x, int y, int flag)
+{
+	int size;
+	// 0，0，20，7.5
+	// 0,7.5，50，45
+	if (flag == 0) // 小
+		size = 1.5;
+	else if (flag == 1) // 中
+		size = 5;
+	setfillstyle(SOLID_FILL, BROWN);
+	bar(x, y, x + size * 4, y + size * 1.5);
+	setfillstyle(SOLID_FILL, YELLOW);
+	bar(x, y + size * 1.5, x + size * 10, y + size * 9);
+	setcolor(BROWN);
+	line(x, y + size * 1.5, x + size * 10, y + size * 1.5);
+	line(x, y + size * 9, x + size * 10, y + size * 9);
+}
+
+
+void draw_txt(int x,int y,int flag)
+{
+	int size;
+	if (flag == 0) // 小
+		size = 1.5;
+	else if (flag == 1) // 中
+		size = 5;
+
+	// 0,0;15,0;17.5,5;17.5,22.5;1,22;1,1
+	// 3,5;11,5
+	//
 }

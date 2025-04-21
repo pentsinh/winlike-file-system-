@@ -536,6 +536,40 @@ void spinOnce(char path[1024], struct file_info *info, int mode, char history[HI
 	// printf("\n");
 }
 
+// int delete_file(char *path)
+// {
+// 	if (get_file_type(path) != 2) // 如果是文件
+// 	{
+// 		printf("removing %s\n", path);
+// 		remove(path);
+// 		return 1;
+// 	}
+// 	else // 如果是文件夹
+// 	{
+// 		DIR *dir;
+// 		struct dirent *entry;
+// 		dir = opendir(path);
+// 		if (!dir)
+// 		{
+// 			perror("Failed to open directory");
+// 			return -1; // 如果打开目录失败，停止读取
+// 		}
+// 		printf("removing %s\n", path);
+// 		while ((entry = readdir(dir)) != NULL)
+// 		{
+// 			if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+// 				continue;
+// 			// char *filepath;
+// 			char filepath[128]; // 目标文件夹中的文件（夹）
+// 			sprintf(filepath, "%s\\%s", path, entry->d_name);
+// 			delete_file(filepath);
+// 		}
+// 		closedir(dir);
+// 		rmdir(path);
+// 	}
+// 	return 1;
+// }
+
 int main()
 {
 	int gd = DETECT, gm; // 图形驱动和图形模式
@@ -596,24 +630,26 @@ int main()
 		strcpy(RB_menu_p[i], RB_menu[i]);
 	}
 	int counter = 0;
+
+	// 文件复制测试
+
+	// copy_file("C:\\PROJECT\\DEMO\\test0.txt", "C:\\PROJECT\\DEMO\\fold_1\\test0.txt");
+	// copy_paste("C:\\PROJECT", "C:\\PROJECT\\DEMO");
+	// delete_file("C:\\PROJECT\\DEMO\\PROJECT");
+
+	copy_paste("C:\\PROJECT", "C:\\DEMO");
+	// delete_file("C:\\DEMO");
 	while (1)
 	{
 		// spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
 		newmouse(&MouseX, &MouseY, &press);
 
-		if (mouse_press(70, 10, 90, 30) == 1)
+		// if (detect_mouse(70, 10, 90, 30))
+		// 	highlight(70, 10, 90, 30, BLACK, DARKGRAY);
+		// else
+		// 	highlight(70, 10, 90, 30, DARKGRAY, BLACK);
+		if (mouse_press(70, 10, 90, 30) == 1) //|| mouse_press(70, 10, 90, 30) == 4)//如果点击刷新
 		{
-
-			current_click_time = clock();
-			elapsed_ticks = current_click_time - last_click_time;
-			last_click_time = current_click_time;
-			counter++;
-		}
-		// if (mouse_press(70, 10, 90, 30) == 1) //|| mouse_press(70, 10, 90, 30) == 4)//如果点击刷新
-		if (elapsed_ticks > 1 && elapsed_ticks < 12 && current_click_time != 0 && counter >= 2)
-		{
-			elapsed_ticks = 0;
-			counter = 0;
 
 			spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
 			read_dir(path, info);
@@ -623,14 +659,92 @@ int main()
 				strcpy(srch_tar, "");
 			load_all(path, info, root, srch_tar, mode);
 		}
-		else if (detect_mouse(10, 40, 500, 65) == 4) //|| mouse_press(10, 40, 500, 65) == 4)//如果点击上方功能区域
+		else if (mouse_press(10, 40, 180, 65) == 1) //|| mouse_press(10, 40, 500, 65) == 4)//如果点击上方功能区域
 		{
 
-			func();
+			func(info);
 			spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
 			clrmous(MouseX, MouseY);
 			cleardevice();
 			load_all(path, info, root, srch_tar, mode);
+		}
+
+		else if (mouse_press(120, 70, 640, 480) == 1) // || mouse_press(120, 70, 640, 480) == 4)//如果点击文件（夹）区域
+		{
+			result = change_dir(info, MouseX, MouseY);
+			if (result == 2) //|| change_dir(info, MouseX, MouseY) == 0)//进入或无效点击
+			{
+				clrmous(MouseX, MouseY);
+				cleardevice();
+				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
+				read_dir(path, info);
+				load_all(path, info, root, srch_tar, mode);
+			}
+			else if (result == 1) // 选中
+			{
+				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
+				cleardevice();
+				load_all(path, info, root, srch_tar, mode);
+			}
+			else if (result == 0) // 点击空白
+			{
+				cleardevice();
+				for (int j = 0; j < INFO_LENGTH; j++)
+					set_bit(&(info + j)->flag, 7, 0); // 这里暂且这样写，等你写多选优化
+				load_all(path, info, root, srch_tar, mode);
+			}
+		}
+		if (mouse_press(120, 70, 640, 480) == 3)
+		{
+			int tmp_x = MouseX, tmp_y = MouseY; // 记录右击时的鼠标位置
+
+			delay(200);
+			result = 0;
+
+			result = drop_down_menu(MouseX, MouseY, 75, 25, 4, 12, RB_menu_p, WHITE, DARKGRAY, 0, 1);
+
+			if (result == 0) // 排序方式
+			{
+				int result_0 = -1;
+				result_0 = drop_down_menu(tmp_x + 75, tmp_y, 75, 25, 6, 12, sort_menu_p, WHITE, DARKGRAY, 0, 0);
+				if (result_0 >= 0 && result_0 <= 3)
+					sort_mode = result_0;
+				else if (result_0 == 4)
+					UpOrDown = 1;
+				else if (result_0 == 5)
+					UpOrDown = -1;
+				if (result_0 != -1)
+				{
+					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
+					clrmous(MouseX, MouseY);
+					cleardevice();
+					load_all(path, info, root, srch_tar, mode);
+					delay(200);
+				}
+				else
+				{
+					clrmous(MouseX, MouseY);
+					cleardevice();
+					load_all(path, info, root, srch_tar, mode);
+				}
+			}
+			else if (result == 1) // 撤销
+			{
+			}
+			else if (result == 2) // 新建
+			{
+			}
+			else if (result == 3) // 属性
+			{
+				if (get_file_num(tmp_x, tmp_y, info) != -1)
+					set_bit(&(info + get_file_num(tmp_x, tmp_y, info) - 1)->flag, 7, 1);
+				if (is_selected(info) != 0)
+					property(NULL, info + is_selected(info) - 1);
+				else
+					property(path, NULL);
+				cleardevice();
+				load_all(path, info, root, srch_tar, mode);
+			}
 		}
 
 		// 结束

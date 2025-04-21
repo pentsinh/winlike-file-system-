@@ -8,23 +8,18 @@
 #include "include.h"
 
 // 搜索
-int srch_input(char target[16], struct file_info *info)
+int srch_input(char target[16], struct file_info *info, void *buffer)
 {
     static char pre_target[16]; // 上一次循环的target
-    // strcpy(pre_target, target);
-    //  getbuffer_keybd(target, 16);
     int result = getbuffer_keybd(target, 16);
     if (result == 2) // 如果按下回车
     {
-
-        printf("srch preparing\n");
-        //*strchr(target, 0x0D) = '\0';
         int position = 0;
-        printf("srch start\n");
-        memset(info, 0, sizeof(struct file_info) * 10);
+        info_init(info);
+        loading(buffer);
         srch("C:\\PROJECT", target, &position, info, 0); // 这里只能进行小范围搜索，大范围搜索会出现遗漏甚至找不到的情况
         // srch("C:\\", target, &position, info, 0);
-        //  srch("C:\\BORLANDC", target, &position, info, 0);
+        // srch("C:\\BORLANDC", target, &position, info, 0);
         return 2;
     }
     if (result == 1) // 如果用户输入了
@@ -40,24 +35,24 @@ void srch(char *path, char *target, int *position, struct file_info *info, int d
     struct dirent *entry;
 
     dir = opendir(path);
-    printf("preparing to srch %s\n", path);
+    // printf("preparing to srch %s\n", path);
     if (!dir)
     {
         perror("Failed to open directory");
         return; // 如果打开目录失败，停止读取
     }
-    printf("start srch %s\n", path);
+    // printf("start srch %s\n", path);
 
     while ((entry = readdir(dir)) != NULL)
     {
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
             continue;
 
-        printf("checking %s : ", entry->d_name);
+        // printf("checking %s : ", entry->d_name);
 
         char *file_path = get_file_path(path, entry->d_name);
 
-        printf("%s\n", file_path);
+        // printf("%s\n", file_path);
 
         if (!file_path)
         {
@@ -70,7 +65,7 @@ void srch(char *path, char *target, int *position, struct file_info *info, int d
         {
             if (strcmp(entry->d_name, target) == 0 && (*position) < 10)
             {
-                printf("find %s\n", path);
+                // printf("find %s\n", path);
                 get_file_info(path, entry->d_name, info + (*position));
                 (*position)++;
             }
@@ -81,7 +76,7 @@ void srch(char *path, char *target, int *position, struct file_info *info, int d
         {
             if (strcmp(entry->d_name, target) == 0 && (*position) < 10)
             {
-                printf("find %s\n", path);
+                // printf("find %s\n", path);
                 get_file_info(path, entry->d_name, info + (*position));
                 (*position)++;
             }
@@ -89,7 +84,7 @@ void srch(char *path, char *target, int *position, struct file_info *info, int d
 
         free(file_path);
     }
-    printf("srch %s OK\n", path);
+    // printf("srch %s OK\n", path);
 
     closedir(dir);
 }

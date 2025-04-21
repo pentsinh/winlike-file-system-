@@ -140,3 +140,5 @@ int change_dir(struct file_info *info, int x, int y) // 更改目录.返回1选中，返回
 	else
 		return 0;
 }
+
+//int keyin_dir()

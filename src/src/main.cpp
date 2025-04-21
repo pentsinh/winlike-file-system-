@@ -1,4 +1,4 @@
-//#define TEST
+// #define TEST
 
 #ifndef TEST
 // #include <stdio.h>
@@ -12,7 +12,7 @@
 // #include <direct.h>
 #include "include.h"
 
-extern void *buffer; // 缓存
+// extern void *buffer; // 缓存
 
 struct menu
 {
@@ -54,8 +54,9 @@ int main()
 
 	int i; // 循环变量
 
-	int sort_mode = 0; // 排序方法
-	int UpOrDown = 1;  // 升序/降序
+	char src_path[1024]; // copy文件源路径
+	int sort_mode = 0;	 // 排序方法
+	int UpOrDown = 1;	 // 升序/降序
 
 	char mode = 0;			 // 主视窗显示模式，0为一般模式，1为搜索模式
 	char mode_shift = _0to0; // 模式切换
@@ -64,6 +65,8 @@ int main()
 	int choose_mode = 0; // 点击选择模式
 
 	int result; // 用来存放函数返回值，防止多次调用
+
+	void *img_buffer; // 图片缓存
 
 	root = (struct My_filenode *)malloc(sizeof(struct My_filenode));
 
@@ -74,7 +77,7 @@ int main()
 	tree_make(root, 0); // 目录树开始构建
 	// printf("Ready to start!\n");
 
-	buffer = NULL;
+	// buffer = NULL;
 
 	mouseinit();
 
@@ -83,8 +86,9 @@ int main()
 	else // 登陆成功
 	{
 		MouseS = 0;
-		cleardevice();
 		clrmous(MouseX, MouseY);
+		cleardevice();
+
 		load_init(path, info, history); // 界面初始化
 		read_dir(path, info);
 
@@ -113,8 +117,9 @@ int main()
 		{
 			// spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
 			newmouse(&MouseX, &MouseY, &press);
+			highlight_detector(info, root);
 
-			if (mouse_press(10, 10, 30, 30) == 1) //|| mouse_press(10, 10, 30, 30) == 4)//如果点击<-撤销目录操作
+			if (mouse_press(5, 5, 25, 25) == 1) //|| mouse_press(10, 10, 30, 30) == 4)//如果点击<-撤销目录操作
 			{
 				result = undo_dir(history, &now_history);
 				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
@@ -124,7 +129,7 @@ int main()
 				cleardevice();
 				load_all(path, info, root, srch_tar, mode);
 			}
-			else if (mouse_press(30, 10, 50, 30) == 1) // || mouse_press(30, 10, 50, 30) == 4)//如果点击->反撤销目录操作
+			else if (mouse_press(25, 5, 45, 25) == 1) // || mouse_press(30, 10, 50, 30) == 4)//如果点击->反撤销目录操作
 			{
 				result = anti_undo_dir(history, &now_history);
 				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
@@ -134,7 +139,7 @@ int main()
 				cleardevice();
 				load_all(path, info, root, srch_tar, mode);
 			}
-			else if (mouse_press(50, 10, 70, 30) == 1) //|| mouse_press(50, 10, 70, 30) == 4)//如果点击返回上一级目录
+			else if (mouse_press(45, 5, 65, 25) == 1) //|| mouse_press(50, 10, 70, 30) == 4)//如果点击返回上一级目录
 			{
 				result = back(path, history, &now_history);
 				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
@@ -144,7 +149,7 @@ int main()
 				cleardevice();
 				load_all(path, info, root, srch_tar, mode);
 			}
-			else if (mouse_press(70, 10, 90, 30) == 1) //|| mouse_press(70, 10, 90, 30) == 4)//如果点击刷新
+			else if (mouse_press(65, 5, 85, 25) == 1) //|| mouse_press(70, 10, 90, 30) == 4)//如果点击刷新
 			{
 				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
 				read_dir(path, info);
@@ -154,33 +159,36 @@ int main()
 					strcpy(srch_tar, "");
 				load_all(path, info, root, srch_tar, mode);
 			}
-			else if (mouse_press(10, 40, 180, 65) == 1) //|| mouse_press(10, 40, 500, 65) == 4)//如果点击上方功能区域
+			else if (detect_mouse(0, 37, 365, 62) == 1) //|| mouse_press(10, 40, 500, 65) == 4)//如果点击上方功能区域
 			{
 
-				func();
-				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
-				clrmous(MouseX, MouseY);
-				cleardevice();
-				load_all(path, info, root, srch_tar, mode);
-			}
-			else if (mouse_press(180, 42, 260, 60) == 1) // 如果排序下拉菜单
-			{
-				result = drop_down_menu(180, 60, 100, 40, 6, 16, sort_menu_p, WHITE, BLACK, 0, 0);
-				if (result >= 0 && result <= 3)
-					sort_mode = result;
-				else if (result == 4)
-					UpOrDown = 1;
-				else if (result == 5)
-					UpOrDown = -1;
-				if (result != -1)
+				if (func(info, src_path, &sort_mode, &UpOrDown, sort_menu_p) != 0)
 				{
+					read_dir(path, info);
 					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
 					clrmous(MouseX, MouseY);
 					cleardevice();
 					load_all(path, info, root, srch_tar, mode);
-					delay(200);
 				}
 			}
+			// else if (mouse_press(190, 37, 275, 62) == 1) // 如果排序下拉菜单
+			// {
+			// 	result = drop_down_menu(195, 60, 80, 25, 6, 12, sort_menu_p, WHITE, DARKGRAY, 0, 0);
+			// 	if (result >= 0 && result <= 3)
+			// 		sort_mode = result;
+			// 	else if (result == 4)
+			// 		UpOrDown = 1;
+			// 	else if (result == 5)
+			// 		UpOrDown = -1;
+			// 	if (result != -1)
+			// 	{
+			// 		spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
+			// 		clrmous(MouseX, MouseY);
+			// 		cleardevice();
+			// 		load_all(path, info, root, srch_tar, mode);
+			// 		delay(200);
+			// 	}
+			// }
 
 			else if (mouse_press(120, 70, 640, 480) == 1) // || mouse_press(120, 70, 640, 480) == 4)//如果点击文件（夹）区域
 			{
@@ -195,6 +203,7 @@ int main()
 				}
 				else if (result == 1) // 选中
 				{
+					clrmous(MouseX, MouseY);
 					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
 					cleardevice();
 					load_all(path, info, root, srch_tar, mode);
@@ -271,12 +280,12 @@ int main()
 				delay(200);
 				result = 0;
 
-				result = drop_down_menu(MouseX, MouseY, 75, 25, 4, 12, RB_menu_p, WHITE, BLACK, 0, 1);
+				result = drop_down_menu(MouseX, MouseY, 75, 25, 4, 12, RB_menu_p, WHITE, DARKGRAY, 0, 1);
 
 				if (result == 0) // 排序方式
 				{
 					int result_0 = -1;
-					result_0 = drop_down_menu(tmp_x + 75, tmp_y, 75, 25, 6, 12, sort_menu_p, WHITE, BLACK, 0, 0);
+					result_0 = drop_down_menu(tmp_x + 75, tmp_y, 75, 25, 6, 12, sort_menu_p, WHITE, DARKGRAY, 0, 0);
 					if (result_0 >= 0 && result_0 <= 3)
 						sort_mode = result_0;
 					else if (result_0 == 4)
@@ -308,7 +317,6 @@ int main()
 				{
 					if (get_file_num(tmp_x, tmp_y, info) != -1)
 						set_bit(&(info + get_file_num(tmp_x, tmp_y, info) - 1)->flag, 7, 1);
-
 					if (is_selected(info) != 0)
 						property(NULL, info + is_selected(info) - 1);
 					else
@@ -335,13 +343,16 @@ int main()
 
 			if (mode_shift == _1to1 || mode_shift == _0to1) // 如果处于搜索模式
 			{
-				result = srch_input(srch_tar, info);
+				blbl(542, 12, srch_tar, 2, WHITE, BLACK); // 输入光标闪烁
+
+				result = srch_input(srch_tar, info, img_buffer);
 				if (result == 1)
 				{
 					load_top(path, srch_tar, mode);
 				}
 				else if (result == 2)
 				{
+					loading_ok(img_buffer);
 					// strcpy(srch_tar, "");
 					mode_shift = _0to1;
 					srch_output(path, info, root, srch_tar);

@@ -45,6 +45,8 @@ int login()
 			is_entering = 0;
 		if (is_entering == 1)
 		{
+			// printf("1");
+			blbl(262, 222, password, 2, WHITE, BLUE);
 			if (mouse_press(280, 220, 360, 260) != 0)
 			{
 				MouseS = 2;
@@ -83,7 +85,6 @@ void user()
 	// settextstyle(DEFAULT_FONT, HORIZ_DIR, 2); // 设置文本样式
 	rectangle(10, 10, 630, 470);
 	puthz(308, 228, "登陆", 24, 0, WHITE);
-
 	while (!kbhit()) // 循环，直到按下键盘键
 		newmouse(&MouseX, &MouseY, &press);
 	clrmous(MouseX, MouseY);
@@ -123,7 +124,7 @@ void power_on()
 	draw_windows(315, 130, 5);
 	setcolor(WHITE);
 	settextstyle(DEFAULT_FONT, HORIZ_DIR, 6);
-	outtextxy(140, 300, "Windows");
+	outtextxy(140, 300, "Windos");
 	settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
 	outtextxy(135, 275, "HUST AIA");
 	setcolor(RED);

@@ -51,4 +51,14 @@ void end()
 
 void end_img()
 {
+    draw_windows(315, 130, 5);
+    setcolor(WHITE);
+    settextstyle(DEFAULT_FONT, HORIZ_DIR, 6);
+    outtextxy(140, 300, "Windos");
+    settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
+    outtextxy(135, 275, "HUST AIA");
+    setcolor(RED);
+    settextstyle(DEFAULT_FONT, HORIZ_DIR, 4);
+    outtextxy(455, 285, "xb");
+    delay(3000);
 }
