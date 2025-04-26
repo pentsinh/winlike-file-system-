@@ -1,6 +1,7 @@
 #ifndef _LOAD_H_
 #define _LOAD_H_
-#include "dir_pro.h"
+#include "dirpro.h"
+#include "include.h"
 /************************************************
  *FUNCTION:界面初始化
  *INPUT:当前路径，将要显示的info，操作历史
@@ -10,10 +11,10 @@ void load_init(char path[1024], struct file_info *info, char history[HISTORY_LEN
 
 /************************************************
  *FUNCTION:加载界面
- *INPUT:当前路径，将要显示的info，目录树根，搜索目标，显示模式
+ *INPUT:当前路径，将要显示的info，目录树根，搜索目标，显示模式，偏好
  *RETURN:无
  *************************************************/
-void load_all(char path[1024], struct file_info *info, struct My_filenode *root, char *target, int mode);
+void load_all(char path[1024], struct file_info *info, struct My_filenode *root, char *target, int mode, char preference[3][1024], int page);
 
 /************************************************
  *FUNCTION:加载top栏
@@ -31,10 +32,10 @@ void load_head(int mode);
 
 /************************************************
  *FUNCTION:加载left栏
- *INPUT:目录树根
+ *INPUT:目录树根，偏好
  *RETURN:无
  *************************************************/
-void load_left(struct My_filenode *root);
+void load_left(struct My_filenode *root, char preference[3][1024]);
 
 /************************************************
  *FUNCTION:加载左栏辅助函数，加载出传入地址的所有子目录
@@ -48,7 +49,7 @@ void load_left_assist(struct My_filenode *p, int layer, int pen_x, int *pen_y);
  *INPUT:将要显示的info，显示模式
  *RETURN:无
  *************************************************/
-void load_main(struct file_info *info, int mode);
+void load_main(struct file_info *info, int mode, int page);
 
 /************************************************
  *FUNCTION:加载一条文件
@@ -169,5 +170,22 @@ void draw_up(int x, int y);
  *************************************************/
 void draw_refresh(int x, int y);
 
+/************************************************
+ *FUNCTION:画各种文件（夹）
+ *INPUT:左上X，左上Y，大小（0小，1中）
+ *RETURN:无
+ *************************************************/
 void draw_file(int x, int y, int flag);
+void draw_txt(int x, int y, int flag);
+void draw_c(int x, int y, int flag);
+void draw_cpp(int x, int y, int flag);
+void draw_exe(int x, int y, int flag);
+void draw_jpg(int x, int y, int flag);
+void draw_png(int x, int y, int flag);
+void draw_doc(int x, int y, int flag);
+void draw_xls(int x, int y, int flag);
+void draw_ppt(int x, int y, int flag);
+void draw_pdf(int x, int y, int flag);
+void draw_h(int x, int y, int flag);
+void draw_obj(int x, int y, int flag);
 #endif // !_LOAD_H_

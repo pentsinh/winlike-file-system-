@@ -1,5 +1,6 @@
 #ifndef _INDEX_H_
 #define _INDEX_H_
+#include "include.h"
 // 目录树结构体
 struct dir_tree
 {
@@ -19,8 +20,6 @@ struct My_filenode
 	struct My_filenode *father;		   // 同一条链用同一个父节点（为了做返回上一级功能）
 	struct My_filenode *son_list_head; // 一个父节点拥有子链的头节点地址
 };
-
-// void tree_make(struct dir_tree* tree,int depth);//构建目录树
 
 /************************************************
  *FUNCTION:目录树构建

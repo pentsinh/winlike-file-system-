@@ -1,6 +1,6 @@
 #ifndef _LOGIN_H_
 #define _LOGIN_H_
-
+#include "include.h"
 /************************************************
  *FUNCTION:登陆
  *INPUT:无

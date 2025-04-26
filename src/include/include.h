@@ -25,21 +25,22 @@ enum // 模式切换,0为一般，1为搜索
 #include <bios.h>     //BIOS中断调用
 #include <MATH.H>     //数学
 
-#include "hz.h"        //汉字库
-#include "mouse.h"     //鼠标库
-#include "login.h"     //登陆
-#include "load.h"      //加载页面
-#include "bit_pro.h"   //按位操作
-#include "dir_pro.h"   //目录操作
-#include "file_info.h" //文件操作
-#include "srch.h"      //搜索
-#include "index.h"     //目录树
-#include "sort.h"      //排序
-#include <IMAGE.h>     //贴图
-#include "exit.h"      //退出
-#include "property.h"  //属性查看
-#include "func.h"      //功能
-#include "inter.h"     //用户交互
-#include "copa.h"      //文件操作
+#include "hz.h"       //汉字库
+#include "mouse.h"    //鼠标库
+#include "mscontrb.h" //鼠标库扩展
+#include "login.h"    //登陆
+#include "load.h"     //加载页面
+#include "bitpro.h"  //按位操作
+#include "dirpro.h"  //目录操作
+#include "finfo.h"    //文件操作
+#include "srch.h"     //搜索
+#include "index.h"    //目录树
+#include "sort.h"     //排序
+#include "img.h"    //贴图
+#include "exit.h"     //退出
+#include "prpty.h" //属性查看
+#include "func.h"     //功能
+#include "inter.h"    //用户交互
+#include "copa.h"     //文件操作
 
 #endif

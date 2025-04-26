@@ -1,5 +1,6 @@
 #ifndef _INTERACTION_H_
 #define _INTERACTION_H_
+#include "include.h"
 /************************************************
  *FUNCTION:清除键盘缓冲区
  *INPUT:无
@@ -62,4 +63,13 @@ void highlight(int x1, int y1, int x2, int y2, int darkcolor, int lightcolor);
  *RETURN:无
  *************************************************/
 void highlight_detector(struct file_info *info, struct My_filenode *root);
+
+/************************************************
+ *FUNCTION:绘制警告
+ *INPUT:警告内容（中文）
+ *RETURN:无
+ *************************************************/
+void warn(char *str);
+
+void get_preference(char history[HISTORY_LENGTH][1024], char preference[3][1024]);
 #endif

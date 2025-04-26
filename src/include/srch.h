@@ -1,6 +1,6 @@
 #ifndef _SRCH_H_
 #define _SRCH_H_
-
+#include "include.h"
 /************************************************
  *FUNCTION:搜索模式下，从键盘读取输入
  *INPUT:搜索目标，用于存放搜索结果的info，用于指向被loading遮挡图像的指针
