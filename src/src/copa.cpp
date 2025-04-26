@@ -1,17 +1,4 @@
 #include "include.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <direct.h>
-#include <sys/stat.h>
-#include <io.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <dir.h>
-#include <dos.h>
-#include <time.h>
-#include <sys/stat.h>
 
 int copy_file(char *source_path, char *dest_path) // 复制粘贴文件
 {
@@ -109,7 +96,7 @@ int rm_file(char *file_path)
 {
   if (remove(file_path) == 0)
   {
-    printf("file %s del success\n", file_path);
+    // printf("file %s del success\n", file_path);
     return 1;
   }
   else
@@ -122,36 +109,47 @@ int rm_file(char *file_path)
 int rm_dir(char *dir_path)
 {
   char *file_path = dir_path;
-  struct dirent *entry;
-  DIR *dir = opendir(dir_path);
-  if (!dir)
-  {
-    perror("无法打开目录");
-    return 0;
-  }
 
-  // 逐个删除文件夹里的文件
-  while ((entry = readdir(dir)) != NULL)
-
+  if (get_file_type(dir_path) != 2) // 如果是文件
   {
-    if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
-    {
-      continue;
-    }
-    char *new_path = get_file_path(file_path, (entry->d_name));
-    unsigned char type = get_file_type(entry->d_name);
-    if (type == FOLD)
-    {
-      rm_dir(new_path);
-    }
-    else
-    {
-      rm_file(new_path);
-    }
-    free(new_path);
+    // printf("removing %s\n", dir_path);
+    remove(dir_path);
+    return 1;
   }
-  closedir(dir);
-  // 删除空目录
-  rmdir(dir_path);
+  else // 如果是文件夹
+  {
+    struct dirent *entry;
+    DIR *dir = opendir(dir_path);
+
+    if (!dir)
+    {
+      perror("unable to open dir");
+      return 0;
+    }
+    // 逐个删除文件夹里的文件
+
+    while ((entry = readdir(dir)) != NULL)
+
+    {
+      if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+      {
+        continue;
+      }
+      char *new_path = get_file_path(file_path, (entry->d_name));
+      unsigned char type = get_file_type(entry->d_name);
+      if (type == FOLD)
+      {
+        rm_dir(new_path);
+      }
+      else
+      {
+        rm_file(new_path);
+      }
+      free(new_path);
+    }
+    closedir(dir);
+    // 删除空目录
+    rmdir(dir_path);
+  }
   return 1;
 }

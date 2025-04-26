@@ -1,10 +1,3 @@
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <graphics.h>
-// #include <dos.h>
-// #include <conio.h>
-// #include <bios.h>
-// #include <string.h>
 #include "include.h"
 
 // 搜索
@@ -17,9 +10,9 @@ int srch_input(char target[16], struct file_info *info, void *buffer)
         int position = 0;
         info_init(info);
         loading(buffer);
-        srch("C:\\PROJECT", target, &position, info, 0); // 这里只能进行小范围搜索，大范围搜索会出现遗漏甚至找不到的情况
-        // srch("C:\\", target, &position, info, 0);
-        // srch("C:\\BORLANDC", target, &position, info, 0);
+        // srch("C:\\PROJECT", target, &position, info, 0); // 虚拟环境只能进行小范围搜索，大范围搜索会出现遗漏甚至找不到的情况
+        srch("C:\\", target, &position, info, 0); // 上机改为这个
+
         return 2;
     }
     if (result == 1) // 如果用户输入了
@@ -95,6 +88,6 @@ void srch_output(char path[1024], struct file_info *info, struct My_filenode *ro
     setcolor(WHITE);
     settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
     clearRectangle(120, 70, 640, 480, BLACK);
-    load_main(info, 1);
-    load_all(path, info, root, target, 1);
+    load_main(info, 1, 0);
+    load_all(path, info, root, target, 1, NULL, 0);
 }

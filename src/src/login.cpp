@@ -1,53 +1,48 @@
-// #include <graphics.h>
-// #include <dos.h>
-// #include <conio.h>
-// #include <bios.h>
-// #include <string.h>
-// #include <stdio.h>
-
 #include "include.h"
 
 #define MAX_LENGTH 10
 #define PASSWORD "123456"
 
-int is_right = 0;					  // 是否允许登陆
-char password[MAX_LENGTH + 1] = "\0"; // 存放用户输入的密码
-int i = -1;							  // 表示当前输入的密码在password中的位置,采用先移位再录入，所以i初始化为-1
+int is_right = 0;					// 是否允许登陆
+char password[MAX_LENGTH + 1] = ""; // 存放用户输入的密码
+int i = -1;							// 表示当前输入的密码在password中的位置,采用先移位再录入，所以i初始化为-1
 
 // 登陆界面的绘制，调用其他登陆相关函数
 int login()
 {
 
-	int is_entering = 0; // 是否正在输入
+	int is_entering = 1; // 是否正在输入
 
 	union REGS regs; // 用于读取键盘缓冲区
 
 	user();
 
-	setbkcolor(BLUE);
-	setcolor(YELLOW); // 设置文本颜色为黄色
-	settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
+	// setbkcolor(BLUE);
 
-	puthz(308, 200, "用户", 12, 10, WHITE);
-	rectangle(260, 220, 380, 240);
+	// puthz(308, 200, "用户", 12, 10, WHITE);
+	settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
+	clearRectangle(280, 268, 360, 292, WHITE);
+	setcolor(BLACK);
+	rectangle(280, 268, 360, 292);
+	clear_keyboard_buffer();
 
 	while (1)
 	{
 		newmouse(&MouseX, &MouseY, &press);
 		// outtextxy(280, 220, password);
 
-		if (mouse_press(280, 220, 360, 260) == 1)
+		if (detect_m(280, 268, 360, 292) == 1 && press == 1)
 		{
 			is_entering = 1;
 			clear_keyboard_buffer();
 		}
-		if (mouse_press(0, 0, 640, 220) == 1 || mouse_press(0, 220, 280, 260) == 1 || mouse_press(360, 220, 640, 260) == 1 || mouse_press(0, 260, 640, 480) == 1)
+		if (mouse_press_out(280, 268, 360, 292) == 1)
 			is_entering = 0;
 		if (is_entering == 1)
 		{
 			// printf("1");
-			blbl(262, 222, password, 2, WHITE, BLUE);
-			if (mouse_press(280, 220, 360, 260) != 0)
+			blbl(282, 274, password, 2, BLACK, WHITE);
+			if (detect_m(280, 268, 360, 292) == 1)
 			{
 				MouseS = 2;
 				newmouse(&MouseX, &MouseY, &press);
@@ -61,7 +56,7 @@ int login()
 			int result = getbuffer_keybd(password, 10);
 			if (result == 1)
 			{
-				out_keybd(password, 10, 262, 222, 1, BLUE, WHITE);
+				out_keybd(password, 10, 282, 274, 1, WHITE, BLACK);
 			}
 			else if (result == 2)
 			{
@@ -80,15 +75,16 @@ int login()
 void user()
 {
 	cleardevice();
-	setbkcolor(BLUE);
-	setcolor(YELLOW); // 设置文本颜色为黄色
-	// settextstyle(DEFAULT_FONT, HORIZ_DIR, 2); // 设置文本样式
-	rectangle(10, 10, 630, 470);
-	puthz(308, 228, "登陆", 24, 0, WHITE);
+	setbkcolor(BLACK);
+	// setcolor(YELLOW); // 设置文本颜色为黄色
+	// rectangle(10, 10, 630, 470);
+	// puthz(308, 228, "登陆", 24, 0, WHITE);
+	bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\login_1.bmp", "C:\\PROJECT\\src\\Images\\DBM\\login_1.dbm");
+	show_dbm(8, 0, "C:\\PROJECT\\src\\Images\\DBM\\login_1.dbm", 0);
 	while (!kbhit()) // 循环，直到按下键盘键
 		newmouse(&MouseX, &MouseY, &press);
 	clrmous(MouseX, MouseY);
-	cleardevice();
+	// cleardevice();
 }
 
 void welcome()

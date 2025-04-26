@@ -504,10 +504,10 @@
 // #include <direct.h>
 #include "include.h"
 
-extern void *buffer;		// 缓存
-time_t last_click_time = 0; // 记录上次点击时间
-time_t current_click_time = 0;
-time_t elapsed_ticks;
+extern void *buffer; // 缓存
+// time_t last_click_time = 0; // 记录上次点击时间
+// time_t current_click_time = 0;
+// time_t elapsed_ticks;
 struct menu
 {
 	char *option;
@@ -593,6 +593,8 @@ int main()
 
 	int result; // 用来存放函数返回值，防止多次调用
 
+	char *src_path;
+
 	root = (struct My_filenode *)malloc(sizeof(struct My_filenode));
 
 	initgraph(&gd, &gm, "C:\\BORLANDC\\BGI"); // 初始化图形模式
@@ -637,8 +639,8 @@ int main()
 	// copy_paste("C:\\PROJECT", "C:\\PROJECT\\DEMO");
 	// delete_file("C:\\PROJECT\\DEMO\\PROJECT");
 
-	copy_paste("C:\\PROJECT", "C:\\DEMO");
-	// delete_file("C:\\DEMO");
+	// copy_paste("C:\\PROJECT", "C:\\DEMO");
+	//  delete_file("C:\\DEMO");
 	while (1)
 	{
 		// spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
@@ -659,10 +661,10 @@ int main()
 				strcpy(srch_tar, "");
 			load_all(path, info, root, srch_tar, mode);
 		}
-		else if (mouse_press(10, 40, 180, 65) == 1) //|| mouse_press(10, 40, 500, 65) == 4)//如果点击上方功能区域
+		else if (detect_m(10, 40, 180, 65) == 1) //|| mouse_press(10, 40, 500, 65) == 4)//如果点击上方功能区域
 		{
 
-			func(info);
+			func(info, src_path, &sort_mode, &UpOrDown, sort_menu_p);
 			spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
 			clrmous(MouseX, MouseY);
 			cleardevice();

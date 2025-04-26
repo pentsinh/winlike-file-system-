@@ -1,28 +1,19 @@
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <dirent.h>
-// #include <direct.h>
-// #include <string.h>
-// #include <graphics.h>
 #include "include.h"
-// #include "index.h"
-// #include "bit_pro.h"
 /*
 Óë×óÀ¸Ïà¹ØµÄº¯Êı
 */
-#define TEST
-#define MAX_DEPTH 10  // Éè¶¨×î´óµİ¹éÉî¶È
-struct dir_tree tree; // Ä¿Â¼Ê÷£¬ÓÃÓÚ¼ÓÔØ×óÀ¸£¬ÒÔ¼°Í¨¹ı×óÀ¸¿ìËÙ¶¨Î»
+// #define TEST
 
+/********´Ëº¯ÊıÔÚÔ­ÉúÏµÍ³ÖĞÅÜ²»ÁË
 void tree_make(struct My_filenode *node, int depth) // Ä¿Â¼Ê÷¹¹½¨£¬Íâ²¿µ÷ÓÃÊ±´«Èë¸ùÄ¿Â¼
 {
 	DIR *dir;
 	struct dirent *entry;
 	struct My_filenode *p; // ÕıÔÚ¹¹½¨µÄÉÏÒ»¸ö×ÓÄ¿Â¼
 	char *path;			   // µ±Ç°½Úµã¾ø¶ÔÂ·¾¶
+	int num;			   // ÎÄ¼şÊıÁ¿
 	if (depth == 0)
 	{
-
 		node->flag = 0;
 		set_bit(&node->flag, 0, 1);
 		set_bit(&node->flag, 4, 1);
@@ -53,17 +44,16 @@ void tree_make(struct My_filenode *node, int depth) // Ä¿Â¼Ê÷¹¹½¨£¬Íâ²¿µ÷ÓÃÊ±´«È
 	//  {
 	while ((entry = readdir(dir)) != NULL)
 	{
+		// if (num++ > 16)
+		// 	break;
 		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
 			continue;
-
 		char *file_path = get_file_path_node(node, entry->d_name);
-
 		if (!file_path)
 		{
 			closedir(dir);
 			return;
 		}
-
 		if (get_file_type(file_path) == 2) // Èç¹ûÊÇÄ¿Â¼
 		{
 			if (node->son_list_head == NULL) // ×ÓÄ¿Â¼Í·½Úµã
@@ -78,6 +68,7 @@ void tree_make(struct My_filenode *node, int depth) // Ä¿Â¼Ê÷¹¹½¨£¬Íâ²¿µ÷ÓÃÊ±´«È
 				}
 				// ½Úµã³õÊ¼»¯
 				strcpy(node->son_list_head->name, entry->d_name);
+				// strcpy(node->son_list_head->name, "name");
 				node->son_list_head->father = node;
 				node->son_list_head->next = NULL;
 				node->son_list_head->son_list_head = NULL;
@@ -85,7 +76,6 @@ void tree_make(struct My_filenode *node, int depth) // Ä¿Â¼Ê÷¹¹½¨£¬Íâ²¿µ÷ÓÃÊ±´«È
 				set_bit(&node->son_list_head->flag, 5, 1);	   // ±ê¼ÇÎ»Í·½Úµã
 				if (depth == 0)								   // µÚÒ»¼¶Ä¿Â¼Ä¬ÈÏ¿É¼û
 					set_bit(&node->son_list_head->flag, 4, 1); // Õ¹¿ª
-
 				p = node->son_list_head;
 				if (depth < 2) // ÏŞÖÆµİ¹éÉî¶È
 					tree_make(p, depth + 1);
@@ -102,6 +92,7 @@ void tree_make(struct My_filenode *node, int depth) // Ä¿Â¼Ê÷¹¹½¨£¬Íâ²¿µ÷ÓÃÊ±´«È
 				}
 				// ½Úµã³õÊ¼»¯
 				strcpy(p->next->name, entry->d_name);
+				// strcpy(p->next->name, "name");
 				p->next->father = node;
 				p->next->next = NULL;
 				p->next->son_list_head = NULL;
@@ -109,7 +100,6 @@ void tree_make(struct My_filenode *node, int depth) // Ä¿Â¼Ê÷¹¹½¨£¬Íâ²¿µ÷ÓÃÊ±´«È
 				set_bit(&p->next->flag, 5, 0);	   // ·ÇÍ·½Úµã
 				if (depth == 0)					   // µÚÒ»¼¶Ä¿Â¼Ä¬ÈÏ¿É¼û
 					set_bit(&p->next->flag, 4, 1); // Õ¹¿ª
-
 				p = p->next;
 				if (depth < 2) // ÏŞÖÆµİ¹éÉî¶È
 					tree_make(p, depth + 1);
@@ -120,22 +110,123 @@ void tree_make(struct My_filenode *node, int depth) // Ä¿Â¼Ê÷¹¹½¨£¬Íâ²¿µ÷ÓÃÊ±´«È
 	//}
 	closedir(dir);
 #ifdef TEST
-	printf("Build %s OK\n", path);
+	printf("Build %s OK\n", node->name);
 #endif
+}*/
+
+void tree_make(struct My_filenode *node, int depth) // Ä¿Â¼Ê÷¹¹½¨£¬Íâ²¿µ÷ÓÃÊ±´«Èë¸ùÄ¿Â¼
+{
+	// DIR *dir;
+	struct ffblk ff;
+	// struct dirent *entry;
+	struct My_filenode *p; // ÕıÔÚ¹¹½¨µÄÉÏÒ»¸ö×ÓÄ¿Â¼
+	char *path;			   // µ±Ç°½Úµã¾ø¶ÔÂ·¾¶
+	int num;			   // ÎÄ¼şÊıÁ¿
+	if (depth == 0)
+	{
+
+		node->flag = 0;
+		set_bit(&node->flag, 0, 1);
+		set_bit(&node->flag, 4, 1);
+		strcpy(node->name, "C:\\");
+		path = (char *)malloc(sizeof(char) * (strlen("C:\\") + 1));
+		strcpy(path, "C:\\");
+		// strcpy(node->name, "C:\\PROJECT");
+		// path = (char *)malloc(sizeof(char) * (strlen("C:\\PROJECT") + 1));
+		// strcpy(path, "C:\\PROJECT");
+	}
+	else
+	{
+		// ÏŞÖÆÄ¿Â¼²ãÊı×î¶àµ½C:\file\file
+		if (depth == 1)
+		{
+			path = (char *)malloc(sizeof(char) * (strlen("C:\\") + strlen(node->name)));
+			sprintf(path, "%s%s", "C:\\", node->name);
+		}
+		if (depth == 2)
+		{
+			path = (char *)malloc(sizeof(char) * (strlen("C:\\") + strlen(node->father->name) + strlen("\\") + strlen(node->name)));
+			sprintf(path, "%s%s\\%s", "C:\\", node->father->name, node->name);
+		}
+	}
+	// printf("depth=%d", depth);
+	// printf("now path = %s", path);
+	chdir(path);
+	free(path);
+
+	// ======Í·½Úµã======
+	findfirst("*.*", &ff, FA_DIREC);
+	while (findnext(&ff) == 0)
+	{
+		if ((ff.ff_attrib & FA_DIREC) && strcmp(ff.ff_name, "..") != 0 && strcmp(ff.ff_name, ".") != 0) // Èç¹ûÊÇÎÄ¼ş¼Ğ
+		{
+			// printf("head = %s", ff.ff_name);
+			node->son_list_head = (struct My_filenode *)malloc(sizeof(struct My_filenode));
+			// ½Úµã³õÊ¼»¯
+			strcpy(node->son_list_head->name, ff.ff_name);
+			node->son_list_head->father = node;
+			node->son_list_head->next = NULL;
+			node->son_list_head->son_list_head = NULL;
+			node->son_list_head->flag = 0;
+			set_bit(&node->son_list_head->flag, 5, 1);	   // ±ê¼ÇÎ»Í·½Úµã
+			if (depth == 0)								   // µÚÒ»¼¶Ä¿Â¼Ä¬ÈÏ¿É¼û
+				set_bit(&node->son_list_head->flag, 4, 1); // Õ¹¿ª
+			p = node->son_list_head;
+			if (depth < 2)
+				tree_make(p, depth + 1);
+			break;
+		}
+	}
+
+	// ======·ÇÍ·½Úµã======
+	findfirst("*.*", &ff, FA_DIREC);
+	while (findnext(&ff) == 0)
+	{
+		if ((ff.ff_attrib & FA_DIREC) && strcmp(ff.ff_name, "..") != 0 && strcmp(ff.ff_name, ".") != 0 && strcmp(ff.ff_name, p->name) != 0) // Èç¹ûÊÇÎÄ¼ş¼Ğ
+		{
+			// printf("next = %s", ff.ff_name);
+			p->next = (struct My_filenode *)malloc(sizeof(struct My_filenode));
+			// ½Úµã³õÊ¼»¯
+			strcpy(p->next->name, ff.ff_name);
+			p->next->father = node;
+			p->next->next = NULL;
+			p->next->son_list_head = NULL;
+			p->next->flag = 0;
+			set_bit(&p->next->flag, 5, 0);	   // ±ê¼Ç·ÇÍ·½Úµã
+			if (depth == 0)					   // µÚÒ»¼¶Ä¿Â¼Ä¬ÈÏ¿É¼û
+				set_bit(&p->next->flag, 4, 1); // Õ¹¿ª
+			p = p->next;
+			if (depth < 2)
+				tree_make(p, depth + 1);
+		}
+	}
+
+	// »Øµ½½ÚµãÂ·¾¶
+	if (depth == 1)
+	{
+		path = (char *)malloc(sizeof(char) * strlen("C:\\"));
+		sprintf(path, "%s", "C:\\");
+	}
+	else if (depth == 2)
+	{
+		path = (char *)malloc(sizeof(char) * (strlen("C:\\") + strlen(node->father->name)));
+		sprintf(path, "%s%s", "C:\\", node->father->name);
+	}
+	chdir(path);
+	// printf("depth=%d", depth);
+	// printf("back path = %s", path);
 }
 
 // »ñÈ¡½Úµã¾ø¶ÔÂ·¾¶
 char *get_node_path(struct My_filenode *node)
 {
-	// printf("1\n");
+
 	if (node == NULL)
 		return NULL;
-	// printf("2\n");
 	//  Èç¹ûÊÇ¸ù½Úµã£¬Ö±½Ó·µ»ØÆäÃû³Æ
 	if (node->father == NULL)
 	{
 		char *path = (char *)malloc(strlen(node->name) + 1);
-		// printf("3\n");
 		if (path == NULL)
 			return NULL;
 		strcpy(path, node->name);
@@ -156,25 +247,20 @@ char *get_node_path(struct My_filenode *node)
 			// Èç¹û¸¸Â·¾¶ÒÔ·´Ğ±¸Ü½áÎ²£¬ÔòÈ¥µô×îºóÒ»¸ö×Ö·û
 			father_path[father_path_len - 1] = '\0';
 		}
-
 		// ¼ÆËãËùĞèÄÚ´æ´óĞ¡
 		size_t len = strlen(father_path) + strlen(node->name) + 2; // +2 ÊÇÎªÁË·Ö¸ô·ûºÍ×Ö·û´®½áÊø·û
 		char *path = (char *)malloc(len);
-		// printf("5\n");
 		if (path == NULL)
 		{
 			free(father_path);
 			return NULL;
 		}
-
 		// Æ´½ÓÂ·¾¶
 		sprintf(path, "%s\\%s", father_path, node->name);
 		if (path[0] == '\\')
 			strcpy(path, path + 1);
-
 		// ÊÍ·Å¸¸½ÚµãÂ·¾¶µÄÄÚ´æ
 		free(father_path);
-
 		return path;
 	}
 }
@@ -229,6 +315,7 @@ char *get_file_path_left(struct My_filenode *node, int x, int y)
 	// ¼ÆËãµã»÷Î»ÖÃ¶ÔÓ¦µÄÎÄ¼ş
 	int row;										  // µã»÷Î»ÖÃÎªµÚ¼¸ĞĞ£¬***Ö®ºó½«²ÎÓëÔËËã***
 	int i;											  // yÖáÏñËØ
+	char result[1024];								  // ·µ»ØÖµ
 	for (i = 80, row = 1; i < 480; i += 10, row += 1) // µÚÒ»Ìõ´Óy=80¿ªÊ¼
 	{
 		if (y > i && y < i + 10)
@@ -239,7 +326,12 @@ char *get_file_path_left(struct My_filenode *node, int x, int y)
 		if (count_son_son_visible(p) + 1 >= row && x > 30) // ´ÓÒ»¼¶Ä¿Â¼¼ÆÊı
 		{
 			if (row == 1) // Ò»¼¶Ä¿Â¼Î´Õ¹¿ª
-				return get_file_path_node(p->father, p->name);
+			// return get_file_path_node(p->father, p->name);
+			{
+				sprintf(result, "%s%s", "C:\\", p->name);
+				return result;
+			}
+
 			else
 			{
 				p = p->son_list_head;
@@ -249,7 +341,11 @@ char *get_file_path_left(struct My_filenode *node, int x, int y)
 					if (count_son_visible(p) + 1 >= row && x > 40)
 					{
 						if (row == 1) // Èç¹û¸Ã¶ş¼¶Ä¿Â¼Î´Õ¹¿ª
-							return get_file_path_node(p->father, p->name);
+						// return get_file_path_node(p->father, p->name);
+						{
+							sprintf(result, "%s%s\\%s", "C:\\", p->father->name, p->name);
+							return result;
+						}
 
 						else
 						{
@@ -258,7 +354,11 @@ char *get_file_path_left(struct My_filenode *node, int x, int y)
 							for (i = 1; p->next != NULL; i++) // 20Îª·ÀÖ¹ËÀÑ­»·µÄÈÎÒâÁ¿
 							{
 								if (i == row && x > 50)
-									return get_file_path_node(p->father, p->name);
+								// return get_file_path_node(p->father, p->name);
+								{
+									sprintf(result, "%s%s\\%s\\%s", "C:\\", p->father->father->name, p->father->name, p->name);
+									return result;
+								}
 								p = p->next;
 							}
 						}

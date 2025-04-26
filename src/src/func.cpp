@@ -1,19 +1,6 @@
-// 实现最上一栏新建，复制粘贴等功能函数
-#include <graphics.h>
-#include <dos.h>
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include <dirent.h>
-#include <mouse.h>
-
-// #include <direct.h>
-// #include <sys/stat.h> // 文件状态
 #include "include.h"
 
-// char source_path[1024]; // 用于复制粘贴的变量
-
-void build(struct file_info *info)
+void build(struct file_info *info, int x, int y)
 {
 	char *file_type_strings[] =
 		{
@@ -39,9 +26,9 @@ void build(struct file_info *info)
 	int type_index; // 记录类型索引
 	press = 0;
 	delay(200);
-	type_index = drop_down_menu(12, 70, 90, 20, 13, 1, file_type_strings, WHITE, DARKGRAY, 1, 0);
+	type_index = drop_down_menu(x, y, 90, 15, 13, 1, file_type_strings, WHITE, DARKGRAY, 1, 0);
 
-	if (type_index == -1 || type_index >= 12)
+	if (type_index == -1 || type_index > 12)
 	{
 		return;
 	}
@@ -57,7 +44,7 @@ void build(struct file_info *info)
 	if (type_index != 0)
 	{
 		// 文件类型：添加扩展名
-		strcpy(name, "newfile");
+		strcpy(name, "NEWFILE");
 		if (strlen(file_type_strings[type_index]) > 0)
 		{
 			strcat(name, ".");
@@ -67,7 +54,7 @@ void build(struct file_info *info)
 	else if (type_index != -1)
 	{
 		// 目录类型
-		strcpy(name, "newdir");
+		strcpy(name, "NEWDIR");
 		if (strlen(file_type_strings[type_index]) > 0)
 		{
 			strcat(name, file_type_strings[type_index]);
@@ -91,7 +78,6 @@ void build(struct file_info *info)
 			free(now_path);
 			return;
 		}
-		// printf("success to new dir: %s\n", now_path);
 	}
 	// 如果新建的是文件
 	else if (type_index != -1)
@@ -105,106 +91,198 @@ void build(struct file_info *info)
 			return;
 		}
 		fclose(file);
-		// printf("success to new file: %s\n", now_path);
 	}
 	free(now_path);
 }
 
-void rename(struct file_info *info)
+// void frename(struct file_info *info)
+// {
+// 	settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
+// 	char new_name[13] = {0};
+// 	int wc_select;
+// 	char *suffix; // 后缀
+// 	char *file_type_strings[] =
+// 		{
+// 			"FOLD",
+// 			"TXT",
+// 			"C",
+// 			"CPP",
+// 			"H",
+// 			"OBJ",
+// 			"EXE",
+// 			"JPG",
+// 			"PNG",
+// 			"DOC",
+// 			"XLS",
+// 			"PPT",
+// 			"PDF",
+// 		};
+// 	wc_select = is_selected(info) - 1; // 记录哪个文件被选中了
+// 	if (wc_select == -1)
+// 		return;
+// 	// char bd[10] = {0};
+// 	int board = 0; // 记录键盘操作
+// 	int result = 0;
+// 	suffix = file_type_strings[get_file_type((info + wc_select)->name)];
+// 	setcolor(RED);
+// 	outtextxy(120, 95 + wc_select * 20, (info + wc_select)->name); // 选中的文件名字先变为红色标亮
+// 	clear_keyboard_buffer();
+// 	// 主循环
+// 	while (1)
+// 	{
+// 		newmouse(&MouseX, &MouseY, &press);
+// 		int i = mouse_press_out(120, 95 + wc_select * 20, 200, 115 + wc_select * 20); // 判断是否点击了别的区域
+// 		if (i == 1)
+// 		{
+// 			setcolor(WHITE);
+// 			outtextxy(120, 95 + wc_select * 20, (info + wc_select)->name);
+// 			return;
+// 		}
+// 		board = getbuffer_keybd(new_name, 10);
+// 		// 如果选中点击重命名后输入删除，则名字部分覆盖等待输入新名字
+// 		if (board == 1)
+// 		{
+// 			bar(120, 95 + wc_select * 20, 200, 115 + wc_select * 20);
+// 			outtextxy(120, 95 + wc_select * 20, new_name);
+// 			while (1)
+// 			{
+// 				newmouse(&MouseX, &MouseY, &press);
+// 				// 获取键盘输入 (是否要设置延迟等待输入完全？)
+// 				result = getbuffer_keybd(new_name, 13);
+// 				if (result == 1)
+// 				{
+// 					bar(120, 95 + wc_select * 20, 200, 115 + wc_select * 20);
+// 					outtextxy(120, 95 + wc_select * 20, new_name);
+// 				}
+// 				else if (result == 2)
+// 				{
+// 					// 删除后，输入新名字后按下回车
+// 					if (strlen(new_name) > 0)
+// 					{
+// 						// 执行重命名操作
+// 						rename((info + wc_select)->name, new_name);
+// 						strcpy((info + wc_select)->name, new_name);
+// 						strcat((info + wc_select)->name, ".");
+// 						strcat((info + wc_select)->name, suffix);
+// 						setcolor(WHITE);
+// 						outtextxy(120, 95 + wc_select * 20, (info + wc_select)->name);
+// 						return;
+// 					}
+// 					// 删除后，如果没有输入就按下回车，则显示原来的名字
+// 					else
+// 					{
+// 						setcolor(WHITE);
+// 						outtextxy(120, 95 + wc_select * 20, (info + wc_select)->name);
+// 						return;
+// 					}
+// 				}
+// 				//  删除后没有检测到输入 则保持原界面
+// 				else if (result == 0)
+// 				{
+// 					delay(3);
+// 					continue;
+// 				}
+// 			}
+// 		}
+// 		// 如果选中点击重命名后没有输入，则保持原界面
+// 		else if (board == 0)
+// 		{
+// 			delay(3);
+// 			continue;
+// 		}
+// 		// 如果选中点击重命名后输入回车则显示旧名字
+// 		else if (board == 2)
+// 		{
+// 			outtextxy(120, 95 + wc_select * 20, (info + wc_select)->name);
+// 			return;
+// 		}
+// 	}
+// }
+
+void frename(struct file_info *info)
 {
 	settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
 	char new_name[13] = {0};
 	int wc_select;
+	char *suffix; // 后缀
+	char *file_type_strings[] =
+		{
+			"THIS_PC",
+			"C_DISK",
+			"FOLD",
+			"TXT",
+			"C",
+			"CPP",
+			"H",
+			"OBJ",
+			"EXE",
+			"JPG",
+			"PNG",
+			"DOC",
+			"XLS",
+			"PPT",
+			"PDF",
+			"OTHER",
+		};
+
 	wc_select = is_selected(info) - 1; // 记录哪个文件被选中了
 	if (wc_select == -1)
 		return;
-	clear_keyboard_buffer();
-	char bd[10] = {0};
-	int board = 0; // 记录键盘操作
-	// char *new_name = (char *)malloc(sizeof(char) * 13); // 存储新文件名
 
+	// char bd[10] = {0};
+	int board = 0; // 记录键盘操作
 	int result = 0;
+	// strcpy(new_name, (info + wc_select)->name);
+	// wc_select += 1;
+	suffix = file_type_strings[get_file_type((info + wc_select)->name)];
 
 	setcolor(RED);
-	outtextxy(120, 95 + wc_select * 20, (info + wc_select)->name); // 选中的文件名字先变为红色标亮
+	outtextxy(140, 95 + wc_select * 20, (info + wc_select)->name); // 选中的文件名字先变为红色标亮
+	clear_keyboard_buffer();
 
 	// 主循环
 	while (1)
 	{
 		newmouse(&MouseX, &MouseY, &press);
-		int i = mouse_press_out(120, 95 + wc_select * 20, 200, 115 + wc_select * 20); // 判断是否点击了别的区域
+		result = getbuffer_keybd(new_name, 8);
 
-		if (i == 1)
+		if (result == 1) // 如果有输入
 		{
-			setcolor(WHITE);
-			outtextxy(120, 95 + wc_select * 20, (info + wc_select)->name);
-			return;
+			setfillstyle(SOLID_FILL, BLACK);
+			bar(140, 90 + wc_select * 20, 200, 110 + wc_select * 20);
+			setcolor(RED);
+			outtextxy(140, 95 + wc_select * 20, new_name);
 		}
-
-		board = getbuffer_keybd(new_name, 10);
-
-		// 如果选中点击重命名后输入删除，则名字部分覆盖等待输入新名字
-		if (board == 1)
+		else if (mouse_press_out(140, 95 + wc_select * 20, 200, 115 + wc_select * 20) || result == 2) // 点击框外或者回车
 		{
-			bar(120, 95 + wc_select * 20, 200, 115 + wc_select * 20);
-			outtextxy(120, 95 + wc_select * 20, new_name);
-			while (1)
+			// 输入新名字后按下回车
+			if (strlen(new_name) > 0)
 			{
+				// 执行重命名操作
 
-				newmouse(&MouseX, &MouseY, &press);
-				// 获取键盘输入 (是否要设置延迟等待输入完全？)
-				result = getbuffer_keybd(new_name, 13);
-
-				if (result == 1)
+				// strcpy((info + wc_select)->name, new_name);
+				if (get_file_type((info + wc_select)->name) != 2) // 文件夹
 				{
-
-					bar(120, 95 + wc_select * 20, 200, 115 + wc_select * 20);
-					outtextxy(120, 95 + wc_select * 20, new_name);
+					strcat(new_name, ".");
+					strcat(new_name, suffix);
 				}
 
-				// 删除后检测到回车键
-				else if (result == 2)
+				if (rename((info + wc_select)->name, new_name) == 0) // 成功
 				{
-					// 删除后，输入新名字后按下回车
-					if (strlen(new_name) > 0)
-					{
-						// 执行重命名操作
-						rename((info + wc_select)->name, new_name);
-						strcpy((info + wc_select)->name, new_name);
-						setcolor(WHITE);
-						outtextxy(120, 95 + wc_select * 20, new_name);
-						return;
-					}
-					// 删除后，如果没有输入就按下回车，则显示原来的名字
-					else
-					{
-
-						setcolor(WHITE);
-						outtextxy(120, 95 + wc_select * 20, (info + wc_select)->name);
-						return;
-					}
+					setcolor(WHITE);
+					outtextxy(140, 95 + wc_select * 20, (info + wc_select)->name);
 				}
-				// delay(5);
-				//  删除后没有检测到输入 则保持原界面
-				else if (result == 0)
-				{
-					delay(3);
-					continue;
-				}
+				else
+					warn("重命名失败");
+				return;
 			}
-		}
-
-		// 如果选中点击重命名后没有输入，则保持原界面
-		else if (board == 0)
-		{
-			delay(3);
-			continue;
-		}
-		// 如果选中点击重命名后输入回车则显示旧名字
-		else if (board == 2)
-		{
-			outtextxy(120, 95 + wc_select * 20, (info + wc_select)->name);
-			return;
+			else
+			{
+				warn("名称为空！");
+				setcolor(WHITE);
+				outtextxy(140, 95 + wc_select * 20, (info + wc_select)->name);
+				return;
+			}
 		}
 	}
 }
@@ -234,11 +312,11 @@ void del(struct file_info *info)
 	// 真正删除文件
 	if (rm_dir(now_path) == 1)
 	{
-		printf("目录删除成功\n");
+		printf("success to rm dir\n");
 	}
 	else
 	{
-		printf("目录删除失败\n");
+		printf("fail to rm dir\n");
 	}
 }
 
@@ -268,7 +346,7 @@ int copy(struct file_info *info, char *source_path)
 	}
 	else
 	{
-		fprintf(stderr, "copy have done");
+		// fprintf(stderr, "copy have done");
 		printf("%s", source_path);
 		return 0;
 	}
@@ -296,8 +374,8 @@ int paste(char *source_path, int *flag)
 	}
 	else
 	{
-		fprintf(stderr, "succeed to copy file\n");
-		// 如果之前是剪切操作，则粘贴后还需删除原文件
+		// fprintf(stderr, "succeed to copy file\n");
+		//  如果之前是剪切操作，则粘贴后还需删除原文件
 		if (*flag == 1)
 		{
 			if (rm_dir(source_path) != 1)
@@ -315,7 +393,7 @@ int cut(struct file_info *info, int *flag, char *source_path)
 {
 	if (copy(info, source_path) != 0) // 当点击剪切图标，先调用复制函数
 	{
-		printf("剪切未成功");
+		// printf("failed to cut");
 		return -1;
 	}
 	int wc_select = is_selected(info) - 1; // 记录哪个文件被选中了
@@ -329,58 +407,48 @@ int cut(struct file_info *info, int *flag, char *source_path)
 int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDown, char **sort_menu_p)
 {
 	// 设置选中状态
-	int F = 0; // 根据大F的值判断是哪个功能被选中了
-	// int click_type;
+	int F = 0;		   // 根据大F的值判断是哪个功能被选中了
 	int exit_flag = 0; // 退出循环标志
 
 	setcolor(YELLOW);
 	static int result = -1; // 防止多次调用
 	static int if_cut = 0;	// 判断之前是否进行的剪切工作，以确认粘贴后是否要进行删除工作
 
-	while (detect_mouse(0, 37, 365, 62) == 1) // 鼠标在功能栏
+	while (detect_m(0, 37, 365, 62) == 1) // 鼠标在功能栏
 	{
 
 		newmouse(&MouseX, &MouseY, &press);
 		highlight_detector(NULL, NULL);
 
-		// rectangle(5, 37, 60, 62);
-		// rectangle(60, 37, 85, 62);
-		// rectangle(85, 37, 110, 62);
-		// rectangle(110, 37, 135, 62);
-		// rectangle(135, 37, 165, 62);
-		// rectangle(165, 37, 190, 62);
-		// rectangle(190, 37, 275, 62);
-		// rectangle(275, 37, 365, 62);
-
 		if (mouse_press(5, 37, 60, 62) == 1)
 		{
 			F = 1; // 选中新建
 		}
-		else if (mouse_press(60, 37, 85, 62))
+		else if (mouse_press(60, 37, 85, 62) == 1)
 		{
 			F = 2; // 选中剪切
 		}
-		else if (mouse_press(85, 37, 110, 62))
+		else if (mouse_press(85, 37, 110, 62) == 1)
 		{
 			F = 3; // 选中复制
 		}
-		else if (mouse_press(110, 37, 135, 62))
+		else if (mouse_press(110, 37, 135, 62) == 1)
 		{
 			F = 4; // 选中粘贴
 		}
-		else if (mouse_press(135, 37, 165, 62))
+		else if (mouse_press(135, 37, 165, 62) == 1)
 		{
 			F = 5; // 选中重命名
 		}
-		else if (mouse_press(165, 37, 190, 62))
+		else if (mouse_press(165, 37, 190, 62) == 1)
 		{
 			F = 6; // 选中删除
 		}
-		else if (mouse_press(190, 37, 275, 62))
+		else if (mouse_press(190, 37, 275, 62) == 1)
 		{
 			F = 7; // 选中排序
 		}
-		else if (mouse_press(275, 37, 365, 62))
+		else if (mouse_press(275, 37, 365, 62) == 1)
 		{
 			F = 8; // 选中查看
 		}
@@ -396,7 +464,7 @@ int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDow
 	{
 	case 1:
 	{
-		build(info);
+		build(info, 12, 70);
 		break;
 	}
 	case 2: // 剪切
@@ -409,7 +477,7 @@ int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDow
 	{
 		// printf("3");
 		result = copy(info, source_path);
-		printf("after copy src=%s", source_path);
+		// printf("after copy src=%s", source_path);
 		break;
 	}
 	case 4: // 粘贴
@@ -417,13 +485,10 @@ int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDow
 		// printf("4\n");
 		if (result == 0)
 		{
-			// paste(source_path);
-			//  if (copy(info, source_path) == 0)//注意多次调用
-
 			// printf("before paste src=%s", source_path);
 			if (paste(source_path, &if_cut) != -1)
 			{
-				printf("Copy and paste succeeded\n");
+				// printf("Copy and paste succeeded\n");
 			}
 			free(source_path);
 		}
@@ -432,7 +497,7 @@ int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDow
 	}
 	case 5:
 	{
-		rename(info);
+		frename(info);
 		break;
 	}
 	case 6: // 删除
@@ -449,14 +514,6 @@ int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDow
 			*UpOrDown = 1;
 		else if (result == 5)
 			*UpOrDown = -1;
-		// if (result != -1)
-		// {
-		// 	spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
-		// 	clrmous(MouseX, MouseY);
-		// 	cleardevice();
-		// 	load_all(path, info, root, srch_tar, mode);
-		// 	delay(200);
-		// }
 		sort(info, *sort_mode, *UpOrDown);
 		break;
 	}

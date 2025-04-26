@@ -1,9 +1,4 @@
-#include <graphics.h>
-#include <conio.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "hz.h"
+#include "include.h"
 
 #define X 640 // 屏幕X轴像素
 
