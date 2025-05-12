@@ -1,0 +1,20 @@
+{
+  "files.associations": {
+    "LTOA1.C": "cpp",
+    "SPRINTF.C": "cpp",
+    "PRINTF.C": "cpp",
+    "xiosbase": "cpp",
+    "xlocale": "cpp",
+    "xutility": "cpp",
+    "TCDISPLY.C": "cpp",
+    "SSCANF.C": "cpp",
+    "DOSGDATE.C": "cpp",
+    "PERROR.C": "cpp",
+    "SETARGV.C": "cpp",
+    "HARD.C": "cpp",
+    "GFREEMEM.C": "cpp",
+    "BGIDEMO.C": "cpp",
+    "FOPEN.C": "cpp"
+  },
+  "C_Cpp.default.compilerPath": "d:\\BC31\\Borland C++ 3.1.vbs"
+}
