@@ -12,19 +12,20 @@
 
 ## 方法一
 
-- 双击 _Borland C++ 3.1.vbs_
-- 点击上方 _RUN_ （环境已经配置好了）
+- 双击 `Borland C++ 3.1.vbs`
+- 点击上方 `RUN` （环境已经配置好了）
 
 ## 方法二
 
-- 如果你的 vscode 已经安装了*Borland C*插件，可以在vscode中打开DISK_C后直接*Ctrl+Shift+P* _启动 Borland C_
-- 点击上方 _RUN_
+- 如果你的 vscode 已经安装了*Borland C*插件，可以在 vscode 中打开`DISK_C`后直接`Ctrl+Shift+P` `启动 Borland C`
+- 点击上方 `RUN`
 
 # 注意事项
 
-- 在游玩过程中不要删除 _PROJECT_ _PROJECT/build_ _PROJECT/devel_ _PROJECT/src_
+- 在游玩过程中*不要删除* `PROJECT` `PROJECT/build` `PROJECT/devel` `PROJECT/src`
 
 - 搜索模块不稳定，仿真环境只能搜索 4 到 5 次。上机记得按照下面的要求修改，可以充分使用 winpx 的算力，但是只能搜索 2 次。如果在仿真里面用了上机的代码，会直接卡死（打 cks 大赛应该会优化的吧
+
 ```
 srch("C:\\PROJECT", target, &position, info, 0); // 虚拟环境只能进行小范围搜索，大范围搜索会出现遗漏甚至找不到的情况
 // srch("C:\\", target, &position, info, 0); // 上机改为这个
@@ -32,5 +33,5 @@ srch("C:\\PROJECT", target, &position, info, 0); // 虚拟环境只能进行小�
 
 # 作者的话
 
-这是我和队友[lxb330](https://github.com/lxb330)自己做的第一个完整的项目，学会了许多，也成长了不少。。。收获颇丰！
-祝好运！
+- 这是我和队友[lxb330](https://github.com/lxb330)自己做的第一个完整的项目，学会了许多，也成长了不少。。。收获颇丰！
+- 祝好运！
