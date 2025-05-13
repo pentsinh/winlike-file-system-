@@ -17,7 +17,7 @@
 
 ## 方法二
 
-- 如果你的 vscode 已经安装了*Borland C*插件，可以直接*Ctrl+Shift+P* _启动 Borland C_
+- 如果你的 vscode 已经安装了*Borland C*插件，可以在vscode中打开DISK_C后直接*Ctrl+Shift+P* _启动 Borland C_
 - 点击上方 _RUN_
 
 # 注意事项
