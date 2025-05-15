@@ -273,6 +273,11 @@ void load_file_info(int x, int y, struct file_info *info)
 		draw_h(x1, y1, 0);
 		break;
 	}
+	case 7:
+	{
+		draw_obj(x1 + 10, y1 + 15, 0);
+		break;
+	}
 	case 8:
 	{
 		draw_exe(x1, y1, 0);
