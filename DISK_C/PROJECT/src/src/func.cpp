@@ -237,7 +237,7 @@ void frename(struct file_info *info)
 	suffix = file_type_strings[get_file_type((info + wc_select)->name)];
 
 	setcolor(RED);
-	outtextxy(120, 95 + wc_select * 20, (info + wc_select)->name); // 选中的文件名字先变为红色标亮
+	outtextxy(140, 95 + wc_select * 20, (info + wc_select)->name); // 选中的文件名字先变为红色标亮
 	clear_keyboard_buffer();
 
 	// 主循环
@@ -249,11 +249,11 @@ void frename(struct file_info *info)
 		if (result == 1) // 如果有输入
 		{
 			setfillstyle(SOLID_FILL, BLACK);
-			bar(120, 90 + wc_select * 20, 200, 110 + wc_select * 20);
+			bar(140, 92 + wc_select * 20, 200, 108 + wc_select * 20);
 			setcolor(RED);
-			outtextxy(120, 95 + wc_select * 20, new_name);
+			outtextxy(140, 95 + wc_select * 20, new_name);
 		}
-		else if (mouse_press_out(120, 95 + wc_select * 20, 200, 115 + wc_select * 20) || result == 2) // 点击框外或者回车
+		else if (mouse_press_out(140, 95 + wc_select * 20, 200, 115 + wc_select * 20) || result == 2) // 点击框外或者回车
 		{
 			// 输入新名字后按下回车
 			if (strlen(new_name) > 0)
@@ -270,7 +270,7 @@ void frename(struct file_info *info)
 				if (rename((info + wc_select)->name, new_name) == 0) // 成功
 				{
 					setcolor(WHITE);
-					outtextxy(120, 95 + wc_select * 20, (info + wc_select)->name);
+					outtextxy(140, 95 + wc_select * 20, (info + wc_select)->name);
 				}
 				else
 					warn("重命名失败");
@@ -280,7 +280,7 @@ void frename(struct file_info *info)
 			{
 				warn("名称为空！");
 				setcolor(WHITE);
-				outtextxy(120, 95 + wc_select * 20, (info + wc_select)->name);
+				outtextxy(140, 95 + wc_select * 20, (info + wc_select)->name);
 				return;
 			}
 		}
@@ -398,7 +398,7 @@ int cut(struct file_info *info, int *flag, char *source_path)
 	}
 	int wc_select = is_selected(info) - 1; // 记录哪个文件被选中了
 	setcolor(DARKGRAY);
-	outtextxy(120, 95 + wc_select * 20, (info + wc_select)->name); // 选中的文件名字先变为灰色
+	outtextxy(140, 95 + wc_select * 20, (info + wc_select)->name); // 选中的文件名字先变为灰色
 
 	*flag = 1;
 	return 0;
