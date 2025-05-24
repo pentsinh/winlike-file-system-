@@ -899,7 +899,7 @@ void draw_obj(int x, int y, int flag)
 	if (flag == 0) // аЁ
 	{
 		bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\obj.bmp", "C:\\PROJECT\\src\\Images\\DBM\\obj.dbm");
-		show_dbm(x, y, "C:\\PROJECT\\src\\Images\\DBM\\obj.dbm", 0);
+		show_dbm(x-8, y-18, "C:\\PROJECT\\src\\Images\\DBM\\obj.dbm", 0);
 	}
 
 	else if (flag == 1) // жа

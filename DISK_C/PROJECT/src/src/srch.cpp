@@ -81,67 +81,6 @@ int srch_input(char target[16], struct file_info *info, void *buffer)
 //     closedir(dir);
 // }
 
-/*
-// 启动搜索！！！参数：搜索路径，目标，将要存入info的位置，用于存放信息的info数组,递归深度
-void srch(char *path, char *target, int *position, struct file_info *info, int depth)
-{
-    DIR *dir;
-    struct dirent *entry;
-    // char file_path[128] = {0}; // 路径
-    dir = opendir(path);
-    // printf("preparing to srch %s\n", path);
-    if (!dir)
-    {
-        perror("Failed to open directory");
-        return; // 如果打开目录失败，停止读取
-    }
-    // printf("start srch %s\n", path);
-
-    while ((entry = readdir(dir)) != NULL)
-    {
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
-            continue;
-
-        // printf("checking %s : ", entry->d_name);
-
-        char *file_path = get_file_path(path, entry->d_name);
-
-        // printf("%s\n", file_path);
-
-        // if (strcmp(path, "C:\\") == 0)
-        //     sprintf(file_path, "%s%s\0", path, entry->d_name); // 拼接路径
-        // else
-        //     sprintf(file_path, "%s\\%s\0", path, entry->d_name); // 拼接路径
-
-        if (get_file_type(file_path) == 2)
-        {
-            if (strcmp(entry->d_name, target) == 0 && (*position) < 10)
-            {
-                // printf("find %s\n", path);
-                get_file_info(path, entry->d_name, info + (*position));
-                (*position)++;
-            }
-            if (depth < 5) // 限制递归深度
-                srch(file_path, target, position, info, depth + 1);
-        }
-        else
-        {
-            if (strcmp(entry->d_name, target) == 0 && (*position) < 10)
-            {
-                // printf("find %s\n", path);
-                get_file_info(path, entry->d_name, info + (*position));
-                (*position)++;
-            }
-        }
-
-        free(file_path);
-    }
-    // printf("srch %s OK\n", path);
-
-    closedir(dir);
-}
-*/
-
 // 搜索  备用
 void srch(char *path, char *target, int *position, struct file_info *info, int depth)
 {
