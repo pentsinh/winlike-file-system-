@@ -140,6 +140,7 @@ int main()
 			{
 				result = undo_dir(history, &now_history);
 				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
+				page = 0;
 				if (result == 1)
 					read_dir(path, info, &page);
 				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
@@ -151,6 +152,7 @@ int main()
 			{
 				result = anti_undo_dir(history, &now_history);
 				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
+				page = 0;
 				if (result == 1)
 					read_dir(path, info, &page);
 				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
@@ -162,6 +164,7 @@ int main()
 			{
 				result = back(path, history, &now_history);
 				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
+				page = 0;
 				if (result == 1)
 					read_dir(path, info, &page);
 				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
@@ -214,6 +217,7 @@ int main()
 					clrmous(MouseX, MouseY);
 					cleardevice();
 					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
+					page = 0;
 					read_dir(path, info, &page);
 					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
 					load_all(path, info, root, srch_tar, mode, preference, page);
