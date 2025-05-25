@@ -207,6 +207,12 @@ int get_file_num(int x, int y, struct file_info *info,int pic_flag)
             if (y > 90 + j * 20 && y < 90 + j * 20 + 20)
                 return j + 1;
     }
+    if(pic_flag==1)
+    {
+        for (j = 0; j < num; j++)
+            if (x > 160 + (j % 4) * 100 && x < 160 + (j % 4) * 100 + 100 && y > 90 + (j / 4) * 100 && y < 90 + (j / 4) * 100 + 100)
+                return j + 1;
+    }
 
     return -1;
 }

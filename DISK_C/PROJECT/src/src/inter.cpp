@@ -229,9 +229,9 @@ void highlight_detector(struct file_info *info,int pic_flag)
             else if (pic_flag == 1)
             {
                 pos[i][0] = 160 + (i % 4) * 100;
-                pos[i][1] = 90 + ((i + 1) / 4) * 100;
+                pos[i][1] = 90 + (i  / 4) * 100;
                 pos[i][2] = 160 + (i % 4) * 100 + 100;
-                pos[i][3] = 90 + ((i + 1) / 4) * 100 + 100;
+                pos[i][3] = 90 + (i / 4) * 100 + 100;
             }
         }
         for (i = 0; i < get_info_num(info); i++)

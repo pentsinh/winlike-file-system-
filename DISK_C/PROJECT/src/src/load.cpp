@@ -106,8 +106,8 @@ void load_head(int mode) //(10,40)(630,60)
 	// 删除
 	draw_trash(170, 42); // 170, 42，188，60
 	// 排序
-	draw_sort(195, 42); // 195, 42，270，59.5
-						// 查看
+	draw_sort(195, 42);	 // 195, 42，270，59.5
+						 // 查看
 	draw_check(280, 42); // 280，42，362.5，57
 #ifdef TEST
 	setcolor(YELLOW);
@@ -170,16 +170,14 @@ void load_left_assist(struct My_filenode *head, int layer, int pen_x, int *pen_y
 void load_main(struct file_info *info, int mode, int page, int pic_flag) //(120,70)(640,480)
 {
 	int i; // 像素
-	int j; // 文件序号	
+	int j; // 文件序号
 	settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
-
-
 
 	// 为了开发方便，开发阶段将格子画出来
 	// for (i = 90; i < 440; i += 20)
 	// 	line(120, i, 640, i);
 
-	if (pic_flag == 0)//小图标
+	if (pic_flag == 0) // 小图标
 	{
 		puthz(120, 70, "名称", 16, 2, WHITE);
 		line(320, 70, 320, 90);
@@ -198,10 +196,10 @@ void load_main(struct file_info *info, int mode, int page, int pic_flag) //(120,
 		}
 	}
 	else if (pic_flag == 1) // 大图标
-	{		
+	{
 		for (j = 0, i = 160; j < INFO_LENGTH && strcmp((info + j)->name, "") != 0; j++, i += 100) // 每行4个
-		{			
-			load_file_info(i, 95 + 100 * (j/4), info + j, pic_flag);
+		{
+			load_file_info(i, 95 + 100 * (j / 4), info + j, pic_flag);
 			if ((j + 1) % 4 == 0)
 				i = 60;
 		}
@@ -252,15 +250,20 @@ void load_file_info(int x, int y, struct file_info *info, int pic_flag)
 	unsigned char flag, flag_4;
 	flag = info->flag;
 	flag_4 = get_bit(flag, 0) * 1 + get_bit(flag, 1) * 2 + get_bit(flag, 2) * 2 * 2 + get_bit(flag, 3) * 2 * 2 * 2;
-	for (k = 0; k < 16&&pic_flag==0; k++)	
+	for (k = 0; k < 16 && pic_flag == 0; k++)
 	{ // 取前4位
 
 		if (flag_4 == k && flag_4 >= 2) // 此电脑
 			outtextxy(400, y, file_type_strings[k]);
 	}
-	//显示图标
+	// 显示图标
 	int x1 = x;
 	int y1 = y;
+	if(pic_flag == 1)
+	{
+		x1 = x + 20;
+		y1 = y + 5;
+	}
 	switch (flag_4)
 	{
 	case 2:
@@ -337,16 +340,19 @@ void load_file_info(int x, int y, struct file_info *info, int pic_flag)
 
 	setcolor(WHITE);
 	// 大小
-	if(pic_flag==0)
-	outtextxy(540, y, info->size);
+	if (pic_flag == 0)
+		outtextxy(540, y, info->size);
+	else if(pic_flag == 1)
+	{
+		outtextxy(x1 + 5, y1 + 60, info->name);
+	}			
 
 	// if (strcmp(chosen_name, (info + j)->name) == 0 && (info + j)->name != 0)
 	if (get_bit(info->flag, 7) == 1)
 	{
 		setcolor(YELLOW);
-		if(pic_flag==0)
-		rectangle(x, y - 4, 640, y + 14);
-		
+		if (pic_flag == 0)
+			rectangle(x, y - 4, 640, y + 14);
 	}
 }
 
@@ -915,7 +921,7 @@ void draw_obj(int x, int y, int flag)
 	if (flag == 0) // 小
 	{
 		bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\obj.bmp", "C:\\PROJECT\\src\\Images\\DBM\\obj.dbm");
-		show_dbm(x-8, y-18, "C:\\PROJECT\\src\\Images\\DBM\\obj.dbm", 0);
+		show_dbm(x - 8, y - 18, "C:\\PROJECT\\src\\Images\\DBM\\obj.dbm", 0);
 	}
 
 	else if (flag == 1) // 中
