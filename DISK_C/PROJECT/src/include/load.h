@@ -188,4 +188,5 @@ void draw_ppt(int x, int y, int flag);
 void draw_pdf(int x, int y, int flag);
 void draw_h(int x, int y, int flag);
 void draw_obj(int x, int y, int flag);
+void draw_other(int x, int y, int flag);
 #endif // !_LOAD_H_

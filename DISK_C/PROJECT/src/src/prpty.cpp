@@ -128,6 +128,12 @@ void property(char *path, struct file_info *info)
         draw_pdf(x1 + 10, y1 + 15, 1);
         break;
     }
+    case 15:
+    {
+        draw_other(x1 + 10, y1 + 15, 1);
+        break;
+    }
+
     }
     setcolor(BLACK);
     outtextxy(x1 + 70, y1 + 50, ppt.name);

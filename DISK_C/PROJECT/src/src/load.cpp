@@ -313,6 +313,11 @@ void load_file_info(int x, int y, struct file_info *info)
 		draw_pdf(x1, y1, 0);
 		break;
 	}
+	case 15:
+	{
+		draw_other(x1, y1, 0);
+		break;
+	}
 	}
 
 	setcolor(WHITE);
@@ -644,8 +649,9 @@ void draw_txt(int x, int y, int flag)
 	line(x, y, x, y + size * 5);
 	line(x, y + size * 5, x + size * 4, y + size * 5);
 	line(x + size * 4, y + size * 5, x + size * 4, y + size * 1);
-	line(x + size * 3, y, x + size * 5, y + size * 1);
+	line(x + size * 3, y, x + size * 4, y + size * 1);
 	line(x + size * 3, y, x + size * 3, y + size * 1);
+	line(x + size * 3, y + size * 1, x + size * 4, y + size * 1);
 	line(x + size * 3, y + size * 1, x + size * 3, y + size * 1);
 	line(x + size * 0.5, y + size * 1, x + size * 2, y + size * 1);
 	line(x + size * 0.5, y + size * 1.5, x + size * 3, y + size * 1.5);
@@ -703,14 +709,6 @@ void draw_cpp(int x, int y, int flag)
 	arc(x + size * 2, y + size * 2, 90, 270, size * 0.8);
 	line(x + size * 2.8, y + size * 2, x + size * 3.6, y + size * 2);
 	line(x + size * 3.2, y + size * 1.5, x + size * 3.2, y + size * 2.6);
-
-	/*bar(x+ size * 1 , y+size*1.6,x+ size * 2, y+ size*2);
-	bar(x+ size * 0.8 , y+size*1.8 , x+ size * 1.2, y+ size*3.4);
-	line(x+ size *0.6, y+size*2, x+ size * 0.6, y+ size*3);
-	line(x+ size *1.2, y+size*3.2, x+ size * 2, y+ size*3.4);
-	line(x+ size *1, y+size*3.4, x+ size * 1.8, y+ size*3.4);
-	line(x+ size *2, y+size*2.4, x+ size * 2.6, y+ size*2.4);
-	line(x+ size *2.2, y+size*2.2, x+ size * 2.2, y+ size*2.6);*/
 }
 
 void draw_exe(int x, int y, int flag)
@@ -907,4 +905,24 @@ void draw_obj(int x, int y, int flag)
 		bmp_convert("C:\\PROJECT\\src\\Images\\BMP\\obj2.bmp", "C:\\PROJECT\\src\\Images\\DBM\\obj2.dbm");
 		show_dbm(x, y, "C:\\PROJECT\\src\\Images\\DBM\\obj2.dbm", 0);
 	}
+}
+
+void draw_other(int x, int y, int flag)
+{
+	int size;
+	if (flag == 0) // аЁ
+		size = 2.1;
+	else if (flag == 1) // жа
+		size = 7;
+	setfillstyle(SOLID_FILL, WHITE);
+	bar(x, y, x + size * 4, y + size * 5);
+	setcolor(DARKGRAY);
+	line(x, y, x + size * 3, y);
+	line(x, y, x, y + size * 5);
+	line(x, y + size * 5, x + size * 4, y + size * 5);
+	line(x + size * 4, y + size * 5, x + size * 4, y + size * 1);
+
+	line(x + size * 3, y, x + size * 4, y + size * 1);
+	line(x + size * 3, y, x + size * 3, y + size * 1);
+	line(x + size * 3, y + size * 1, x + size * 4, y + size * 1);
 }
