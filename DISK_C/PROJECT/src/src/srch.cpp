@@ -121,10 +121,10 @@ void srch(char *path, char *target, int *position, struct file_info *info, int d
 
 void srch_output(char path[1024], struct file_info *info, struct My_filenode *root, char *target)
 {
-    cleardevice();
-    setcolor(WHITE);
-    settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
-    clearRectangle(120, 70, 640, 480, BLACK);
-    load_main(info, 1, 0);
-    load_all(path, info, root, target, 1, NULL, 0);
+    // cleardevice();
+    // setcolor(WHITE);
+    // settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
+    // clearRectangle(120, 70, 640, 480, BLACK);
+    // load_main(info, 1, 0);
+    // load_all(path, info, root, target, 1, NULL, 0);
 }

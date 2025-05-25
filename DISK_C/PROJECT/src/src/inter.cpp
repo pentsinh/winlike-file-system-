@@ -166,13 +166,13 @@ void highlight(int x1, int y1, int x2, int y2, int darkcolor, int lightcolor)
 }
 
 // 高亮侦测（不想大改main了，就水了这么个函数）
-void highlight_detector(struct file_info *info, struct My_filenode *root)
+void highlight_detector()
 {
-#define CAPACITY 32
-    static int flag[CAPACITY] = {0}; // 高亮标签1:高亮;0:取消高亮
+
+    static int flag[16] = {0}; // 高亮标签1:高亮;0:取消高亮
     int i;                           // 循环变量
 
-    int pos[CAPACITY][4] = {
+    int pos[16][4] = {
         {5, 5, 25, 25},       // 0左箭头
         {25, 5, 45, 25},      // 1右箭头
         {45, 5, 65, 25},      // 2上箭头
@@ -185,11 +185,11 @@ void highlight_detector(struct file_info *info, struct My_filenode *root)
         {165, 37, 190, 62},   // 9删除
         {190, 37, 275, 62},   // 10排序
         {550, 440, 570, 460}, // 11上一页
-        {580, 440, 600, 460}  // 12下一页
-        //{275, 37, 365, 62}  // 13查看
+		{580, 440, 600, 460},  // 12下一页
+        {275, 37, 365, 62}  // 13查看
 
     };
-    int len = 13; // 功能数量
+    int len = 14; // 功能数量
     for (i = 0; i < len; i++)
     {
         if (detect_m(pos[i][0], pos[i][1], pos[i][2], pos[i][3]) == 1 && flag[i] == 0)
@@ -204,40 +204,54 @@ void highlight_detector(struct file_info *info, struct My_filenode *root)
             highlight(pos[i][0], pos[i][1], pos[i][2], pos[i][3], DARKGRAY, BLACK);
             flag[i] = 0;
         }
-    }
+    }    
+}
+
+void highlight_detector(struct file_info *info,int pic_flag)
+{
+#define CAPACITY 32
+    static int flag[CAPACITY] = {0}; // 高亮标签1:高亮;0:取消高亮
+    int i;                           // 循环变量
+    int pos[CAPACITY][4];
 
     // 文件夹区域采用不同的高亮方式,大区域putpixel流畅度低
     if (info != NULL)
     {
         for (i = 0; i < get_info_num(info); i++)
         {
-            pos[len + i][0] = 120;
-            pos[len + i][1] = 90 + i * 20;
-            pos[len + i][2] = 630;
-            pos[len + i][3] = 90 + i * 20 + 20;
+            if(pic_flag==0)
+            {
+                pos[i][0] = 120;
+                pos[i][1] = 90 + i * 20;
+                pos[i][2] = 630;
+                pos[i][3] = 90 + i * 20 + 20;
+            }
+            else if (pic_flag == 1)
+            {
+                pos[i][0] = 160 + (i % 4) * 100;
+                pos[i][1] = 90 + ((i + 1) / 4) * 100;
+                pos[i][2] = 160 + (i % 4) * 100 + 100;
+                pos[i][3] = 90 + ((i + 1) / 4) * 100 + 100;
+            }
         }
-        for (i = len; i < len + get_info_num(info); i++)
+        for (i = 0; i < get_info_num(info); i++)
         {
             if (detect_m(pos[i][0], pos[i][1], pos[i][2], pos[i][3]) == 1 && flag[i] == 0)
             {
                 clrmous(MouseX, MouseY);
-                clearRectangle(pos[i][0], pos[i][1] + 1, pos[i][2], pos[i][3] - 1, DARKGRAY);
-                load_file_info(pos[i][0], pos[i][1] + 5, info + i - len);
+                clearRectangle(pos[i][0], pos[i][1] , pos[i][2], pos[i][3] , DARKGRAY);
+                load_file_info(pos[i][0], pos[i][1] + 5, info + i ,pic_flag);
                 flag[i] = 1;
             }
             else if (detect_m(pos[i][0], pos[i][1], pos[i][2], pos[i][3]) == 0 && flag[i] == 1)
             {
                 clrmous(MouseX, MouseY);
-                clearRectangle(pos[i][0], pos[i][1] + 1, pos[i][2], pos[i][3] - 1, BLACK);
-                load_file_info(pos[i][0], pos[i][1] + 5, info + i - len);
+                clearRectangle(pos[i][0], pos[i][1] , pos[i][2], pos[i][3] , BLACK);
+                load_file_info(pos[i][0], pos[i][1] + 5, info + i, pic_flag);
                 flag[i] = 0;
             }
         }
     }
-    // else if (root != NULL)
-    // {
-    //     return;
-    // }
 }
 
 // 警告中文
@@ -289,99 +303,97 @@ void warn(char *str)
     free(buffer);
 }
 
-// 比较函数，用于qsort排序时按值从大到小排序
-int compare(const void *a, const void *b)
-{
-    int val1 = ((int *)a)[0];
-    int val2 = ((int *)b)[0];
-    return val2 - val1; // 按值从大到小排序
-}
-
-// 函数实现
-void findTopIndices(int *arr1, int len1, int *arr2, int len2)
-{
-    if (len2 > len1)
-    {
-        printf("Error: len2 cannot be larger than len1\n");
-        return;
-    }
-
-    // 创建一个临时数组来存储索引
-    int *temp = (int *)malloc(len1 * sizeof(int));
-    for (int i = 0; i < len1; i++)
-    {
-        temp[i] = i; // 存储原数组的索引
-    }
-
-    // 按照arr1中的值对索引进行排序（从大到小）
-    qsort(temp, len1, sizeof(int), compare);
-
-    // 将最大的len2个索引存入arr2
-    for (i = 0; i < len2; i++)
-    {
-        arr2[i] = temp[i];
-    }
-
-    // 释放临时数组
-    free(temp);
-}
-
-int check(char *str) // 检查排除非法字符
+// 检查字符是否合法
+int check(char *str)
 {
     int i = 0;
-    int result = 0; // 返回值
-    while (str[i] != '\0' && i < 1024)
+    while (str[i] != '\0')
     {
-        if ((str[i] >= '0' && str[i] <= '9') || (str[i] >= 'A' && str[i] <= 'Z') || (str[i] >= 'a' && str[i] <= 'z') || str[i] == '~' || str[i] == '\\' || str[i] == ':' || str[i] == ' ')
-            result = 1;
-        else
+        char c = str[i];
+        if (!((c >= '0' && c <= '9') ||
+              (c >= 'A' && c <= 'Z') ||
+              (c >= 'a' && c <= 'z') ||
+              c == '~' || c == '\\' || c == ':' || c == ' '))
         {
-            result = 0;
-            break;
+            return 0; // 非法字符
         }
         i++;
     }
-    return result;
+    return 1;
+}
+
+// 结构体用于存储路径及其出现次数
+typedef struct
+{
+    char path[1024];
+    int count;
+} PathCount;
+
+// 比较函数：按出现次数降序排序
+int compare_path_count(const void *a, const void *b)
+{
+    return ((PathCount *)b)->count - ((PathCount *)a)->count;
 }
 
 // 获取偏好
 void get_preference(char history[HISTORY_LENGTH][1024], char preference[3][1024])
 {
-    char tmp[1024];                  // 暂存路径
-    int count[HISTORY_LENGTH] = {0}; // 每个路径在history里面出现次数的平方
-    int max_pos[HISTORY_LENGTH];     // 最大值在count中的位置，从大到小
-    int i, j;                        // 循环变脸
-    // 统计每个路径在history里面出现次数的平方
-    for (i = 0; i < HISTORY_LENGTH; i++)
+    PathCount paths[HISTORY_LENGTH];
+    int path_count = 0;
+
+    // 初始化 paths 数组并统计出现次数
+    for (int i = 0; i < HISTORY_LENGTH; i++)
     {
-        strcpy(tmp, history[i]);
-        for (j = 0; j < HISTORY_LENGTH; j++)
-            if (strcmp(tmp, history[j]))
-                count[i] += 1;
-    }
-    // 只有某个路径出现三次及以上preference才可以记录
-    for (i = 0; i < HISTORY_LENGTH; i++)
-    {
-        if (count[i] >= 9)
-            break;
-    }
-    if (i == HISTORY_LENGTH)
-        return;
-    // 开始构建preference
-    // int tmp = 0; // 比较中间值
-    // 找最大
-    int k = 0; // prefenence中的位置
-    findTopIndices(count, HISTORY_LENGTH, max_pos, HISTORY_LENGTH);
-    for (i = 0; i < HISTORY_LENGTH; i++)
-    {
-        for (j = 0; j < k; j++)
-            if (strcmp(preference[j], history[max_pos[i]]) == 0) // 如果已经记录在preference
-                goto node;
-        if (check(history[max_pos[i]]) == 1)
+        int found = 0;
+        for (int j = 0; j < path_count; j++)
         {
-            strcpy(preference[k], history[max_pos[i]]);
-            k++;
+            if (strcmp(history[i], paths[j].path) == 0)
+            {
+                paths[j].count++;
+                found = 1;
+                break;
+            }
         }
-    node:
+        if (!found && strlen(history[i]) > 0)
+        {
+            strcpy(paths[path_count].path, history[i]);
+            paths[path_count].count = 1;
+            path_count++;
+        }
+    }
+
+    // 按照出现次数排序
+    qsort(paths, path_count, sizeof(PathCount), compare_path_count);
+
+    // 筛选出现次数 >= 3，并且保证不重复、符合check条件
+    int pref_index = 0;
+	for (i = 0; i < path_count && pref_index < 3; i++)
+    {
+        if (//paths[i].count >= 3  && 
+            check(paths[i].path))
+        {
+            // 去重检查
+            int is_dup = 0;
+            for (int j = 0; j < pref_index; j++)
+            {
+                if (strcmp(preference[j], paths[i].path) == 0)
+                {
+                    is_dup = 1;
+                    break;
+                }
+            }
+            if (!is_dup)
+            {
+                strcpy(preference[pref_index], paths[i].path);
+                pref_index++;
+            }
+        }
+    }
+
+    // 如果不够三个，补空字符串
+    while (pref_index < 3)
+    {
+        preference[pref_index][0] = '\0';
+        pref_index++;
     }
 }

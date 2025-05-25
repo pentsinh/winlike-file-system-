@@ -96,7 +96,7 @@ void new_history(char history[HISTORY_LENGTH][1024], char path[1024]) // ¸üĞÂÄ¿Â
 		strcpy(history[0], path);
 }
 
-int change_dir(struct file_info *info, int x, int y) // ¸ü¸ÄÄ¿Â¼.·µ»Ø1Ñ¡ÖĞ£¬·µ»Ø2È·ÈÏ
+int change_dir(struct file_info *info, int x, int y,int pic_flag) // ¸ü¸ÄÄ¿Â¼.·µ»Ø1Ñ¡ÖĞ£¬·µ»Ø2È·ÈÏ
 {
 	int i = 0;		   // Ä¿±êÎÄ¼ş±êºÅ-1
 	int j;			   // Ñ­»·±äÁ¿
@@ -108,7 +108,7 @@ int change_dir(struct file_info *info, int x, int y) // ¸ü¸ÄÄ¿Â¼.·µ»Ø1Ñ¡ÖĞ£¬·µ»Ø
 	time_t elapsed_ticks = current_click_time - last_click_time;
 
 	// ²éÕÒÊó±êµã»÷µÄÇøÓòµÄÎÄ¼şĞòºÅ
-	file_num = get_file_num(x, y, info);
+	file_num = get_file_num(x, y, info,pic_flag);
 	i = file_num - 1;
 
 	if (file_num == -1) // µã»÷ÎŞĞ§

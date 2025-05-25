@@ -195,15 +195,18 @@ int get_info_num(struct file_info *info)
 }
 
 // 获取点击位置的文件标号
-int get_file_num(int x, int y, struct file_info *info)
+int get_file_num(int x, int y, struct file_info *info,int pic_flag)
 {
     int num; // info链中有效文件数量
     int j;   // 循环变量
     num = get_info_num(info);
     // 查找鼠标点击的区域的文件序号
-    for (j = 0; j < num; j++)
-        if (y > 90 + j * 20 && y < 90 + j * 20 + 20)
-            return j + 1;
+    if(pic_flag==0)
+    {
+        for (j = 0; j < num; j++)
+            if (y > 90 + j * 20 && y < 90 + j * 20 + 20)
+                return j + 1;
+    }
 
     return -1;
 }

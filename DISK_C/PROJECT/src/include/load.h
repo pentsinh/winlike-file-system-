@@ -11,10 +11,10 @@ void load_init(char path[1024], struct file_info *info, char history[HISTORY_LEN
 
 /************************************************
  *FUNCTION:加载界面
- *INPUT:当前路径，将要显示的info，目录树根，搜索目标，显示模式，偏好
+ *INPUT:当前路径，将要显示的info，目录树根，搜索目标，显示模式，偏好，页码，图片大小标志
  *RETURN:无
  *************************************************/
-void load_all(char path[1024], struct file_info *info, struct My_filenode *root, char *target, int mode, char preference[3][1024], int page);
+void load_all(char path[1024], struct file_info *info, struct My_filenode *root, char *target, int mode, char preference[3][1024], int page,int pic_flag);
 
 /************************************************
  *FUNCTION:加载top栏
@@ -46,17 +46,17 @@ void load_left_assist(struct My_filenode *p, int layer, int pen_x, int *pen_y);
 
 /************************************************
  *FUNCTION:加载main栏
- *INPUT:将要显示的info，显示模式
+ *INPUT:将要显示的info，显示模式，页码，图片大小标志
  *RETURN:无
  *************************************************/
-void load_main(struct file_info *info, int mode, int page);
+void load_main(struct file_info *info, int mode, int page,int pic_flag);
 
 /************************************************
  *FUNCTION:加载一条文件
- *INPUT:左上x，左上y，info指针
+ *INPUT:左上x，左上y，info指针，图片大小标志
  *RETURN:无
  *************************************************/
-void load_file_info(int x, int y, struct file_info *info);
+void load_file_info(int x, int y, struct file_info *info, int pic_flag);
 
 /************************************************
  *FUNCTION:清空指定矩形区域

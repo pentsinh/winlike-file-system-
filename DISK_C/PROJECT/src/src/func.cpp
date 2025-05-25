@@ -404,7 +404,24 @@ int cut(struct file_info *info, int *flag, char *source_path)
 	return 0;
 }
 
-int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDown, char **sort_menu_p)
+int check(int x,int y,int *pic_flag)
+{
+	char *choices[] =
+		{
+			"小图标",
+			"大图标"
+		};
+	int choice_index; // 记录类型索引
+	press = 0;
+	delay(200);
+	choice_index = drop_down_menu(x, y, 80, 25, 2, 12, choices, WHITE, DARKGRAY, 0, 0);
+
+	if(choice_index!=-1)
+		*pic_flag = choice_index;
+	return 0;
+}
+
+int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDown, char **sort_menu_p,int *pic_flag)
 {
 	// 设置选中状态
 	int F = 0;		   // 根据大F的值判断是哪个功能被选中了
@@ -418,7 +435,7 @@ int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDow
 	{
 
 		newmouse(&MouseX, &MouseY, &press);
-		highlight_detector(NULL, NULL);
+		highlight_detector();
 
 		if (mouse_press(5, 37, 60, 62) == 1)
 		{
@@ -517,12 +534,11 @@ int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDow
 		sort(info, *sort_mode, *UpOrDown);
 		break;
 	}
-		// case 7:
-		// {
-		// 	check();
-		// 	break;
-		// }
-
+	case 8:
+	{
+		check(280,70,pic_flag);
+		break;
+	}
 	default:
 		break;
 	}

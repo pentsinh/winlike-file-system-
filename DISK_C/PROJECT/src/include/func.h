@@ -1,7 +1,7 @@
 #ifndef _FUNC_H_
 #define _FUNC_H_
 #include "include.h"
-int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDown, char **sort_menu_p);
+int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDown, char **sort_menu_p, int *pic_flag);
 void build(struct file_info *info, int x, int y);
 int copy(struct file_info *info, char *source_path);
 int paste(char *source_path, int *flag);

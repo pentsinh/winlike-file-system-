@@ -91,10 +91,10 @@ int get_info_num(struct file_info *info);
 
 /************************************************
  *FUNCTION:获取点击位置的文件标号
- *INPUT:点击X，点击Y，info链
+ *INPUT:点击X，点击Y，info链，图标大小标志
  *RETURN:标号，返回-1表示点击位置没有文件
  *************************************************/
-int get_file_num(int x, int y, struct file_info *info);
+int get_file_num(int x, int y, struct file_info *info,int pic_flag);
 
 /************************************************
  *FUNCTION:判断info链中是否有已经选中的文件

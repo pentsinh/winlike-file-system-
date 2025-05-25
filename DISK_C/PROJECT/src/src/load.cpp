@@ -21,7 +21,7 @@ void load_init(char path[1024], struct file_info *info, char history[HISTORY_LEN
 							  // load_all(info);
 }
 
-void load_all(char path[1024], struct file_info *info, struct My_filenode *root, char *target, int mode, char preference[3][1024], int page) // 加载界面
+void load_all(char path[1024], struct file_info *info, struct My_filenode *root, char *target, int mode, char preference[3][1024], int page, int pic_flag) // 加载界面
 {
 	load_top(path, target, mode);
 	setcolor(WHITE);
@@ -33,7 +33,7 @@ void load_all(char path[1024], struct file_info *info, struct My_filenode *root,
 	floodfill(121, 71, BLACK);
 	setcolor(WHITE);
 	line(105, 65, 105, 480);
-	load_main(info, mode, page);
+	load_main(info, mode, page, pic_flag);
 }
 
 void load_top(char path[1024], char *target, int mode) //(10,10)(630,30)
@@ -108,7 +108,7 @@ void load_head(int mode) //(10,40)(630,60)
 	// 排序
 	draw_sort(195, 42); // 195, 42，270，59.5
 						// 查看
-						// draw_check(280, 42); // 280，42，362.5，57
+	draw_check(280, 42); // 280，42，362.5，57
 #ifdef TEST
 	setcolor(YELLOW);
 	rectangle(5, 37, 60, 62);
@@ -167,31 +167,44 @@ void load_left_assist(struct My_filenode *head, int layer, int pen_x, int *pen_y
 	}
 }
 
-void load_main(struct file_info *info, int mode, int page) //(120,70)(640,480)
+void load_main(struct file_info *info, int mode, int page, int pic_flag) //(120,70)(640,480)
 {
 	int i; // 像素
-	int j; // 文件序号
-	// int k; // 循环变量
+	int j; // 文件序号	
 	settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
 
-	puthz(120, 70, "名称", 16, 2, WHITE);
-	line(320, 70, 320, 90);
 
-	puthz(240, 70, "修改日期", 16, 2, WHITE);
-	line(400, 70, 400, 90);
-
-	puthz(400, 70, "类型", 16, 2, WHITE);
-	line(540, 70, 540, 90);
-
-	puthz(540, 70, "大小", 16, 2, WHITE);
 
 	// 为了开发方便，开发阶段将格子画出来
-	for (i = 90; i < 440; i += 20)
-		line(120, i, 640, i);
+	// for (i = 90; i < 440; i += 20)
+	// 	line(120, i, 640, i);
 
-	for (j = 0, i = 95; j < INFO_LENGTH && strcmp((info + j)->name, "") != 0; j++, i += 20)
+	if (pic_flag == 0)//小图标
 	{
-		load_file_info(120, i, info + j);
+		puthz(120, 70, "名称", 16, 2, WHITE);
+		line(320, 70, 320, 90);
+
+		puthz(240, 70, "修改日期", 16, 2, WHITE);
+		line(400, 70, 400, 90);
+
+		puthz(400, 70, "类型", 16, 2, WHITE);
+		line(540, 70, 540, 90);
+
+		puthz(540, 70, "大小", 16, 2, WHITE);
+
+		for (j = 0, i = 95; j < INFO_LENGTH && strcmp((info + j)->name, "") != 0; j++, i += 20)
+		{
+			load_file_info(120, i, info + j, pic_flag);
+		}
+	}
+	else if (pic_flag == 1) // 大图标
+	{		
+		for (j = 0, i = 160; j < INFO_LENGTH && strcmp((info + j)->name, "") != 0; j++, i += 100) // 每行4个
+		{			
+			load_file_info(i, 95 + 100 * (j/4), info + j, pic_flag);
+			if ((j + 1) % 4 == 0)
+				i = 60;
+		}
 	}
 
 	// 翻页键
@@ -206,7 +219,7 @@ void load_main(struct file_info *info, int mode, int page) //(120,70)(640,480)
 }
 
 // 加载一条文件
-void load_file_info(int x, int y, struct file_info *info)
+void load_file_info(int x, int y, struct file_info *info, int pic_flag)
 {
 	int k; // 循环变量
 	char *file_type_strings[] = {
@@ -229,106 +242,111 @@ void load_file_info(int x, int y, struct file_info *info)
 	};
 	setcolor(WHITE);
 	settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
-	// outtextxy(120, y, info->name); // 名称
-	outtextxy(140, y, info->name); // 名称
-
-	outtextxy(240, y, info->time); // 修改日期
+	if (pic_flag == 0)
+	{
+		outtextxy(140, y, info->name); // 名称
+		outtextxy(240, y, info->time); // 修改日期
+	}
 
 	// 类型
 	unsigned char flag, flag_4;
 	flag = info->flag;
 	flag_4 = get_bit(flag, 0) * 1 + get_bit(flag, 1) * 2 + get_bit(flag, 2) * 2 * 2 + get_bit(flag, 3) * 2 * 2 * 2;
-	for (k = 0; k < 16; k++)
+	for (k = 0; k < 16&&pic_flag==0; k++)	
 	{ // 取前4位
 
 		if (flag_4 == k && flag_4 >= 2) // 此电脑
 			outtextxy(400, y, file_type_strings[k]);
 	}
-	int x1 = 120;
+	//显示图标
+	int x1 = x;
 	int y1 = y;
 	switch (flag_4)
 	{
 	case 2:
 	{
-		draw_file(x1, y1, 0);
+		draw_file(x1, y1, pic_flag);
 		break;
 	}
 	case 3:
 	{
-		draw_txt(x1, y1, 0);
+		draw_txt(x1, y1, pic_flag);
 		break;
 	}
 	case 4:
 	{
-		draw_c(x1, y1, 0);
+		draw_c(x1, y1, pic_flag);
 		break;
 	}
 	case 5:
 	{
-		draw_cpp(x1, y1, 0);
+		draw_cpp(x1, y1, pic_flag);
 		break;
 	}
 	case 6:
 	{
-		draw_h(x1, y1, 0);
+		draw_h(x1, y1, pic_flag);
 		break;
 	}
 	case 7:
 	{
-		draw_obj(x1 + 10, y1 + 15, 0);
+		draw_obj(x1 + 10, y1 + 15, pic_flag);
 		break;
 	}
 	case 8:
 	{
-		draw_exe(x1, y1, 0);
+		draw_exe(x1, y1, pic_flag);
 		break;
 	}
 	case 9:
 	{
-		draw_jpg(x1, y1, 0);
+		draw_jpg(x1, y1, pic_flag);
 		break;
 	}
 	case 10:
 	{
-		draw_png(x1, y1, 0);
+		draw_png(x1, y1, pic_flag);
 		break;
 	}
 	case 11:
 	{
-		draw_doc(x1, y1, 0);
+		draw_doc(x1, y1, pic_flag);
 		break;
 	}
 	case 12:
 	{
-		draw_xls(x1, y1, 0);
+		draw_xls(x1, y1, pic_flag);
 		break;
 	}
 	case 13:
 	{
-		draw_ppt(x1, y1, 0);
+		draw_ppt(x1, y1, pic_flag);
 		break;
 	}
 	case 14:
 	{
-		draw_pdf(x1, y1, 0);
+		draw_pdf(x1, y1, pic_flag);
 		break;
 	}
 	case 15:
 	{
-		draw_other(x1, y1, 0);
+		draw_other(x1, y1, pic_flag);
 		break;
 	}
 	}
 
 	setcolor(WHITE);
 	// 大小
+	if(pic_flag==0)
 	outtextxy(540, y, info->size);
 
 	// if (strcmp(chosen_name, (info + j)->name) == 0 && (info + j)->name != 0)
 	if (get_bit(info->flag, 7) == 1)
 	{
 		setcolor(YELLOW);
-		rectangle(120, y - 5, 640, y + 15);
+		if(pic_flag==0)
+		rectangle(x, y - 4, 640, y + 14);
+		
 	}
 }
 

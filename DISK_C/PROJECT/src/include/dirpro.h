@@ -43,10 +43,10 @@ void new_history(char history[HISTORY_LENGTH][1024], char path[1024]);
 
 /************************************************
  *FUNCTION: 更改目录
- *INPUT:当前显示的info，鼠标X，鼠标Y
+ *INPUT:当前显示的info，鼠标X，鼠标Y，图标大小标志
  *RETURN:返回1选中，返回2确认
  *************************************************/
-int change_dir(struct file_info *info, int x, int y);
+int change_dir(struct file_info *info, int x, int y,int pic_flag);
 
 /************************************************
  *FUNCTION: 键入进入文件夹
