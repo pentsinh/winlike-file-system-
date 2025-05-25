@@ -44,7 +44,7 @@ int main()
 
 	int i; // 循环变量
 
-	char src_path[1024]; // copy文件源路径
+	char src_path[1024]="\0"; // copy文件源路径
 	int sort_mode = 0;	 // 排序方法
 	int UpOrDown = 1;	 // 升序/降序
 

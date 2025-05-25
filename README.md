@@ -32,7 +32,7 @@
 我们为这一版汉字库添加了 12 号字体
 
 # 注意事项
-
+- 密码为`123456`
 - 在游玩过程中*不要删除* `PROJECT` `PROJECT/build` `PROJECT/devel` `PROJECT/src`
 - 为了方便统计有效代码，我们将给鼠标库做的扩展新建了一个文件`mcontrb.cpp`及其头文件`mscontrb.h`
 - `hz.cpp`和`load.cpp`中采用了绝对路径，最好不要改动文件夹结构
