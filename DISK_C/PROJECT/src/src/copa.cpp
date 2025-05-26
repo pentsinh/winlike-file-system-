@@ -110,7 +110,7 @@ int rm_dir(char *dir_path)
 {
   char *file_path = dir_path;
 
-  if (get_file_type(dir_path) != 2) // 如果是文件
+  if (get_file_type(dir_path) != FOLD) // 如果是文件
   {
     // printf("removing %s\n", dir_path);
     remove(dir_path);
@@ -129,14 +129,13 @@ int rm_dir(char *dir_path)
     // 逐个删除文件夹里的文件
 
     while ((entry = readdir(dir)) != NULL)
-
     {
       if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
       {
         continue;
       }
       char *new_path = get_file_path(file_path, (entry->d_name));
-      unsigned char type = get_file_type(entry->d_name);
+      unsigned char type = get_file_type(new_path);
       if (type == FOLD)
       {
         rm_dir(new_path);
