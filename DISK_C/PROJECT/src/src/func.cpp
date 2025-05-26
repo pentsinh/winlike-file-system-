@@ -55,10 +55,10 @@ int build(struct file_info *info, int x, int y) //-1失败；0成功
 	{
 		// 目录类型
 		strcpy(name, "NEWDIR");
-		if (strlen(file_type_strings[type_index]) > 0)
-		{
-			strcat(name, file_type_strings[type_index]);
-		}
+		// if (strlen(file_type_strings[type_index]) > 0)
+		// {
+		// 	strcat(name, file_type_strings[type_index]);
+		// }
 	}
 
 	// 整合完整路径
@@ -325,8 +325,10 @@ int del(struct file_info *info, struct pro_history history[5]) //-1失败；0成功
 	}
 
 	// 真正删除文件
-	if (rm_dir(now_path) == 1)
+	if (c_p(now_path, "C:\\PROJECT\\DEVEL\\BIN\\BIN_0") != -1 && rm_dir(now_path) == 1)
 	{
+		new_history(history, DELETE, "", now_path); // 记录删除操作
+		free(now_path);								// 释放动态分配的内存
 		// printf("success to rm dir\n");
 		return 0;
 	}
@@ -450,8 +452,8 @@ int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDow
 		strcat(bin_path, itoa(i + 1, buffer, 10)); // 拼接回收站路径
 		history[i].num = i + 1;
 		history[i].process = -1; // 初始化为-1
-		strcpy(history[i].tar_1, "");
-		strcpy(history[i].tar_2, "");
+		strcpy(history[i].src, "");
+		strcpy(history[i].tar, "");
 		strcpy(history[i].bin_path, bin_path); // 初始化回收站路径
 	}
 
@@ -556,7 +558,7 @@ int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDow
 	}
 	case 5:
 	{
-		frename(info, history, pic_flag);
+		frename(info, history, *pic_flag);
 		break;
 	}
 	case 6: // 删除
@@ -596,23 +598,66 @@ void new_history(struct pro_history history[5], int process, char tar[1024], cha
 	// 将历史记录向后移动
 	for (i = 4; i > 0; i--)
 	{
-		char old_bin_path[64] = "C:\\PROJECT\\DEVEL\\BIN\\BIN_"; // 回收站路径
-		char new_bin_path[64] = "C:\\PROJECT\\DEVEL\\BIN\\BIN_"; // 新的回收站路径
-		char buffer[64] = {0};
-		strcat(old_bin_path, itoa(i, buffer, 10));	   // 拼接回收站路径
-		strcat(new_bin_path, itoa(i + 1, buffer, 10)); // 拼接新的回收站路径
-		rename(old_bin_path, new_bin_path);			   // 将旧的回收站重命名为新的回收站
-
 		history[i].num = i + 1; // 更新序号
-		strcpy(history[i].tar_1, history[i - 1].tar_1);
+		strcpy(history[i].tar, history[i - 1].tar);
 		history[i].process = history[i - 1].process;
 		strcpy(history[i].src, history[i - 1].src);
 	}
-	strcpy(history[0].tar_1, tar);
+	strcpy(history[0].tar, tar);
 	history[0].process = process;
 	strcpy(history[0].src, src);
 
 	rename("C:\\PROJECT\\DEVEL\\BIN\\BIN_0", "C:\\PROJECT\\DEVEL\\BIN\\BIN_1");
 	strcpy(history[0].bin_path, "C:\\PROJECT\\DEVEL\\BIN\\BIN_1");
 	mkdir("C:\\PROJECT\\DEVEL\\BIN\\BIN_0"); // 创建新的回收站文件夹
+}
+
+void undo_pro(struct pro_history history[5]) // 撤销操作
+{
+	if (history[0].process == -1) // 如果没有操作记录
+	{
+		warn("没有可撤销的操作");
+		return;
+	}
+	char *bin_path = history[0].bin_path;
+	char *src_path = history[0].src;
+	char *tar_path = history[0].tar;
+
+	switch (history[0].process)
+	{
+	case NEWFILE:
+		rm_dir(tar_path); // 删除新建的文件或文件夹
+		break;
+	case CUT_PASTE:
+		c_p(get_file_path(tar_path, path_to_name(src_path)), get_father_path(src_path)); // 将剪切的文件或文件夹粘贴到目标路径
+		rm_dir(get_file_path(tar_path, path_to_name(src_path)));
+		break;
+	case COPY_PASTE:
+		rm_dir(get_file_path(tar_path, path_to_name(src_path)));
+		break;
+	case RENAME:
+		rename(src_path, tar_path); // 恢复重命名之前的文件或文件夹
+	case DELETE:
+		c_p(get_file_path(bin_path, path_to_name(src_path)), get_father_path(src_path)); // 将删除的文件或文件夹恢复到目标路径
+		rm_dir(get_file_path(bin_path, path_to_name(src_path)));
+		break;
+	default:
+		break;
+	}
+
+	history_reset(history[0], 0, "", "", ""); // 清除操作记录
+	for (int i = 1; i < 5; i++)				  // 将后面的操作记录向前移动
+	{
+		history[i - 1].process = history[i].process;
+		strcpy(history[i - 1].src, history[i].src);
+		strcpy(history[i - 1].tar, history[i].tar);
+	}
+}
+
+void history_reset(struct pro_history *history, int num, char src[1024], char tar[1024], char bin_path[64]) // 初始化操作历史
+{
+	history->num = num;
+	history->process = -1;
+	strcpy(history->src, src);
+	strcpy(history->tar, tar);
 }

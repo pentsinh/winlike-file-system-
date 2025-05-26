@@ -98,7 +98,7 @@ int main()
 		// 右键菜单初始化
 		char RB_menu[4][16] = {
 			"排序方式",
-			//"撤销",
+			"撤销",
 			"新建",
 			"属性"};
 		char **RB_menu_p = (char **)malloc(4 * sizeof(char *));
@@ -371,10 +371,16 @@ int main()
 						load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
 					}
 				}
-				// else if (result == 1) // 撤销
-				// {
-				// }
-				else if (result == 1) // 新建
+				else if (result == 1) // 撤销
+				{
+					undo_pro(history);
+					clrmous(MouseX, MouseY);
+					cleardevice();
+					read_dir(path, info, &page);
+					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
+					load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+				}
+				else if (result == 2) // 新建
 				{
 					build(info, tmp_x + 75, tmp_y);
 					clrmous(MouseX, MouseY);
@@ -383,7 +389,7 @@ int main()
 					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
 					load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
 				}
-				else if (result == 2) // 属性
+				else if (result == 3) // 属性
 				{
 					if (get_file_num(tmp_x, tmp_y, info,pic_flag) != -1)
 						set_bit(&(info + get_file_num(tmp_x, tmp_y, info,pic_flag) - 1)->flag, 7, 1);
