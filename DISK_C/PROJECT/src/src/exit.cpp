@@ -22,6 +22,7 @@ void end()
             cleardevice();
             end_img();
             chdir("C:\\PROJECT\\devel");
+            rm_dir("C:\\PROJECT\\devel\\BIN");
             closegraph();
         }
         if (MouseX > 620 && MouseX < 640 && MouseY > 0 && MouseY < 20)

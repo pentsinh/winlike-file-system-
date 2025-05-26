@@ -10,6 +10,15 @@
 void load_init(char path[1024], struct file_info *info, char history[HISTORY_LENGTH][1024]) // 界面初始化
 {
 	setbkcolor(BLACK);
+	chdir("C:\\PROJECT\\DEVEL"); // 进入开发目录	
+	mkdir("BIN"); // 创建回收站，RUBBISHBIN太长了。。。
+	chdir("C:\\PROJECT\\DEVEL\\BIN");
+	mkdir("BIN_0"); // 0为暂存
+	mkdir("BIN_1");// 创建回收站子目录
+	mkdir("BIN_2");// 创建回收站子目录
+	mkdir("BIN_3");// 创建回收站子目录
+	mkdir("BIN_4");// 创建回收站子目录
+	mkdir("BIN_5");// 创建回收站子目录
 	chdir("C:\\PROJECT");
 	if (getcwd(path, sizeof(path) * 1024) == NULL) // 获取当前路径
 	{
