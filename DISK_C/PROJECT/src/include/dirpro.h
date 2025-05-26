@@ -18,28 +18,28 @@ void read_dir(char *target, struct file_info *info, int *page);
  *INPUT:操作历史，当前在历史数组中的位置
  *RETURN:1 操作有效；0 操作无效
  *************************************************/
-int undo_dir(char history[HISTORY_LENGTH][1024], int *now_history);
+int undo_dir(char history[HISTORY_LENGTH][128], int *now_history);
 
 /************************************************
  *FUNCTION:反撤销目录操作
  *INPUT:操作历史，当前在历史数组中的位置
  *RETURN:1 操作有效；0 操作无效
  *************************************************/
-int anti_undo_dir(char history[HISTORY_LENGTH][1024], int *now_history);
+int anti_undo_dir(char history[HISTORY_LENGTH][128], int *now_history);
 
 /************************************************
  *FUNCTION:返回上一级目录
  *INPUT:当前路径，操作历史，当前在历史数组中的位置
  *RETURN:1 操作有效；0 操作无效
  *************************************************/
-int back(char path[1024], char history[HISTORY_LENGTH][1024], int *now_history);
+int back(char path[128], char history[HISTORY_LENGTH][128], int *now_history);
 
 /************************************************
  *FUNCTION:更新目录操作历史
  *INPUT:操作历史，当前路径
  *RETURN:无
  *************************************************/
-void new_history(char history[HISTORY_LENGTH][1024], char path[1024]);
+void new_history(char history[HISTORY_LENGTH][128], char path[128]);
 
 /************************************************
  *FUNCTION: 更改目录
@@ -53,6 +53,6 @@ int change_dir(struct file_info *info, int x, int y,int pic_flag);
  *INPUT:路径，路径长度限制
  *RETURN:1
  *************************************************/
-int keyin_dir(char path[1024], int length);
+int keyin_dir(char path[128], int length);
 
 #endif // _DIR_PRO_H_

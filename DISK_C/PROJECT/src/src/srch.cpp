@@ -119,7 +119,7 @@ void srch(char *path, char *target, int *position, struct file_info *info, int d
     chdir("..");
 }
 
-void srch_output(char path[1024], struct file_info *info, struct My_filenode *root, char *target)
+void srch_output(char path[128], struct file_info *info, struct My_filenode *root, char *target)
 {
     // cleardevice();
     // setcolor(WHITE);

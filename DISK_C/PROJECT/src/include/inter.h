@@ -73,5 +73,5 @@ void highlight_detector(struct My_filenode *root);
  *************************************************/
 void warn(char *str);
 
-void get_preference(char history[HISTORY_LENGTH][1024], char preference[3][1024]);
+void get_preference(char history[HISTORY_LENGTH][128], char preference[3][128]);
 #endif

@@ -12,12 +12,12 @@ struct menu
 	struct menu *son_menu_head;
 };
 
-void spinOnce(char path[1024], struct file_info *info, int mode, char history[HISTORY_LENGTH][1024], int now_history, int sort_mode, int UpOrDown, char preference[3][1024]) // 更新状态检测函数
+void spinOnce(char path[128], struct file_info *info, int mode, char history[HISTORY_LENGTH][128], int now_history, int sort_mode, int UpOrDown, char preference[3][128]) // 更新状态检测函数
 {
 	newmouse(&MouseX, &MouseY, &press);
 	if (mode == 0)
 	{
-		getcwd(path, sizeof(path) * 1024);
+		getcwd(path, sizeof(path) * 128);
 		// read_dir(path, info);
 	}
 	sort(info, sort_mode, UpOrDown);
@@ -34,17 +34,17 @@ int main()
 	int gd = DETECT, gm; // 图形驱动和图形模式
 
 	struct My_filenode *root;				  // 目录树的根
-	char path[1024];						  // 当前路径
-	char history[HISTORY_LENGTH][1024] = {0}; // 操作历史
+	char path[128];						  // 当前路径
+	char history[HISTORY_LENGTH][128] = {0}; // 操作历史
 	int now_history = 0;					  // 当前在路径在history中的位置，服务撤销操作
 	struct file_info info[10];				  // 存放文件信息
 	int page = 0;							  // 页码，从0开始
 
-	char preference[3][1024] = {0};
+	char preference[3][128] = {0};
 
 	int i; // 循环变量
 
-	char src_path[1024]="\0"; // copy文件源路径
+	char src_path[128]="\0"; // copy文件源路径
 	int sort_mode = 0;	 // 排序方法
 	int UpOrDown = 1;	 // 升序/降序
 
@@ -54,6 +54,7 @@ int main()
 
 	int choose_mode = 0; // 点击选择模式，0单选;1多选
 	int pic_flag=0;		 // 条目大小标志，0小；1大
+	struct pro_history pro_history[5] = {0}; // 操作历史
 
 	int result; // 用来存放函数返回值，防止多次调用
 
@@ -81,6 +82,7 @@ int main()
 		cleardevice();
 
 		load_init(path, info, history); // 界面初始化
+		history_init(pro_history); // 初始化操作历史
 		read_dir(path, info, &page);
 
 		spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference); // 刷新info
@@ -201,7 +203,7 @@ int main()
 			else if (detect_m(0, 37, 365, 62) == 1) //|| mouse_press(10, 40, 500, 65) == 4)//如果点击上方功能区域
 			{
 
-				if (func(info, src_path, &sort_mode, &UpOrDown, sort_menu_p, &pic_flag) != 0)
+				if (func(info, src_path, &sort_mode, &UpOrDown, sort_menu_p, &pic_flag, pro_history) != 0)
 				{
 					read_dir(path, info, &page);
 					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
@@ -344,7 +346,7 @@ int main()
 				result = 0;
 
 				// result = drop_down_menu(MouseX, MouseY, 75, 25, 4, 12, RB_menu_p, WHITE, DARKGRAY, 0, 1);
-				result = drop_down_menu(MouseX, MouseY, 75, 25, 3, 12, RB_menu_p, WHITE, DARKGRAY, 0, 1);
+				result = drop_down_menu(MouseX, MouseY, 75, 25, 4, 12, RB_menu_p, WHITE, DARKGRAY, 0, 1);
 
 				if (result == 0) // 排序方式
 				{
@@ -373,7 +375,7 @@ int main()
 				}
 				else if (result == 1) // 撤销
 				{
-					undo_pro(history);
+					undo_pro(pro_history);
 					clrmous(MouseX, MouseY);
 					cleardevice();
 					read_dir(path, info, &page);

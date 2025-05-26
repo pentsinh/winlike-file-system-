@@ -4,5 +4,3 @@ Copyright 2002-2007 DOSBox Team, published under GNU GPL.
 CONFIG:Loading primary settings from config file bc31.conf
 MIDI:Opened device:win32
 MAPPER: Loading mapper settings from bcmapper.txt
-Warning: file creation failed: ..\DISK_C\PROJEC\FOLD_2_1\NEWFILE.H
-Warning: file creation failed: ..\DISK_C\PROJEC\FOLD_2_1\TEST1.TXT

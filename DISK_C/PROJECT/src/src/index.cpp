@@ -315,7 +315,7 @@ char *get_file_path_left(struct My_filenode *node, int x, int y)
 	// 计算点击位置对应的文件
 	int row;										  // 点击位置为第几行，***之后将参与运算***
 	int i;											  // y轴像素
-	char result[1024];								  // 返回值
+	char result[128];								  // 返回值
 	for (i = 80, row = 1; i < 480; i += 10, row += 1) // 第一条从y=80开始
 	{
 		if (y > i && y < i + 10)

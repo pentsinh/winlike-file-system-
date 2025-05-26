@@ -40,7 +40,7 @@ void read_dir(char *target, struct file_info *info, int *page) // 读取指定目录下
 	closedir(dir);
 }
 
-int undo_dir(char history[HISTORY_LENGTH][1024], int *now_history)
+int undo_dir(char history[HISTORY_LENGTH][128], int *now_history)
 {
 
 	int now = *now_history;
@@ -55,7 +55,7 @@ int undo_dir(char history[HISTORY_LENGTH][1024], int *now_history)
 	return 1;
 }
 
-int anti_undo_dir(char history[HISTORY_LENGTH][1024], int *now_history)
+int anti_undo_dir(char history[HISTORY_LENGTH][128], int *now_history)
 {
 	int now = *now_history;
 	if (now == 0)
@@ -67,14 +67,14 @@ int anti_undo_dir(char history[HISTORY_LENGTH][1024], int *now_history)
 	return 1;
 }
 
-int back(char path[1024], char history[HISTORY_LENGTH][1024], int *now_history)
+int back(char path[128], char history[HISTORY_LENGTH][128], int *now_history)
 {
 	if (strcmp(path, "C:\\") == 0)
 		return 0;
 	int i;
 
 	chdir("..");
-	getcwd(path, sizeof(path) * 1024);
+	getcwd(path, sizeof(path) * 128);
 	if (*now_history != 0)
 	{
 		for (i = 0; i < *now_history && i + *now_history < HISTORY_LENGTH; i++)
@@ -86,7 +86,7 @@ int back(char path[1024], char history[HISTORY_LENGTH][1024], int *now_history)
 	return 1;
 }
 
-void new_history(char history[HISTORY_LENGTH][1024], char path[1024]) // 更新目录操作历史***在遇到BORLANDC及里面特定文件夹时会bug***
+void new_history(char history[HISTORY_LENGTH][128], char path[128]) // 更新目录操作历史***在遇到BORLANDC及里面特定文件夹时会bug***
 {
 	int i;
 	// printf("path=%s", path);
@@ -101,7 +101,7 @@ int change_dir(struct file_info *info, int x, int y,int pic_flag) // 更改目录.返
 	int i = 0;		   // 目标文件标号-1
 	int j;			   // 循环变量
 	int file_num;	   // 目标文件标号
-	char target[1024]; // 目标文件绝对路径
+	char target[128]; // 目标文件绝对路径
 
 	static time_t last_click_time = 0; // 记录上次点击时间
 	time_t current_click_time = clock();
@@ -143,10 +143,10 @@ int change_dir(struct file_info *info, int x, int y,int pic_flag) // 更改目录.返
 }
 
 // 手动输入
-int keyin_dir(char path[1024], int length)
+int keyin_dir(char path[128], int length)
 {
 	int result = 0;
-	char nowpath[1024];
+	char nowpath[128];
 	strcpy(nowpath, path);
 	clrmous(MouseX, MouseY);
 	highlight(90, 10, 500, 30, BLACK, DARKGRAY);

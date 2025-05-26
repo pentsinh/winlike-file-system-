@@ -5,7 +5,7 @@
 struct dir_tree
 {
 	char name[13];				 // 名称
-	char path[1024];			 // 当前文件夹路径，包含名称
+	char path[128];			 // 当前文件夹路径，包含名称
 	struct dir_tree *branch[10]; // 树枝（子目录）
 	int is_branch_on;			 // 子目录是否可见
 };

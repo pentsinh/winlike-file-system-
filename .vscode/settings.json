@@ -2,6 +2,7 @@
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
         "GETCWD.C": "cpp",
-        "PERROR.C": "cpp"
+        "PERROR.C": "cpp",
+        "PRINTF.C": "cpp"
     }
 }

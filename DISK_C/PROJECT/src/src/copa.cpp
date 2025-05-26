@@ -48,10 +48,12 @@ int copy_file(char *source_path, char *dest_path) // 复制粘贴文件
 // 复制粘贴文件（夹）
 int c_p(char *source_path, char *dest_father_path) // 源文件绝对路径，目标所在文件夹绝对路径
 {
-  char dest_file_path[1024]; // 目标文件路径
+  char dest_father_path_local[128];
+  strcpy(dest_father_path_local, dest_father_path);
+  char dest_file_path[128] = {0}; // 目标文件路径
 
-  sprintf(dest_file_path, "%s\\%s", dest_father_path, path_to_name(source_path));
-
+  sprintf(dest_file_path, "%s\\%s", dest_father_path_local, path_to_name(source_path));
+  // printf("dest_file_path:%s\n", dest_file_path);
   if (get_file_type(source_path) != 2) // 如果是文件
   {
     copy_file(source_path, dest_file_path);
@@ -81,16 +83,19 @@ int c_p(char *source_path, char *dest_father_path) // 源文件绝对路径，目标所在文
         continue;
 
       char *filename = entry->d_name; // 目标文件夹中的文件
-      // char dest_son_path[128];
-      char *dest_son_path; // 目标文件夹中的文件（夹）
-      sprintf(dest_son_path, "%s\\%s", dest_father_path, path_to_name(source_path));
+      char dest_son_path[128];
+      // char *dest_son_path; // 目标文件夹中的文件（夹）
+      sprintf(dest_son_path, "%s\\%s", dest_father_path_local, path_to_name(source_path));
+      // printf("dest_son_path:%s\n", dest_son_path);
       c_p(get_file_path(source_path, filename), dest_son_path);
+      free(filename);
     }
 
     closedir(dir);
   }
   return 1;
 }
+
 // 删除文件
 int rm_file(char *file_path)
 {

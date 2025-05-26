@@ -264,7 +264,7 @@ char *get_father_path(char *path)
         int flag = 0;           // 循环退出标志
         int len = strlen(path); // path长度
         int i = len - 1;        // 寻呼按变量
-        char tmp[1024];
+        char tmp[128];
         strcpy(tmp, path);
         do
         {

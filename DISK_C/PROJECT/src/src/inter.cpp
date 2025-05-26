@@ -14,7 +14,7 @@ void clear_keyboard_buffer()
 // 显示键盘输入内容
 void out_keybd(char *text, int max, int x, int y, int lettersize, int bkcolor, int lettercolor)
 {
-    char box[1024];
+    char box[128];
     strcpy(box, text);
     setfillstyle(SOLID_FILL, bkcolor);
     clrmous(MouseX, MouseY);
@@ -325,7 +325,7 @@ int check(char *str)
 // 结构体用于存储路径及其出现次数
 typedef struct
 {
-    char path[1024];
+    char path[128];
     int count;
 } PathCount;
 
@@ -336,7 +336,7 @@ int compare_path_count(const void *a, const void *b)
 }
 
 // 获取偏好
-void get_preference(char history[HISTORY_LENGTH][1024], char preference[3][1024])
+void get_preference(char history[HISTORY_LENGTH][128], char preference[3][128])
 {
     PathCount paths[HISTORY_LENGTH];
     int path_count = 0;

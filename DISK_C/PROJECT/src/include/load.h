@@ -7,21 +7,21 @@
  *INPUT:当前路径，将要显示的info，操作历史
  *RETURN:无
  *************************************************/
-void load_init(char path[1024], struct file_info *info, char history[HISTORY_LENGTH][1024]);
+void load_init(char path[128], struct file_info *info, char history[HISTORY_LENGTH][128]);
 
 /************************************************
  *FUNCTION:加载界面
  *INPUT:当前路径，将要显示的info，目录树根，搜索目标，显示模式，偏好，页码，图片大小标志
  *RETURN:无
  *************************************************/
-void load_all(char path[1024], struct file_info *info, struct My_filenode *root, char *target, int mode, char preference[3][1024], int page,int pic_flag);
+void load_all(char path[128], struct file_info *info, struct My_filenode *root, char *target, int mode, char preference[3][128], int page,int pic_flag);
 
 /************************************************
  *FUNCTION:加载top栏
  *INPUT:当前路径，搜索目标，模式
  *RETURN:无
  *************************************************/
-void load_top(char path[1024], char *target, int mode);
+void load_top(char path[128], char *target, int mode);
 
 /************************************************
  *FUNCTION:加载head栏
@@ -35,7 +35,7 @@ void load_head(int mode);
  *INPUT:目录树根，偏好
  *RETURN:无
  *************************************************/
-void load_left(struct My_filenode *root, char preference[3][1024]);
+void load_left(struct My_filenode *root, char preference[3][128]);
 
 /************************************************
  *FUNCTION:加载左栏辅助函数，加载出传入地址的所有子目录

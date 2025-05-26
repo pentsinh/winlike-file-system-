@@ -7,7 +7,7 @@
 //  main主栏：操作板
 #include "include.h"
 
-void load_init(char path[1024], struct file_info *info, char history[HISTORY_LENGTH][1024]) // 界面初始化
+void load_init(char path[128], struct file_info *info, char history[HISTORY_LENGTH][128]) // 界面初始化
 {
 	setbkcolor(BLACK);
 	chdir("C:\\PROJECT\\DEVEL"); // 进入开发目录	
@@ -20,7 +20,7 @@ void load_init(char path[1024], struct file_info *info, char history[HISTORY_LEN
 	mkdir("BIN_4");// 创建回收站子目录
 	mkdir("BIN_5");// 创建回收站子目录
 	chdir("C:\\PROJECT");
-	if (getcwd(path, sizeof(path) * 1024) == NULL) // 获取当前路径
+	if (getcwd(path, sizeof(path) * 128) == NULL) // 获取当前路径
 	{
 		perror("Can't get current dir");
 		return;
@@ -30,7 +30,7 @@ void load_init(char path[1024], struct file_info *info, char history[HISTORY_LEN
 							  // load_all(info);
 }
 
-void load_all(char path[1024], struct file_info *info, struct My_filenode *root, char *target, int mode, char preference[3][1024], int page, int pic_flag) // 加载界面
+void load_all(char path[128], struct file_info *info, struct My_filenode *root, char *target, int mode, char preference[3][128], int page, int pic_flag) // 加载界面
 {
 	load_top(path, target, mode);
 	setcolor(WHITE);
@@ -45,7 +45,7 @@ void load_all(char path[1024], struct file_info *info, struct My_filenode *root,
 	load_main(info, mode, page, pic_flag);
 }
 
-void load_top(char path[1024], char *target, int mode) //(10,10)(630,30)
+void load_top(char path[128], char *target, int mode) //(10,10)(630,30)
 {
 
 	// 操作
@@ -132,7 +132,7 @@ void load_head(int mode) //(10,40)(630,60)
 #endif
 }
 
-void load_left(struct My_filenode *root, char preference[3][1024]) //(10,70)(100,470)
+void load_left(struct My_filenode *root, char preference[3][128]) //(10,70)(100,470)
 {
 	// int i;			// 循环变量
 	int layer = 0; // 目录的层数，设c盘问第0层
