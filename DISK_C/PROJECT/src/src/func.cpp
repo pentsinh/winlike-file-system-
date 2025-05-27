@@ -215,6 +215,11 @@ int frename(struct file_info *info, struct pro_history *history, int pic_flag) /
 	char old_name[13] = {0}; // 记录旧名字
 	int wc_select;
 	char *suffix; // 后缀
+
+	char current_dir[128]; // 便于显示释放内存
+	char *old_file_path = NULL;
+	char *new_file_path = NULL;
+
 	char *file_type_strings[] =
 		{
 			"THIS_PC",
@@ -282,7 +287,17 @@ int frename(struct file_info *info, struct pro_history *history, int pic_flag) /
 				{
 					setcolor(WHITE);
 					outtextxy(140, 95 + wc_select * 20, (info + wc_select)->name);
-					new_history(history, RENAME, get_file_path(getcwd(NULL, 0), old_name), get_file_path(getcwd(NULL, 0), new_name));
+
+					getcwd(current_dir, sizeof(current_dir)); // 获取当前工作目录
+					printf("current_dir=%s\n", current_dir);
+					old_file_path = get_file_path(current_dir, old_name);
+					new_file_path = get_file_path(current_dir, new_name);
+					printf("old_file_path=%s\n", old_file_path);
+					printf("new_file_path=%s\n", new_file_path);
+					new_history(history, RENAME, old_file_path, new_file_path);
+					free(old_file_path);
+					free(new_file_path);
+
 					return 0;
 				}
 				else
@@ -334,6 +349,7 @@ int del(struct file_info *info, struct pro_history *history) //-1失败；0成功
 	}
 	else
 	{
+		free(now_path); // 释放动态分配的内存
 		return -1;
 		// printf("fail to rm dir\n");
 	}
@@ -347,7 +363,7 @@ int copy(struct file_info *info, char *source_path) //-1失败；0成功
 		return -1;
 	}
 	int wc_select = is_selected(info) - 1; // 记录哪个文件被选中了
-	char buffer[128] = {0};			   // buffer用于储存新的路径，name是新建文件名
+	char buffer[128] = {0};				   // buffer用于储存新的路径，name是新建文件名
 	press = 0;
 	// 获取当前工作目录
 	char *result = getcwd(buffer, sizeof(buffer));
@@ -357,16 +373,19 @@ int copy(struct file_info *info, char *source_path) //-1失败；0成功
 		return -1;
 	}
 	// 整合完整路径
-	strcpy(source_path, get_file_path(buffer, (info + wc_select)->name));
+	char *file_path = get_file_path(buffer, (info + wc_select)->name);
+	strcpy(source_path, file_path);
 	if (*source_path == NULL)
 	{
 		fprintf(stderr, "fail to build full path\n");
+		free(file_path); // 释放动态分配的内存
 		return -1;
 	}
 	else
 	{
 		// fprintf(stderr, "copy have done");
 		printf("%s", source_path);
+		free(file_path); // 释放动态分配的内存
 		return 0;
 	}
 }
@@ -402,7 +421,7 @@ int paste(char *source_path, int *flag) //-1失败；1成功
 				fprintf(stderr, "Failed to remove source after cut\n");
 				return -1;
 			}
-			*flag = 0;
+			//*flag = 0;
 		}
 		return 1;
 	}
@@ -448,6 +467,9 @@ int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDow
 	setcolor(YELLOW);
 	static int result = -1; // 防止多次调用
 	static int if_cut = 0;	// 判断之前是否进行的剪切工作，以确认粘贴后是否要进行删除工作
+	char current_dir[128];
+	getcwd(current_dir, sizeof(current_dir)); // 获取当前工作目录
+	char *file_path = NULL;					  // 便于显示释放内存
 
 	while (detect_m(0, 37, 365, 62) == 1) // 鼠标在功能栏
 	{
@@ -502,12 +524,16 @@ int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDow
 		int result_1 = build(info, 12, 70);
 		if (result_1 == 0) // 文件夹
 		{
-			new_history(history, NEWFILE, get_file_path(getcwd(NULL, 0), "NEWDIR"), "");
+			file_path = get_file_path(current_dir, "NEWDIR");
+			new_history(history, NEWFILE, file_path, "");
+			free(file_path); // 释放动态分配的内存
 			break;
 		}
 		else if (result_1 == 1)
 		{
-			new_history(history, NEWFILE, get_file_path(getcwd(NULL, 0), "NEWFILE"), "");
+			file_path = get_file_path(current_dir, "NEWFILE");
+			new_history(history, NEWFILE, file_path, "");
+			free(file_path); // 释放动态分配的内存
 			break;
 		}
 	}
@@ -527,15 +553,19 @@ int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDow
 	case 4: // 粘贴
 	{
 		// printf("4\n");
-		if (result == 0)
+		if (result != -1)
 		{
 			// printf("before paste src=%s", source_path);
 			if (paste(source_path, &if_cut) != -1)
 			{
 				if (if_cut == 1)
-					new_history(history, CUT_PASTE, get_file_path(getcwd(NULL, 0), path_to_name(source_path)), source_path);
+				{
+					new_history(history, CUT_PASTE, current_dir, source_path);
+				}
 				else
-					new_history(history, COPY_PASTE, get_file_path(getcwd(NULL, 0), path_to_name(source_path)), source_path);
+				{
+					new_history(history, COPY_PASTE, current_dir, source_path);
+				}
 				// printf("Copy and paste succeeded\n");
 			}
 			free(source_path);
@@ -551,7 +581,7 @@ int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDow
 	}
 	case 6: // 删除
 	{
-		del(info, history);		
+		del(info, history);
 		break;
 	}
 	case 7: // 排序
@@ -614,6 +644,7 @@ void undo_pro(struct pro_history *history) // 撤销操作
 		warn("没有可撤销的操作");
 		return;
 	}
+	char *file_path = NULL; // 便于显示释放内存
 	char *bin_path = (history + 0)->bin_path;
 	char *src_path = (history + 0)->src;
 	char *tar_path = (history + 0)->tar;
@@ -624,19 +655,23 @@ void undo_pro(struct pro_history *history) // 撤销操作
 		rm_dir(tar_path); // 删除新建的文件或文件夹
 		break;
 	case CUT_PASTE:
-		c_p(get_file_path(tar_path, path_to_name(src_path)), get_father_path(src_path)); // 将剪切的文件或文件夹粘贴到目标路径
-		rm_dir(get_file_path(tar_path, path_to_name(src_path)));
+		file_path = get_file_path(tar_path, path_to_name(src_path));
+		c_p(file_path, get_father_path(src_path)); // 将剪切的文件或文件夹粘贴到目标路径
+		rm_dir(file_path);						   // 删除剪切的文件或文件夹
+		free(file_path);						   // 释放动态分配的内存
 		break;
 	case COPY_PASTE:
-		rm_dir(get_file_path(tar_path, path_to_name(src_path)));
+		file_path = get_file_path(tar_path, path_to_name(src_path));
+		rm_dir(file_path);
+		free(file_path);
 		break;
 	case RENAME:
 		rename(src_path, tar_path); // 恢复重命名之前的文件或文件夹
 	case DELETE:
-		c_p(get_file_path(bin_path, path_to_name(src_path)), get_father_path(src_path)); // 将删除的文件或文件夹恢复到目标路径
-		// while (1)
-		// 	;
-		rm_dir(get_file_path(bin_path, path_to_name(src_path)));
+		file_path = get_file_path(bin_path, path_to_name(src_path));
+		c_p(file_path, get_father_path(src_path)); // 将删除的文件或文件夹恢复到目标路径
+		rm_dir(file_path);						   // 删除回收站中的文件或文件夹
+		free(file_path);						   // 释放动态分配的内存
 		break;
 	default:
 		break;

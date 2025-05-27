@@ -10,7 +10,8 @@
 void load_init(char path[128], struct file_info *info, char history[HISTORY_LENGTH][128]) // 界面初始化
 {
 	setbkcolor(BLACK);
-	chdir("C:\\PROJECT\\DEVEL"); // 进入开发目录	
+	chdir("C:\\PROJECT\\DEVEL"); // 进入开发目录
+	rm_dir("BIN"); // 删除回收站目录	
 	mkdir("BIN"); // 创建回收站，RUBBISHBIN太长了。。。
 	chdir("C:\\PROJECT\\DEVEL\\BIN");
 	mkdir("BIN_0"); // 0为暂存
