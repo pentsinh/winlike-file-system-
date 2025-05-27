@@ -475,7 +475,7 @@ int func(struct file_info *info, char *source_path, int *sort_mode, int *UpOrDow
 	{
 
 		newmouse(&MouseX, &MouseY, &press);
-		highlight_detector();
+		highlight_detector(source_path, info);
 
 		if (mouse_press(5, 37, 60, 62) == 1)
 		{

@@ -137,7 +137,7 @@ int main()
 		{
 			// spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown);
 			newmouse(&MouseX, &MouseY, &press);
-			highlight_detector();
+			highlight_detector(src_path, info);
 			highlight_detector(info, pic_flag);
 
 			// printf("%d", page);

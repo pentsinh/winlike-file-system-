@@ -166,11 +166,11 @@ void highlight(int x1, int y1, int x2, int y2, int darkcolor, int lightcolor)
 }
 
 // 高亮侦测（不想大改main了，就水了这么个函数）
-void highlight_detector()
+void highlight_detector(char src_path[128], struct file_info *info)
 {
 
     static int flag[16] = {0}; // 高亮标签1:高亮;0:取消高亮
-    int i;                           // 循环变量
+    int i;                     // 循环变量
 
     int pos[16][4] = {
         {5, 5, 25, 25},       // 0左箭头
@@ -185,13 +185,27 @@ void highlight_detector()
         {165, 37, 190, 62},   // 9删除
         {190, 37, 275, 62},   // 10排序
         {550, 440, 570, 460}, // 11上一页
-		{580, 440, 600, 460},  // 12下一页
-        {275, 37, 365, 62}  // 13查看
+        {580, 440, 600, 460}, // 12下一页
+        {275, 37, 365, 62}    // 13查看
 
     };
     int len = 14; // 功能数量
     for (i = 0; i < len; i++)
     {
+        if (strcmp(src_path, "") == 0 && i == 7) // 如果路径为空，剪切、复制、重命名、删除不可用
+        {
+            pos[i][0] = -1;
+            pos[i][1] = -1;
+            pos[i][2] = -1;
+            pos[i][3] = -1;
+        }
+        else if (is_selected(info) == 0 && (i == 5 || i == 6 || i == 8 || i == 9)) // 如果没有选中文件，剪切、复制、重命名、删除不可用
+        {
+            pos[i][0] = -1;
+            pos[i][1] = -1;
+            pos[i][2] = -1;
+            pos[i][3] = -1;
+        }
         if (detect_m(pos[i][0], pos[i][1], pos[i][2], pos[i][3]) == 1 && flag[i] == 0)
         {
             clrmous(MouseX, MouseY);
@@ -204,10 +218,10 @@ void highlight_detector()
             highlight(pos[i][0], pos[i][1], pos[i][2], pos[i][3], DARKGRAY, BLACK);
             flag[i] = 0;
         }
-    }    
+    }
 }
 
-void highlight_detector(struct file_info *info,int pic_flag)
+void highlight_detector(struct file_info *info, int pic_flag)
 {
 #define CAPACITY 32
     static int flag[CAPACITY] = {0}; // 高亮标签1:高亮;0:取消高亮
@@ -219,7 +233,7 @@ void highlight_detector(struct file_info *info,int pic_flag)
     {
         for (i = 0; i < get_info_num(info); i++)
         {
-            if(pic_flag==0)
+            if (pic_flag == 0)
             {
                 pos[i][0] = 120;
                 pos[i][1] = 90 + i * 20;
@@ -229,7 +243,7 @@ void highlight_detector(struct file_info *info,int pic_flag)
             else if (pic_flag == 1)
             {
                 pos[i][0] = 160 + (i % 4) * 100;
-                pos[i][1] = 90 + (i  / 4) * 100;
+                pos[i][1] = 90 + (i / 4) * 100;
                 pos[i][2] = 160 + (i % 4) * 100 + 100;
                 pos[i][3] = 90 + (i / 4) * 100 + 100;
             }
@@ -239,14 +253,14 @@ void highlight_detector(struct file_info *info,int pic_flag)
             if (detect_m(pos[i][0], pos[i][1], pos[i][2], pos[i][3]) == 1 && flag[i] == 0)
             {
                 clrmous(MouseX, MouseY);
-                clearRectangle(pos[i][0], pos[i][1] , pos[i][2], pos[i][3] , DARKGRAY);
-                load_file_info(pos[i][0], pos[i][1] + 5, info + i ,pic_flag);
+                clearRectangle(pos[i][0], pos[i][1], pos[i][2], pos[i][3], DARKGRAY);
+                load_file_info(pos[i][0], pos[i][1] + 5, info + i, pic_flag);
                 flag[i] = 1;
             }
             else if (detect_m(pos[i][0], pos[i][1], pos[i][2], pos[i][3]) == 0 && flag[i] == 1)
             {
                 clrmous(MouseX, MouseY);
-                clearRectangle(pos[i][0], pos[i][1] , pos[i][2], pos[i][3] , BLACK);
+                clearRectangle(pos[i][0], pos[i][1], pos[i][2], pos[i][3], BLACK);
                 load_file_info(pos[i][0], pos[i][1] + 5, info + i, pic_flag);
                 flag[i] = 0;
             }
@@ -367,9 +381,9 @@ void get_preference(char history[HISTORY_LENGTH][128], char preference[3][128])
 
     // 筛选出现次数 >= 3，并且保证不重复、符合check条件
     int pref_index = 0;
-	for (i = 0; i < path_count && pref_index < 3; i++)
+    for (i = 0; i < path_count && pref_index < 3; i++)
     {
-        if (//paths[i].count >= 3  && 
+        if ( // paths[i].count >= 3  &&
             check(paths[i].path))
         {
             // 去重检查

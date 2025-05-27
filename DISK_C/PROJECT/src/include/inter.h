@@ -62,8 +62,8 @@ void highlight(int x1, int y1, int x2, int y2, int darkcolor, int lightcolor);
  *INPUT:info链，目录树根root，图片大小标志
  *RETURN:无
  *************************************************/
-void highlight_detector();
-void highlight_detector(struct file_info *info,int pic_flag);
+void highlight_detector(char src_path[128], struct file_info *info);
+void highlight_detector(struct file_info *info, int pic_flag);
 void highlight_detector(struct My_filenode *root);
 
 /************************************************
