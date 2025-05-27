@@ -31,15 +31,20 @@
 
 我们为这一版汉字库添加了 12 号字体
 
-# 在WindowsXP上部署
+# 在 WindowsXP 上部署
 
-- 直接将`PROJECT`文件夹放在C盘下
-- 双击BC（注意上机要求用的BC与windows10/11上的不一样，不是dosbox哦）
+- 直接将`PROJECT`文件夹放在 C 盘下
+- 双击 BC（注意上机要求用的 BC 与 windows10/11 上的不一样，不是 dosbox 哦）
 - `File`->`Change dir...`->更改工作路径为`C:\PROJECT\DEVEL`
 - `Project`->`Open project`->由于上面更改过工作路径了，这里直接可以看到`WIN_PRO.PRJ`，直接打开
-- `Run`->`Run`，上面的.PRJ文件里面已经将路径配置号好了，所以不需要手动配置了
+- `Run`->`Run`，上面的.PRJ 文件里面已经将路径配置号好了，所以不需要手动配置了
+
+# 项目详细介绍
+
+[README.md](DISK_C/README.md)
 
 # 注意事项
+
 - 密码为`123456`
 - 在游玩过程中**不要删除** `PROJECT` `PROJECT/build` `PROJECT/devel` `PROJECT/src`
 - 为了方便统计有效代码，我们将给鼠标库做的扩展新建了一个文件`mcontrb.cpp`及其头文件`mscontrb.h`

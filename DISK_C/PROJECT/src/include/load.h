@@ -11,10 +11,10 @@ void load_init(char path[128], struct file_info *info, char history[HISTORY_LENG
 
 /************************************************
  *FUNCTION:加载界面
- *INPUT:当前路径，将要显示的info，目录树根，搜索目标，显示模式，偏好，页码，图片大小标志
+ *INPUT:当前路径，将要显示的info，目录树根，搜索目标，显示模式，偏好，页码，图片大小标志，复制源路径
  *RETURN:无
  *************************************************/
-void load_all(char path[128], struct file_info *info, struct My_filenode *root, char *target, int mode, char preference[3][128], int page,int pic_flag);
+void load_all(char path[128], struct file_info *info, struct My_filenode *root, char *target, int mode, char preference[3][128], int page,int pic_flag,char src_path[128]);
 
 /************************************************
  *FUNCTION:加载top栏
@@ -25,10 +25,10 @@ void load_top(char path[128], char *target, int mode);
 
 /************************************************
  *FUNCTION:加载head栏
- *INPUT:显示模式
+ *INPUT:显示模式，复制源路径, info指针
  *RETURN:无
  *************************************************/
-void load_head(int mode);
+void load_head(int mode,char src_path[128],struct file_info *info);
 
 /************************************************
  *FUNCTION:加载left栏
@@ -95,38 +95,38 @@ void draw_new(int x, int y);
 
 /************************************************
  *FUNCTION:画剪切剪刀
- *INPUT:左上X，左上Y
+ *INPUT:左上X，左上Y, 是否可用（0不可用，1可用）
  *RETURN:无
  *************************************************/
-void draw_scissor(int x, int y);
+void draw_scissor(int x, int y,int is_able);
 
 /************************************************
  *FUNCTION:画复制
- *INPUT:左上X，左上Y
+ *INPUT:左上X，左上Y, 是否可用（0不可用，1可用）
  *RETURN:无
  *************************************************/
-void draw_copy(int x, int y);
+void draw_copy(int x, int y,int is_able);
 
 /************************************************
  *FUNCTION:画粘贴
- *INPUT:左上X，左上Y
+ *INPUT:左上X，左上Y, 是否可用（0不可用，1可用）
  *RETURN:无
  *************************************************/
-void draw_paste(int x, int y);
+void draw_paste(int x, int y,int is_able);
 
 /************************************************
  *FUNCTION:画重命名
- *INPUT:左上X，左上Y
+ *INPUT:左上X，左上Y, 是否可用（0不可用，1可用）
  *RETURN:无
  *************************************************/
-void draw_rename(int x, int y);
+void draw_rename(int x, int y,int is_able);
 
 /************************************************
  *FUNCTION:画垃圾桶
- *INPUT:左上X，左上Y
+ *INPUT:左上X，左上Y, 是否可用（0不可用，1可用）
  *RETURN:无
  *************************************************/
-void draw_trash(int x, int y);
+void draw_trash(int x, int y,int is_able);
 
 /************************************************
  *FUNCTION:画排序

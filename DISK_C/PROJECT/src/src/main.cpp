@@ -86,7 +86,7 @@ int main()
 		read_dir(path, info, &page);
 
 		spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference); // 刷新info
-		load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);			   // 显示
+		load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);			   // 显示
 
 		// 排序菜单初始化
 		char sort_menu[6][16] = {"名称", "修改时间", "类型", "大小", "递增", "递减"};
@@ -102,7 +102,8 @@ int main()
 			"排序方式",
 			"撤销",
 			"新建",
-			"属性"};
+			"属性"			
+		};
 		char **RB_menu_p = (char **)malloc(4 * sizeof(char *));
 		for (i = 0; i < 4; i++)
 		{
@@ -151,7 +152,7 @@ int main()
 				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
 				clrmous(MouseX, MouseY);
 				cleardevice();
-				load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+				load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);
 			}
 			else if (mouse_press(25, 5, 45, 25) == 1) // || mouse_press(30, 10, 50, 30) == 4)//如果点击->反撤销目录操作
 			{
@@ -163,7 +164,7 @@ int main()
 				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
 				clrmous(MouseX, MouseY);
 				cleardevice();
-				load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+				load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);
 			}
 			else if (mouse_press(45, 5, 65, 25) == 1) //|| mouse_press(50, 10, 70, 30) == 4)//如果点击返回上一级目录
 			{
@@ -175,7 +176,7 @@ int main()
 				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
 				clrmous(MouseX, MouseY);
 				cleardevice();
-				load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+				load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);
 			}
 			else if (mouse_press(65, 5, 85, 25) == 1) //|| mouse_press(70, 10, 90, 30) == 4)//如果点击刷新
 			{
@@ -186,7 +187,7 @@ int main()
 				cleardevice();
 				if (mode == 0)
 					strcpy(srch_tar, "");
-				load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+				load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);
 			}
 			else if (mouse_press(90, 10, 500, 30) == 1) // 点击键入路径
 			{
@@ -198,7 +199,7 @@ int main()
 				cleardevice();
 				if (mode == 0)
 					strcpy(srch_tar, "");
-				load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+				load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);
 			}
 			else if (detect_m(0, 37, 365, 62) == 1) //|| mouse_press(10, 40, 500, 65) == 4)//如果点击上方功能区域
 			{
@@ -209,7 +210,7 @@ int main()
 					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
 					clrmous(MouseX, MouseY);
 					cleardevice();
-					load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+					load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);
 				}
 			}
 
@@ -225,21 +226,21 @@ int main()
 					page = 0;
 					read_dir(path, info, &page);
 					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
-					load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+					load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);
 				}
 				else if (result == 1) // 选中
 				{
 					clrmous(MouseX, MouseY);
 					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
 					cleardevice();
-					load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+					load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);
 				}
 				else if (result == 0) // 点击空白
 				{
 					cleardevice();
 					for (int j = 0; j < INFO_LENGTH; j++)
 						set_bit(&(info + j)->flag, 7, 0); // 这里暂且这样写，等你写多选优化
-					load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+					load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);
 				}
 			}
 			// 翻页
@@ -251,7 +252,7 @@ int main()
 				cleardevice();
 				read_dir(path, info, &page);
 				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
-				load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+				load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);
 			}
 			else if (mouse_press(580, 440, 600, 460) == 1)
 			{
@@ -260,7 +261,7 @@ int main()
 				cleardevice();
 				read_dir(path, info, &page);
 				spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
-				load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+				load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);
 			}
 
 			// 左栏目录树
@@ -277,7 +278,7 @@ int main()
 					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
 					clrmous(MouseX, MouseY);
 					cleardevice();
-					load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+					load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);
 					// clearRectangle(10, 10, 630, 30, BLACK);
 					// load_top(path, srch_tar, mode);
 					// clearRectangle(120, 70, 640, 480, BLACK);
@@ -304,7 +305,7 @@ int main()
 						spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
 						clrmous(MouseX, MouseY);
 						cleardevice();
-						load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+						load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);
 					}
 				}
 			}
@@ -363,14 +364,14 @@ int main()
 						spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
 						clrmous(MouseX, MouseY);
 						cleardevice();
-						load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+						load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);
 						delay(200);
 					}
 					else
 					{
 						clrmous(MouseX, MouseY);
 						cleardevice();
-						load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+						load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);
 					}
 				}
 				else if (result == 1) // 撤销
@@ -380,7 +381,7 @@ int main()
 					cleardevice();
 					read_dir(path, info, &page);
 					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
-					load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+					load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);
 				}
 				else if (result == 2) // 新建
 				{
@@ -389,7 +390,7 @@ int main()
 					cleardevice();
 					read_dir(path, info, &page);
 					spinOnce(path, info, mode, history, now_history, sort_mode, UpOrDown, preference);
-					load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+					load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);
 				}
 				else if (result == 3) // 属性
 				{
@@ -400,7 +401,7 @@ int main()
 					else
 						property(path, NULL);
 					cleardevice();
-					load_all(path, info, root, srch_tar, mode, preference, page, pic_flag);
+					load_all(path, info, root, srch_tar, mode, preference, page, pic_flag,src_path);
 				}
 			}
 

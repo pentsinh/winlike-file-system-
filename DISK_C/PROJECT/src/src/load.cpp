@@ -11,15 +11,15 @@ void load_init(char path[128], struct file_info *info, char history[HISTORY_LENG
 {
 	setbkcolor(BLACK);
 	chdir("C:\\PROJECT\\DEVEL"); // 进入开发目录
-	rm_dir("BIN"); // 删除回收站目录	
-	mkdir("BIN"); // 创建回收站，RUBBISHBIN太长了。。。
+	rm_dir("BIN");				 // 删除回收站目录
+	mkdir("BIN");				 // 创建回收站，RUBBISHBIN太长了。。。
 	chdir("C:\\PROJECT\\DEVEL\\BIN");
 	mkdir("BIN_0"); // 0为暂存
-	mkdir("BIN_1");// 创建回收站子目录
-	mkdir("BIN_2");// 创建回收站子目录
-	mkdir("BIN_3");// 创建回收站子目录
-	mkdir("BIN_4");// 创建回收站子目录
-	mkdir("BIN_5");// 创建回收站子目录
+	mkdir("BIN_1"); // 创建回收站子目录
+	mkdir("BIN_2"); // 创建回收站子目录
+	mkdir("BIN_3"); // 创建回收站子目录
+	mkdir("BIN_4"); // 创建回收站子目录
+	mkdir("BIN_5"); // 创建回收站子目录
 	chdir("C:\\PROJECT");
 	if (getcwd(path, sizeof(path) * 128) == NULL) // 获取当前路径
 	{
@@ -31,12 +31,12 @@ void load_init(char path[128], struct file_info *info, char history[HISTORY_LENG
 							  // load_all(info);
 }
 
-void load_all(char path[128], struct file_info *info, struct My_filenode *root, char *target, int mode, char preference[3][128], int page, int pic_flag) // 加载界面
+void load_all(char path[128], struct file_info *info, struct My_filenode *root, char *target, int mode, char preference[3][128], int page, int pic_flag, char src_path[128]) // 加载界面
 {
 	load_top(path, target, mode);
 	setcolor(WHITE);
 	line(1, 35, 640, 35);
-	load_head(mode);
+	load_head(mode, src_path, info);
 	setcolor(WHITE);
 	line(1, 65, 640, 65);
 	load_left(root, preference);
@@ -100,25 +100,25 @@ void load_top(char path[128], char *target, int mode) //(10,10)(630,30)
 	line(640, 0, 620, 20);
 }
 
-void load_head(int mode) //(10,40)(630,60)
+void load_head(int mode, char src_path[128], struct file_info *info) //(10,40)(630,60)
 {
 	setcolor(WHITE);
 	// 新建
 	draw_new(10, 42); // 10，42，56，58
 	// 剪切
-	draw_scissor(65, 42); // 65，42，80，57
+	draw_scissor(65, 42, is_selected(info) != 0); // 65，42，80，57
 	// 复制
-	draw_copy(90, 42); // 90，42，106，58
+	draw_copy(90, 42, is_selected(info) != 0); // 90，42，106，58
 	// 粘贴
-	draw_paste(115, 42); // 115，42，131，60
+	draw_paste(115, 42, strcmp(src_path, "") != 0); // 115，42，131，60
 	//  重命名
-	draw_rename(140, 42); // 140，42，160，56
+	draw_rename(140, 42, is_selected(info) != 0); // 140，42，160，56
 	// 删除
-	draw_trash(170, 42); // 170, 42，188，60
+	draw_trash(170, 42, is_selected(info) != 0); // 170, 42，188，60
 	// 排序
-	draw_sort(195, 42);	 // 195, 42，270，59.5
-						 // 查看
-	draw_check(280, 42); // 280，42，362.5，57
+	draw_sort(195, 42); // 195, 42，270，59.5
+	// 查看
+	draw_check(280, 42 ); // 280，42，362.5，57
 #ifdef TEST
 	setcolor(YELLOW);
 	rectangle(5, 37, 60, 62);
@@ -269,7 +269,7 @@ void load_file_info(int x, int y, struct file_info *info, int pic_flag)
 	// 显示图标
 	int x1 = x;
 	int y1 = y;
-	if(pic_flag == 1)
+	if (pic_flag == 1)
 	{
 		x1 = x + 20;
 		y1 = y + 5;
@@ -352,10 +352,10 @@ void load_file_info(int x, int y, struct file_info *info, int pic_flag)
 	// 大小
 	if (pic_flag == 0)
 		outtextxy(540, y, info->size);
-	else if(pic_flag == 1)
+	else if (pic_flag == 1)
 	{
 		outtextxy(x1 + 5, y1 + 60, info->name);
-	}			
+	}
 
 	// if (strcmp(chosen_name, (info + j)->name) == 0 && (info + j)->name != 0)
 	if (get_bit(info->flag, 7) == 1)
@@ -510,7 +510,7 @@ void draw_new(int x, int y)
 }
 
 // 画剪切剪刀15*15
-void draw_scissor(int x, int y)
+void draw_scissor(int x, int y, int is_able)
 {
 	int size = 3;
 	setcolor(WHITE);
@@ -522,12 +522,18 @@ void draw_scissor(int x, int y)
 }
 
 // 画复制16*16
-void draw_copy(int x, int y)
+void draw_copy(int x, int y, int is_able)
 {
 	int size = 4;
-	setcolor(LIGHTBLUE);
+	if (is_able != 0)
+		setcolor(LIGHTBLUE);
+	else
+		setcolor(BLUE);
 	rectangle(x + size * 1.5, y, x + size * 4, y + size * 3);
-	setcolor(WHITE);
+	if (is_able != 0)
+		setcolor(WHITE);
+	else
+		setcolor(DARKGRAY);
 	line(x, y + size, x + size * 1.5, y + size);
 	line(x, y + size, x, y + size * 4);
 	line(x, y + size * 4, x + size * 2.5, y + size * 4);
@@ -535,12 +541,18 @@ void draw_copy(int x, int y)
 }
 
 // 画粘贴16*18
-void draw_paste(int x, int y)
+void draw_paste(int x, int y, int is_able)
 {
 	int size = 4;
-	setcolor(LIGHTBLUE);
+	if (is_able != 0)
+		setcolor(LIGHTBLUE);
+	else
+		setcolor(BLUE);
 	rectangle(x + size * 2, y + size * 1.5, x + size * 4, y + size * 4.5);
-	setcolor(WHITE);
+	if (is_able != 0)
+		setcolor(WHITE);
+	else
+		setcolor(DARKGRAY);
 	rectangle(x + size * 1.5, y - size * 0.5, x + size * 2.5, y + size * 0.5);
 	line(x, y, x + size * 1.5, y);
 	line(x + size * 2.5, y, x + size * 3.5, y);
@@ -550,12 +562,18 @@ void draw_paste(int x, int y)
 }
 
 // 画重命名20*14
-void draw_rename(int x, int y)
+void draw_rename(int x, int y, int is_able)
 {
 	int size = 4;
-	setcolor(WHITE);
+	if (is_able != 0)
+		setcolor(WHITE);
+	else
+		setcolor(DARKGRAY);
 	rectangle(x, y, x + size * 5, y + size * 3.5);
-	setcolor(LIGHTBLUE);
+	if (is_able != 0)
+		setcolor(LIGHTBLUE);
+	else
+		setcolor(BLUE);
 	line(x + size * 2.5, y - size * 1, x + size * 4, y - size * 1);
 	line(x + size * 3.25, y - size * 1, x + size * 3.25, y + size * 4);
 	line(x + size * 2.5, y + size * 4, x + size * 4, y + size * 4);
@@ -565,10 +583,13 @@ void draw_rename(int x, int y)
 }
 
 // 画垃圾桶18*18
-void draw_trash(int x, int y)
+void draw_trash(int x, int y, int is_able)
 {
 	int size = 4;
-	setcolor(WHITE);
+	if (is_able != 0)
+		setcolor(WHITE);
+	else
+		setcolor(DARKGRAY);
 	line(x, y + size * 0.5, x + size * 4.5, y + size * 0.5);
 	line(x + size * 0.5, y + size * 0.5, x + size * 1, y + size * 4.5);
 	line(x + size * 4, y + size * 0.5, x + size * 3.5, y + size * 4.5);
